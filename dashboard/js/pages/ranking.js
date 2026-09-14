@@ -369,20 +369,22 @@ const RankingPage = {
               <span style="font-size: 0.8rem; font-weight: 800; background: ${scoreBg}; color: ${scoreColor}; padding: 3px 10px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.06);">
                 AI SCORE: ${score}/100
               </span>
-              <a href="${story.url}" target="_blank" style="font-size: 0.76rem; color: var(--primary-purple); text-decoration: none; display: inline-flex; align-items: center; gap: 3px;">
-                Original Article <i data-lucide="external-link" style="width: 12px; height: 12px;"></i>
+              <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.76rem; font-weight: 700; color: var(--primary-purple); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border-color: rgba(217,119,87,0.35); background: #ffffff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <i data-lucide="external-link" style="width: 13px; height: 13px;"></i> Source: ${story.source_domain || story.source} ↗
               </a>
             </div>
           </div>
 
-          <!-- Main Story Headline -->
+          <!-- Main Story Headline (Clickable Link to Original Scraped Article) -->
           <div>
             <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 700; line-height: 1.35; color: var(--text-main); margin-bottom: 4px;">
-              ${story.title}
+              <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; display: inline-block; transition: color 0.15s ease;" onmouseover="this.style.color='var(--primary-purple)'" onmouseout="this.style.color='var(--text-main)'">
+                ${story.title}
+              </a>
             </h3>
           </div>
 
-          <!-- Section 1: AI Refined Narrative & Context -->
+          <!-- Section 1: AI Refined Narrative, Reference & Context -->
           <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color);">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
               <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 5px;">
@@ -392,6 +394,17 @@ const RankingPage = {
               <span style="font-size: 0.72rem; color: #2e7d32; font-weight: 700; display: flex; align-items: center; gap: 4px;">
                 <span style="width: 6px; height: 6px; border-radius: 50%; background: #2e7d32;"></span> Gemini 2.5 Refined
               </span>
+            </div>
+
+            <!-- Scraped Source Reference & Direct Website Link Bar -->
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid var(--border-color); padding: 9px 13px; border-radius: 8px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted);">
+                <i data-lucide="globe" style="width: 15px; height: 15px; color: var(--primary-purple);"></i>
+                <span>Scraped Source Reference: <strong style="color: var(--text-main);">${story.source}</strong> <span style="color: var(--text-dim);">(${story.source_domain || story.source})</span></span>
+              </div>
+              <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding: 5px 14px; font-size: 0.76rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; box-shadow: 0 2px 5px rgba(217,119,87,0.25);">
+                <i data-lucide="external-link" style="width: 13px; height: 13px;"></i> Visit Original Article Website ↗
+              </a>
             </div>
 
             <p style="font-size: 0.86rem; color: var(--text-main); line-height: 1.55; margin-bottom: 10px; font-weight: 500;">
@@ -468,7 +481,10 @@ const RankingPage = {
               Scraped: ${App.formatTimestamp(story.scraped_at)}
             </span>
 
-            <div style="display: flex; gap: 8px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.78rem; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-weight: 600;">
+                <i data-lucide="globe" style="width: 14px; height: 14px;"></i> Source Website (${story.source_domain || story.source}) ↗
+              </a>
               <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;" onclick="App.openArticleModal(${story.id})">
                 <i data-lucide="eye"></i> Inspect Full Article
               </button>

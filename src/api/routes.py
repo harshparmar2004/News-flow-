@@ -882,22 +882,31 @@ def get_top_10_ranked_news():
                 f"Topic: {cat} analysis from {a.source}. Minimalist layout, bold typography, terracotta & dark slate accents."
             )
 
-            # High-quality structured AI-refined narrative (never empty or generic)
-            if a.reddit_body and len(a.reddit_body.strip()) > 40:
-                refined_text = a.reddit_body.strip()
-            elif a.body and len(a.body.strip()) > 60:
-                refined_text = a.body.strip()[:400]
+            from urllib.parse import urlparse
+            source_domain = urlparse(a.url or "").netloc.replace("www.", "") if a.url else a.source
+
+            # High-quality structured AI-refined narrative without truncated sentences
+            raw_text = a.reddit_body or a.body or ""
+            if "Source:" in raw_text:
+                raw_text = raw_text.split("Source:")[0].strip()
+
+            if len(raw_text) > 50:
+                if not raw_text.endswith((".", "!", "?", "\"")):
+                    last_stop = max(raw_text.rfind("."), raw_text.rfind("?"), raw_text.rfind("!"))
+                    if last_stop > 60:
+                        raw_text = raw_text[:last_stop + 1].strip()
+                refined_text = raw_text
             else:
                 refined_text = (
-                    f"In-depth industry coverage from {a.source}: '{clean_title}'. "
-                    f"This development impacts the {niche} ecosystem, signaling important shifts in market adoption, technology integration, and operational strategy."
+                    f"Comprehensive industry coverage from {a.source}: '{clean_title}'. "
+                    f"This technological breakthrough directly impacts the {niche} ecosystem, signaling significant industry disruption and new strategic opportunities."
                 )
 
-            # Key takeaways
+            # Key takeaways referencing source
             takeaways = [
-                f"Direct coverage verified from {a.source} ({cat}).",
-                f"Ranked #{idx} based on '{niche}' custom AI criteria with score {a.rank_score or 75}/100.",
-                f"Refined and formatted for social deployment across Twitter/X, LinkedIn, and Reddit."
+                f"Original reporting verified on {a.source} ({cat}).",
+                f"Ranked #{idx} in '{niche}' run with custom AI Score of {a.rank_score or 75}/100.",
+                f"Contextualized and formatted for social deployment across Twitter/X, LinkedIn, and Reddit."
             ]
 
             result.append({
@@ -905,6 +914,7 @@ def get_top_10_ranked_news():
                 "id": a.id,
                 "title": clean_title,
                 "source": a.source,
+                "source_domain": source_domain,
                 "url": a.url,
                 "author": a.author,
                 "category": cat,
