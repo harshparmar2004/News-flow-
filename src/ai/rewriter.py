@@ -56,13 +56,18 @@ def rewrite_article(article_id: int) -> bool:
         prompt = (
             f"Target Niche / Audience: {niche}\n"
             f"Title: {article.title}\n"
-            f"Body: {article.body}\n\n"
-            f"Act as a professional AI curator for the '{niche}' niche. Please evaluate and rewrite this news article for 4 social media platforms. Return strictly a JSON object with these keys:\n"
-            "- 'twitter_text': punchy tweet under 280 chars tailored for this niche\n"
-            "- 'linkedin_text': professional post in 2 paragraphs tailored for this niche\n"
-            "- 'instagram_caption': engaging caption with 5-10 niche hashtags\n"
-            "- 'reddit_title': informative title under 300 chars\n"
-            "- 'reddit_body': 2 paragraph summary with discussion question\n"
+            f"Source Publication: {article.source}\n"
+            f"Original URL: {article.url}\n"
+            f"Article Content: {article.body}\n\n"
+            f"Act as a premier AI technology journalist and analyst for the '{niche}' ecosystem.\n"
+            f"Synthesize our own original, highly insightful editorial context based on this scraped report from {article.source}.\n"
+            f"Reference the scraped source ({article.source}) clearly and professionally. Ensure all sentences are grammatically complete and end with proper punctuation.\n"
+            f"Return strictly a JSON object with these keys:\n"
+            "- 'twitter_text': sharp, high-impact tweet under 280 characters with hashtags and credit to the source\n"
+            "- 'linkedin_text': strategic 2-paragraph analysis exploring market disruption, key takeaways, and a call for professional commentary\n"
+            "- 'instagram_caption': compelling 2-paragraph summary with key takeaways and 5-8 relevant hashtags\n"
+            "- 'reddit_title': informative, objective headline under 300 characters framing the core breakthrough\n"
+            "- 'reddit_body': 2 comprehensive paragraphs providing context, analysis of industry impact, source reference, and an engaging discussion question for the community\n"
         )
 
         data = None
@@ -146,17 +151,31 @@ def rewrite_article(article_id: int) -> bool:
                 logger.error(f"Google Gemini rewrite failed: {e}")
 
         if not data:
-            logger.warning(f"All LLM API calls failed/suspended for article #{article_id}. Using Smart NLP Rewriter Fallback.")
+            logger.warning(f"All LLM API calls failed/suspended for article #{article_id}. Using Smart Context Synthesizer Fallback.")
             clean_title = article.title.strip()
-            clean_body = (article.body or clean_title)[:300].strip()
+            
+            # Cleanly extract full complete sentences from article.body
+            sentences = []
+            if article.body:
+                raw_sentences = [s.strip() for s in article.body.replace("\n", " ").split(".") if len(s.strip()) > 15]
+                for s in raw_sentences:
+                    sentences.append(s)
+                    if len(" ".join(sentences)) >= 250:
+                        break
+            
+            if sentences:
+                extracted_context = ". ".join(sentences) + "."
+            else:
+                extracted_context = f"Leading industry coverage from {article.source} highlights key strategic shifts surrounding '{clean_title}', signaling notable ecosystem disruption."
+
             tags = f"#{niche.replace(' ', '').replace(',', '').replace('&', '')} #TechNews #Innovation #AI"
 
             data = {
-                "twitter_text": f"🚨 {clean_title[:200]}\n\nSource: {article.source}\n{tags[:35]}",
-                "linkedin_text": f"📌 {clean_title}\n\n{clean_body}\n\nWhat are your thoughts on this development? Let us know in the comments below.\n\n{tags}",
-                "instagram_caption": f"✨ {clean_title}\n\n{clean_body}\n\nFollow for daily updates! 🔥\n\n{tags} #NewsFlow #Trending",
-                "reddit_title": f"{clean_title} [Discussion]",
-                "reddit_body": f"{clean_body}\n\nSource: {article.source}"
+                "twitter_text": f"🚨 {clean_title[:180]}... via @{article.source}\n\n{tags[:40]}",
+                "linkedin_text": f"📌 Strategic Analysis: {clean_title}\n\n{extracted_context}\n\nThis development from {article.source} marks a notable milestone for {niche}. What is your perspective on this direction?\n\n{tags}",
+                "instagram_caption": f"✨ In-Depth: {clean_title}\n\n{extracted_context}\n\nOriginally reported by {article.source}. Drop your thoughts below! 👇\n\n{tags} #NewsFlow",
+                "reddit_title": f"{clean_title} — Analysis & Discussion",
+                "reddit_body": f"{extracted_context}\n\nWhat are your thoughts on this move and its broader impact on the ecosystem?\n\nReference: {article.source} ({article.url})"
             }
 
         # Save rewritten content to DB
