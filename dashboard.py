@@ -54,6 +54,17 @@ app.add_middleware(
 # Mount API router
 app.include_router(api_router)
 
+# No-cache middleware for dashboard UI files
+@app.middleware("http")
+async def add_no_cache_headers(request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith("/js/") or path.startswith("/css/") or path.endswith(".html") or path == "/":
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
 # Mount static frontend directory
 DASHBOARD_DIR = os.path.join(PROJECT_ROOT, "dashboard")
 if not os.path.exists(DASHBOARD_DIR):

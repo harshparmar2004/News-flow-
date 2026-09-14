@@ -143,14 +143,15 @@ def stage_rank(max_articles: int | None = None) -> int:
     return ranked_count
 
 
-def stage_rewrite(top_n: int = 10) -> int:
-    """Stage 3: AI Refines & Rewrites the Top 10 Ranked Stories for Studio."""
+def stage_rewrite(top_n: int | None = 10) -> int:
+    """Stage 3: AI Refines & Rewrites strictly the Top 10 Ranked Stories for Studio."""
+    limit_val = top_n if (top_n is not None and top_n > 0) else 10
     logger.info("=" * 60)
-    logger.info(f"STAGE 3: AI REFINING TOP {top_n} RANKED STORIES FOR NANO BANANA STUDIO")
+    logger.info(f"STAGE 3: AI REFINING TOP {limit_val} RANKED STORIES FOR NANO BANANA STUDIO")
     logger.info("=" * 60)
 
     with get_session() as session:
-        articles = session.query(Article).order_by(Article.rank_score.desc()).limit(top_n).all()
+        articles = session.query(Article).order_by(Article.rank_score.desc()).limit(limit_val).all()
         article_ids = [a.id for a in articles]
 
     logger.info(f"Found {len(article_ids)} Top Ranked articles for AI refinement & contextualization")
@@ -172,14 +173,15 @@ def stage_rewrite(top_n: int = 10) -> int:
     return rewritten_count
 
 
-def stage_image_gen(top_n: int = 10) -> int:
-    """Stage 4: Generate Nano Banana 4-slide catalog decks for the Top 10 Refined Stories."""
+def stage_image_gen(top_n: int | None = 10) -> int:
+    """Stage 4: Generate Nano Banana 4-slide catalog decks strictly for the Top 10 Refined Stories."""
+    limit_val = top_n if (top_n is not None and top_n > 0) else 10
     logger.info("=" * 60)
-    logger.info(f"STAGE 4: NANO BANANA STUDIO IMAGE & 4-SLIDE DECK GENERATION (TOP {top_n})")
+    logger.info(f"STAGE 4: NANO BANANA STUDIO IMAGE & 4-SLIDE DECK GENERATION (TOP {limit_val})")
     logger.info("=" * 60)
 
     with get_session() as session:
-        articles = session.query(Article).order_by(Article.rank_score.desc()).limit(top_n).all()
+        articles = session.query(Article).order_by(Article.rank_score.desc()).limit(limit_val).all()
         article_ids = [a.id for a in articles]
 
     logger.info(f"Found {len(article_ids)} Top stories needing Nano Banana visual slide decks")
@@ -244,8 +246,9 @@ def run_pipeline(max_articles: int | None = None):
 
     new_articles = stage_scrape(sources, max_articles)
     ranked_count = stage_rank(max_articles)
-    rewritten = stage_rewrite(max_articles)
-    images = stage_image_gen(max_articles)
+    top_limit = max_articles if max_articles is not None else 10
+    rewritten = stage_rewrite(top_limit)
+    images = stage_image_gen(top_limit)
     sync_results = stage_sync_to_app2()
 
     elapsed = time.time() - start_time

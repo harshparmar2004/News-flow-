@@ -127,12 +127,23 @@ const MediaPage = {
       articles.sort((a, b) => (b.rank_score || 75) - (a.rank_score || 75));
       this.articles = articles.slice(0, 10);
 
-      if (countLabel) countLabel.textContent = `Showing Top ${this.articles.length} AI Ranked News Stories`;
-
       // Populate article target dropdown with Top 10 Ranked News ONLY
       if (articleSelect && this.articles.length > 0) {
         articleSelect.innerHTML = '<option value="">-- Apply to All Top 10 AI Ranked Stories --</option>' +
           this.articles.map(a => `<option value="${a.id}">🔥 Rank #${a.rank_score || 75}: Article #${a.id} - ${a.title.substring(0, 40)}...</option>`).join('');
+      }
+
+      // Check if arriving from Top 10 Ranking Studio with target article
+      const targetId = sessionStorage.getItem('nano_banana_target_id');
+      const targetPrompt = sessionStorage.getItem('nano_banana_prompt');
+      if (targetId && articleSelect) {
+        articleSelect.value = targetId;
+        sessionStorage.removeItem('nano_banana_target_id');
+      }
+      if (targetPrompt && promptInput) {
+        promptInput.value = targetPrompt;
+        sessionStorage.removeItem('nano_banana_prompt');
+        App.showToast(`Loaded Nano Banana prompt for Story #${targetId || ''}`, 'info');
       }
 
       if (!this.articles || this.articles.length === 0) {
