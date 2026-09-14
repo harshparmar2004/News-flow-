@@ -986,6 +986,55 @@ def generate_all_top10_slides():
     }
 
 
+@router.get("/space/nodes")
+def get_space_nodes_data():
+    """Returns live node states and stats for the 3D Agentic Space."""
+    with get_session() as session:
+        total_scraped = session.query(func.count(Article.id)).scalar() or 0
+        top_articles = session.query(Article).order_by(Article.rank_score.desc()).limit(10).all()
+        top_count = len(top_articles)
+        
+        slide_count = 0
+        for a in top_articles:
+            for s in range(1, 5):
+                slide_file = os.path.join(IMAGES_DIR, f"{a.id}_slide{s}.png")
+                if os.path.exists(slide_file):
+                    slide_count += 1
+
+        return {
+            "success": True,
+            "nodes": [
+                {
+                    "node_id": 1,
+                    "name": "Web Scraper Engine",
+                    "status": "active",
+                    "monitored_sources": 16,
+                    "total_scraped": total_scraped
+                },
+                {
+                    "node_id": 2,
+                    "name": "AI News Ranker & Theme Adapter",
+                    "status": "active",
+                    "ranked_count": top_count,
+                    "threshold_score": 75
+                },
+                {
+                    "node_id": 3,
+                    "name": "Nano Banana Visual Studio",
+                    "status": "ready",
+                    "slide_cards_count": slide_count
+                },
+                {
+                    "node_id": 4,
+                    "name": "Multi-API Social Dispatch",
+                    "status": "ready",
+                    "targets": ["twitter", "linkedin", "instagram", "reddit"]
+                }
+            ],
+            "top10": [{"id": a.id, "title": a.title, "source": a.source, "rank_score": a.rank_score} for a in top_articles]
+        }
+
+
 # ---------------------------------------------------------------------------
 # Settings & API Keys Management
 # ---------------------------------------------------------------------------
