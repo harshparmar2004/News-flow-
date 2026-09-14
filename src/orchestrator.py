@@ -143,69 +143,61 @@ def stage_rank(max_articles: int | None = None) -> int:
     return ranked_count
 
 
-def stage_rewrite(max_articles: int | None = None) -> int:
-    """Stage 2: Rewrite pending articles using active LLM."""
+def stage_rewrite(top_n: int = 10) -> int:
+    """Stage 3: AI Refines & Rewrites the Top 10 Ranked Stories for Studio."""
     logger.info("=" * 60)
-    logger.info("STAGE 2: AI REWRITING ARTICLES")
+    logger.info(f"STAGE 3: AI REFINING TOP {top_n} RANKED STORIES FOR NANO BANANA STUDIO")
     logger.info("=" * 60)
 
     with get_session() as session:
-        articles = session.query(Article).filter(Article.status == "scraped").all()
+        articles = session.query(Article).order_by(Article.rank_score.desc()).limit(top_n).all()
         article_ids = [a.id for a in articles]
 
-    if max_articles is not None:
-        article_ids = article_ids[:max_articles]
-
-    logger.info(f"Found {len(article_ids)} articles needing AI rewrite")
+    logger.info(f"Found {len(article_ids)} Top Ranked articles for AI refinement & contextualization")
     rewritten_count = 0
 
     for aid in article_ids:
         if is_abort_requested():
-            logger.warning("Stage 2 AI Rewrite aborted by user.")
+            logger.warning("Stage 3 AI Rewrite aborted by user.")
             break
 
         try:
             if rewrite_article(aid):
                 rewritten_count += 1
-                logger.info(f"Rewrote article #{aid}")
+                logger.info(f" ✓ Refined Top story #{aid}")
         except Exception as e:
             logger.error(f"Failed to rewrite article #{aid}: {e}")
 
-    logger.info(f"Stage 2 complete: {rewritten_count}/{len(article_ids)} rewritten")
+    logger.info(f"Stage 3 complete: {rewritten_count}/{len(article_ids)} Top stories refined")
     return rewritten_count
 
 
-def stage_image_gen(max_articles: int | None = None) -> int:
-    """Stage 3: Generate Nano Banana slide images."""
+def stage_image_gen(top_n: int = 10) -> int:
+    """Stage 4: Generate Nano Banana 4-slide catalog decks for the Top 10 Refined Stories."""
     logger.info("=" * 60)
-    logger.info("STAGE 3: NANO BANANA IMAGE GENERATION")
+    logger.info(f"STAGE 4: NANO BANANA STUDIO IMAGE & 4-SLIDE DECK GENERATION (TOP {top_n})")
     logger.info("=" * 60)
 
     with get_session() as session:
-        articles = session.query(Article).filter(
-            Article.image_path.is_(None)
-        ).all()
+        articles = session.query(Article).order_by(Article.rank_score.desc()).limit(top_n).all()
         article_ids = [a.id for a in articles]
 
-    if max_articles is not None:
-        article_ids = article_ids[:max_articles]
-
-    logger.info(f"Found {len(article_ids)} articles needing images")
+    logger.info(f"Found {len(article_ids)} Top stories needing Nano Banana visual slide decks")
     image_count = 0
 
     for aid in article_ids:
         if is_abort_requested():
-            logger.warning("Stage 3 Image Gen aborted by user.")
+            logger.warning("Stage 4 Image Gen aborted by user.")
             break
 
         try:
             if generate_image(aid):
                 image_count += 1
-                logger.info(f"Generated image for article #{aid}")
+                logger.info(f" ✓ Generated Nano Banana 4-slide deck for Top story #{aid}")
         except Exception as e:
             logger.error(f"Failed image gen for article #{aid}: {e}")
 
-    logger.info(f"Stage 3 complete: {image_count}/{len(article_ids)} images generated")
+    logger.info(f"Stage 4 complete: {image_count}/{len(article_ids)} Nano Banana decks generated")
     return image_count
 
 

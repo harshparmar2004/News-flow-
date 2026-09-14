@@ -852,6 +852,70 @@ def save_ranking_prompt(data: Dict[str, Any]):
     return {"success": True, "message": "Ranking prompt updated!"}
 
 
+@router.get("/ranking/top10")
+def get_top_10_ranked_news():
+    """Returns the Top 10 curated and AI-refined news stories for the current run."""
+    from src.ai.ranker import get_ranking_rules
+    rules = get_ranking_rules()
+    threshold = rules.get("min_threshold_score", 75)
+    niche = rules.get("target_niche", "Technology & AI Innovation")
+
+    with get_session() as session:
+        top_articles = session.query(Article).order_by(Article.rank_score.desc()).limit(10).all()
+        total_scraped = session.query(func.count(Article.id)).scalar() or 0
+
+        result = []
+        for idx, a in enumerate(top_articles, 1):
+            # Check slides
+            slide_urls = []
+            for s in range(1, 5):
+                slide_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "images", f"{a.id}_slide{s}.png")
+                if os.path.exists(slide_path):
+                    slide_urls.append(f"/api/images/{a.id}_slide{s}.png")
+
+            # Nano Banana Prompt
+            cat = a.category or 'Technology'
+            nb_prompt = (
+                f"High-quality editorial 1:1 social media visual card for '{niche}'.\n"
+                f"Headline: '{a.title[:100]}'\n"
+                f"Context: {cat} breakthrough from {a.source}. Modern minimalist layout, high contrast, crisp typography."
+            )
+
+            result.append({
+                "rank": idx,
+                "id": a.id,
+                "title": a.title,
+                "source": a.source,
+                "url": a.url,
+                "author": a.author,
+                "category": cat,
+                "subreddit": a.subreddit or "technology",
+                "rank_score": a.rank_score or 75,
+                "rank_reason": a.rank_reason or f"Evaluated against custom AI rules for {niche}.",
+                "status": a.status,
+                "is_sync_ready": (a.rank_score or 75) >= threshold,
+                "refined_headline": a.reddit_title or a.title,
+                "refined_body": a.reddit_body or (a.body[:350] if a.body else "Contextual analysis in progress."),
+                "twitter_text": a.twitter_text or f"🔥 {a.title[:180]}... via @{a.source or 'NewsFlow'}",
+                "linkedin_text": a.linkedin_text or f"Important development in {cat}: {a.title}. Analyzing strategic implications for founders and teams.",
+                "instagram_caption": a.instagram_caption or f"Major tech story: {a.title}\n\n#tech #ai #innovation #news",
+                "nano_banana_prompt": nb_prompt,
+                "has_image": bool(a.image_path and os.path.exists(a.image_path)),
+                "image_url": f"/api/images/{a.id}.png" if a.image_path and os.path.exists(a.image_path) else None,
+                "slide_urls": slide_urls,
+                "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None
+            })
+
+    return {
+        "success": True,
+        "total_scraped": total_scraped,
+        "top_count": len(result),
+        "threshold": threshold,
+        "niche": niche,
+        "top10": result
+    }
+
+
 # ---------------------------------------------------------------------------
 # Settings & API Keys Management
 # ---------------------------------------------------------------------------
