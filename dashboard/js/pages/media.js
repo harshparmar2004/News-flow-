@@ -183,30 +183,30 @@ const MediaPage = {
         </div>
 
         <!-- Target Articles Pipeline Queue (Clean Structured Overview Table) -->
-        <div class="glass-card" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+        <div class="glass-card" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <h4 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; color: var(--text-main);">
+              <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
                 📋 Top 10 News Visual Pipeline Target Queue
               </h4>
-              <p style="font-size: 0.78rem; color: var(--text-muted);">
+              <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
                 The prompt directives and visual style above will be applied sequentially to these 10 breakthrough stories.
               </p>
             </div>
-            <span style="font-size: 0.76rem; font-weight: 700; background: var(--bg-surface); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-color);" id="queue-status-count">
+            <span style="font-size: 0.72rem; font-weight: 700; background: var(--bg-surface); padding: 3px 9px; border-radius: 6px; border: 1px solid var(--border-color);" id="queue-status-count">
               10 Stories in Queue
             </span>
           </div>
 
-          <div id="top10-queue-list" style="display: flex; flex-direction: column; gap: 8px;">
-            <div style="text-align: center; padding: 20px; color: var(--text-muted);">Loading Top 10 target articles...</div>
+          <div id="top10-queue-list" style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">Loading Top 10 target articles...</div>
           </div>
 
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-color); font-size: 0.8rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 0.76rem; flex-wrap: wrap; gap: 8px;">
             <span style="color: var(--text-muted);">
               💡 <em>All generated 4-slide catalog decks can be reviewed directly in the AI Rank & Refine Studio.</em>
             </span>
-            <button class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px 14px;" onclick="App.navigateTo('ranking')">
+            <button class="btn btn-secondary" style="font-size: 0.74rem; padding: 4px 12px;" onclick="App.navigateTo('ranking')">
               🏆 Open AI Rank & Refine Studio →
             </button>
           </div>
@@ -283,38 +283,52 @@ const MediaPage = {
           const rankNum = idx + 1;
           const hasSlides = a.slide_urls && a.slide_urls.length > 0;
           const score = a.rank_score || 75;
+          const rankBadgeBg = rankNum <= 3 ? '#d97757' : '#1f1e1b';
+          const scoreColor = score >= 90 ? '#d97757' : score >= 80 ? '#2e7d32' : '#2b7bb9';
+          const scoreBg = score >= 90 ? 'rgba(217,119,87,0.08)' : score >= 80 ? 'rgba(46,125,50,0.08)' : 'rgba(43,123,185,0.08)';
 
           return `
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; gap: 12px; transition: background 0.15s ease;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 7px; gap: 10px; transition: all 0.15s ease;" onmouseover="this.style.background='#ffffff'; this.style.borderColor='rgba(217,119,87,0.35)'; this.style.boxShadow='0 1px 4px rgba(0,0,0,0.03)'" onmouseout="this.style.background='var(--bg-surface)'; this.style.borderColor='var(--border-color)'; this.style.boxShadow='none'">
               
-              <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
-                <span style="font-size: 0.74rem; font-weight: 800; background: ${rankNum <= 3 ? '#d97757' : '#1f1e1b'}; color: #ffffff; padding: 2px 7px; border-radius: 4px; flex-shrink: 0;">
+              <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0; flex: 1;">
+                <span style="font-size: 0.68rem; font-weight: 800; background: ${rankBadgeBg}; color: #ffffff; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; min-width: 26px; text-align: center; margin-top: 1px;">
                   #${rankNum}
                 </span>
-                <span class="source-pill" style="font-size: 0.7rem; flex-shrink: 0;">${a.source}</span>
-                <h5 style="font-family: var(--font-serif); font-size: 0.92rem; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0;">
-                  ${a.title}
-                </h5>
+                <span class="source-pill" style="font-size: 0.64rem; padding: 2px 6px; flex-shrink: 0; margin-top: 1px;">${a.source}</span>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                  <a href="${a.url || '#'}" target="_blank" rel="noopener noreferrer" style="font-family: var(--font-serif); font-size: 0.82rem; font-weight: 600; color: var(--text-main); text-decoration: none; line-height: 1.35; display: block; word-break: break-word;" onmouseover="this.style.color='var(--primary-purple)'" onmouseout="this.style.color='var(--text-main)'">
+                    ${a.title}
+                  </a>
+                  ${a.refined_body ? `
+                    <span style="font-size: 0.71rem; color: var(--text-muted); line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">
+                      ${a.refined_body}
+                    </span>
+                  ` : ''}
+                </div>
               </div>
 
-              <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
-                <span style="font-size: 0.76rem; font-weight: 700; color: ${score >= 90 ? '#d97757' : score >= 80 ? '#2e7d32' : '#2b7bb9'};">
+              <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: 8px;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: ${scoreColor}; background: ${scoreBg}; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); white-space: nowrap;">
                   ${score}/100
                 </span>
 
                 ${hasSlides ? `
-                  <span style="font-size: 0.72rem; font-weight: 700; background: rgba(46,125,50,0.12); color: #2e7d32; padding: 3px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px;">
-                    <i data-lucide="check" style="width: 12px; height: 12px;"></i> 4 Slides Ready
+                  <span style="font-size: 0.68rem; font-weight: 700; background: rgba(46,125,50,0.12); color: #2e7d32; padding: 2px 7px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; border: 1px solid rgba(46,125,50,0.25); white-space: nowrap;">
+                    <i data-lucide="check" style="width: 11px; height: 11px;"></i> 4 Slides Ready
                   </span>
                 ` : `
-                  <span style="font-size: 0.72rem; font-weight: 600; background: rgba(0,0,0,0.05); color: var(--text-muted); padding: 3px 8px; border-radius: 4px;">
+                  <span style="font-size: 0.68rem; font-weight: 600; background: rgba(0,0,0,0.04); color: var(--text-muted); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border-color); white-space: nowrap;">
                     Pending Gen
                   </span>
                 `}
 
-                <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.72rem;" onclick="MediaPage.generateSingleStory(${a.id})">
-                  <i data-lucide="sparkles"></i> Render
+                <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.7rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;" onclick="MediaPage.generateSingleStory(${a.id})" title="Generate or re-render 4-slide catalog deck">
+                  <i data-lucide="sparkles" style="width: 11px; height: 11px;"></i> Render
                 </button>
+
+                <a href="${a.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 3px 6px; font-size: 0.7rem; color: var(--primary-purple); display: inline-flex; align-items: center;" title="Open original article website ↗">
+                  <i data-lucide="external-link" style="width: 11px; height: 11px;"></i>
+                </a>
               </div>
 
             </div>
