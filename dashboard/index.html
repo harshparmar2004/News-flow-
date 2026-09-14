@@ -111,13 +111,48 @@
           <p id="page-subtitle">Real-time automation analytics and content pipeline status</p>
         </div>
 
+        <!-- Global Top Live Metrics Bar -->
+        <div class="top-overview-bar" id="top-overview-bar">
+          <div class="top-overview-pill" title="Configured monitored news source links">
+            <i data-lucide="rss" class="pill-icon"></i>
+            <div class="pill-info">
+              <span class="pill-label">Monitored Sources</span>
+              <span class="pill-value" id="top-metric-sources">16 Active</span>
+            </div>
+          </div>
+
+          <div class="top-overview-pill" title="Total raw news items scraped from monitored sources">
+            <i data-lucide="database" class="pill-icon"></i>
+            <div class="pill-info">
+              <span class="pill-label">Scraped Data</span>
+              <span class="pill-value" id="top-metric-scraped">0 Items</span>
+            </div>
+          </div>
+
+          <div class="top-overview-pill" title="Articles scored and ranked by AI (1-100)">
+            <i data-lucide="award" class="pill-icon"></i>
+            <div class="pill-info">
+              <span class="pill-label">AI Ranked Stories</span>
+              <span class="pill-value" id="top-metric-ranked">0 Stories</span>
+            </div>
+          </div>
+
+          <div class="top-overview-pill" title="Refined news + Nano Banana visual asset decks ready for App 2 Transfer">
+            <i data-lucide="zap" class="pill-icon"></i>
+            <div class="pill-info">
+              <span class="pill-label">App 2 Sync Ready</span>
+              <span class="pill-value" id="top-metric-ready">0 Ready</span>
+            </div>
+          </div>
+        </div>
+
         <div class="header-actions">
           <div class="pipeline-status-banner" id="pipeline-status-banner">
             <span class="dot-pulse green"></span>
             <span id="pipeline-status-text">Idle</span>
           </div>
 
-          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; background: var(--bg-card); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer;" title="Automatically check sources for news every 15 minutes">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; background: var(--bg-card); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer;" title="Automatically check sources for news every 15 minutes">
             <input type="checkbox" id="autopilot-toggle-chk" style="cursor: pointer;">
             <span style="font-weight: 600;">Auto-Pilot: <span id="autopilot-label" style="color: var(--text-muted);">OFF</span></span>
           </label>

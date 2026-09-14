@@ -65,6 +65,9 @@ def _run_pipeline_background(max_articles: Optional[int] = None):
 @router.get("/stats")
 def get_stats():
     """Returns overview statistics for dashboard metrics, platform distribution, categories and sources."""
+    sources_config = load_sources()
+    total_monitored_sources = len(sources_config)
+
     with get_session() as session:
         total = session.query(func.count(Article.id)).scalar() or 0
         scraped = session.query(func.count(Article.id)).filter(Article.status == "scraped").scalar() or 0
@@ -72,6 +75,7 @@ def get_stats():
         published = session.query(func.count(Article.id)).filter(Article.status == "published").scalar() or 0
         queued = session.query(func.count(Article.id)).filter(Article.status == "queued").scalar() or 0
         failed = session.query(func.count(Article.id)).filter(Article.status == "failed").scalar() or 0
+        ranked_count = session.query(func.count(Article.id)).filter(Article.rank_score.isnot(None)).scalar() or 0
 
         reddit_posted = session.query(func.count(Article.id)).filter(Article.reddit_posted == True).scalar() or 0
         twitter_posted = session.query(func.count(Article.id)).filter(Article.twitter_posted == True).scalar() or 0
@@ -94,6 +98,9 @@ def get_stats():
             "published": published,
             "queued": queued,
             "failed": failed,
+            "ranked": ranked_count,
+            "monitored_sources": total_monitored_sources,
+            "active_scraped_sources": len(sources_breakdown)
         },
         "platforms": {
             "reddit": reddit_posted,

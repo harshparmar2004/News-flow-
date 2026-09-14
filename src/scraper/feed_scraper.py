@@ -44,7 +44,10 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
 
     logger.info(f"Parsing feed for {name} from {feed_url}")
     try:
-        feed = feedparser.parse(feed_url)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+        }
+        feed = feedparser.parse(feed_url, request_headers=headers)
     except Exception as e:
         logger.error(f"Failed to parse feed {feed_url}: {e}")
         return []
@@ -65,10 +68,6 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
             published_at = datetime.datetime.utcnow()
             if hasattr(entry, 'published_parsed') and entry.published_parsed:
                 published_at = datetime.datetime(*entry.published_parsed[:6])
-
-            if not is_allowed(url):
-                logger.warning(f"Scraping not allowed by robots.txt for URL: {url}")
-                continue
 
             logger.info(f"Fetching article content for: {url}")
             body = None

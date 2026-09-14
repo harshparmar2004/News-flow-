@@ -287,6 +287,58 @@ body.sidebar-collapsed-mode .main-content {
   font-weight: 500;
 }
 
+/* Global Top Overview Bar */
+.top-overview-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 16px;
+}
+
+.top-overview-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  padding: 4px 11px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.top-overview-pill:hover {
+  border-color: var(--primary-purple);
+  transform: translateY(-1px);
+}
+
+.top-overview-pill .pill-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--primary-purple);
+  flex-shrink: 0;
+}
+
+.top-overview-pill .pill-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.top-overview-pill .pill-label {
+  font-size: 0.64rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.top-overview-pill .pill-value {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
 .header-actions {
   display: flex;
   align-items: center;

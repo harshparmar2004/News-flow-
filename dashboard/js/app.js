@@ -277,26 +277,44 @@ const App = {
   async checkPipelineStatus() {
     try {
       const res = await fetch('/api/pipeline/status');
-      if (!res.ok) return;
-      const data = await res.json();
-      
-      const dot = document.querySelector('.dot-pulse');
-      const text = document.getElementById('pipeline-status-text');
+      if (res.ok) {
+        const data = await res.json();
+        
+        const dot = document.querySelector('.dot-pulse');
+        const text = document.getElementById('pipeline-status-text');
 
-      if (data.is_running) {
-        this.pipelineRunning = true;
-        if (dot) dot.className = 'dot-pulse running';
-        if (text) text.textContent = 'Pipeline Running...';
-        this.updatePipelineButtonState();
-      } else {
-        if (this.pipelineRunning) {
-          this.showToast('Pipeline run completed!', 'success');
-          this.navigateTo(this.currentPage, false);
+        if (data.is_running) {
+          this.pipelineRunning = true;
+          if (dot) dot.className = 'dot-pulse running';
+          if (text) text.textContent = 'Pipeline Running...';
+          this.updatePipelineButtonState();
+        } else {
+          if (this.pipelineRunning) {
+            this.showToast('Pipeline run completed!', 'success');
+            this.navigateTo(this.currentPage, false);
+          }
+          this.pipelineRunning = false;
+          if (dot) dot.className = 'dot-pulse green';
+          if (text) text.textContent = data.last_run ? `Last run: ${new Date(data.last_run).toLocaleTimeString()}` : 'Idle (Ready)';
+          this.updatePipelineButtonState();
         }
-        this.pipelineRunning = false;
-        if (dot) dot.className = 'dot-pulse green';
-        if (text) text.textContent = data.last_run ? `Last run: ${new Date(data.last_run).toLocaleTimeString()}` : 'Idle (Ready)';
-        this.updatePipelineButtonState();
+      }
+
+      // Live update top header overview metrics
+      const statsRes = await fetch('/api/stats');
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        const summary = statsData.summary || {};
+
+        const mSources = document.getElementById('top-metric-sources');
+        const mScraped = document.getElementById('top-metric-scraped');
+        const mRanked = document.getElementById('top-metric-ranked');
+        const mReady = document.getElementById('top-metric-ready');
+
+        if (mSources) mSources.textContent = `${summary.monitored_sources || 16} Active`;
+        if (mScraped) mScraped.textContent = `${summary.total || 0} Items`;
+        if (mRanked) mRanked.textContent = `${summary.ranked || 0} Stories`;
+        if (mReady) mReady.textContent = `${summary.ready || 0} Ready`;
       }
     } catch (e) {
       console.warn("Status check failed", e);

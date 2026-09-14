@@ -65,45 +65,48 @@ def load_sources() -> list[dict[str, Any]]:
 
 
 def stage_scrape(sources: list[dict], max_articles: int | None = None) -> int:
-    """Stage 1: Scrape articles from all configured sources."""
+    """Stage 1: Scrape articles sequentially across 100% of configured sources (from source #1 to #N)."""
     logger.info("=" * 60)
-    logger.info("STAGE 1: SCRAPING ARTICLES")
+    logger.info(f"STAGE 1: SCRAPING ARTICLES ACROSS ALL {len(sources)} SOURCES (100% TRAVERSAL)")
     logger.info("=" * 60)
 
     total_new = 0
     total_scraped = 0
 
-    for source in sources:
+    for idx, source in enumerate(sources, 1):
         if is_abort_requested():
-            logger.warning("Stage 1 aborted by user.")
+            logger.warning(f"Stage 1 aborted by user at source {idx}/{len(sources)}.")
             break
 
         name = source.get("name", "Unknown")
         tier = source.get("tier", 1)
 
+        source_config = dict(source)
         if max_articles is not None:
-            source = {**source, "max_articles": min(source.get("max_articles", 5), max_articles)}
+            source_config["max_articles"] = min(source.get("max_articles", 5), max_articles)
+
+        logger.info(f"[{idx}/{len(sources)}] Checking source: {name} (Tier {tier})...")
 
         try:
             if tier == 1:
-                articles = scrape_feed(source)
+                articles = scrape_feed(source_config)
             elif tier == 2:
-                articles = scrape_with_ai(source)
+                articles = scrape_with_ai(source_config)
             else:
-                articles = scrape_html(source)
+                articles = scrape_html(source_config)
 
             total_scraped += len(articles)
             if articles:
                 new_count = dedupe_and_store(articles)
                 total_new += new_count
-                logger.info(f"{name}: {len(articles)} scraped, {new_count} new stored")
+                logger.info(f" ✓ [{idx}/{len(sources)}] {name}: {len(articles)} scraped, {new_count} new stored")
             else:
-                logger.info(f"{name}: 0 articles extracted")
+                logger.info(f" ⚠️ [{idx}/{len(sources)}] {name}: 0 articles extracted")
 
         except Exception as e:
-            logger.error(f"Error scraping {name}: {e}")
+            logger.error(f" ❌ [{idx}/{len(sources)}] Error scraping {name}: {e}")
 
-    logger.info(f"Stage 1 complete: {total_scraped} articles scraped, {total_new} new stored")
+    logger.info(f"Stage 1 complete: Processed {len(sources)} sources | {total_scraped} total items scraped | {total_new} new stored")
     return total_new
 
 

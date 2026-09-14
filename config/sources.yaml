@@ -41,11 +41,11 @@ sources:
   max_articles: 5
 - name: Reuters Tech
   url: https://www.reuters.com/technology/
-  feed_url: https://www.reutersagency.com/feed/?taxonomy=best-sectors&post_type=best
+  feed_url: https://news.google.com/rss/search?q=site:reuters.com/technology
   tier: 1
   category: tech
   subreddit: technews
-  delay_seconds: 3
+  delay_seconds: 2
   max_articles: 5
 - name: Hacker News
   url: https://news.ycombinator.com
@@ -61,7 +61,7 @@ sources:
   tier: 1
   category: tech
   subreddit: Futurology
-  delay_seconds: 3
+  delay_seconds: 2
   max_articles: 5
 - name: The Guardian Tech
   url: https://www.theguardian.com/technology
@@ -89,7 +89,7 @@ sources:
   max_articles: 5
 - name: VentureBeat
   url: https://venturebeat.com
-  feed_url: https://venturebeat.com/feed/
+  feed_url: https://news.google.com/rss/search?q=site:venturebeat.com
   tier: 1
   category: tech
   subreddit: technology
@@ -101,7 +101,7 @@ sources:
   tier: 1
   category: business
   subreddit: business
-  delay_seconds: 3
+  delay_seconds: 2
   max_articles: 5
 - name: TechRadar
   url: https://www.techradar.com
@@ -121,9 +121,9 @@ sources:
   max_articles: 5
 - name: Bloomberg Tech
   url: https://www.bloomberg.com/technology
-  feed_url: null
-  tier: 2
+  feed_url: https://news.google.com/rss/search?q=site:bloomberg.com/technology
+  tier: 1
   category: business
   subreddit: business
-  delay_seconds: 5
-  max_articles: 3
+  delay_seconds: 2
+  max_articles: 5
