@@ -42,7 +42,7 @@ const SpacePage = {
             <div class="node-3d-card vertical-node" onclick="SpacePage.openNodeInspector(1)" style="padding: 12px 18px; border-radius: 12px;">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
                 <span class="node-badge" style="background: rgba(217,119,87,0.15); color: var(--primary-purple); font-size: 0.65rem; padding: 2px 8px;">NODE 1 • WEB SCRAPER ENGINE</span>
-                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">18 Permanent Feeds</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">16 Monitored Sources</span>
               </div>
 
               <div style="display: flex; align-items: center; gap: 14px; text-align: left;">
@@ -54,7 +54,7 @@ const SpacePage = {
                   <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Monitors RSS feeds & AI ScrapeGraph web sources continuously</p>
                 </div>
                 <div style="text-align: right; flex-shrink: 0;">
-                  <div style="font-size: 1.05rem; font-weight: 700; color: var(--primary-purple);" id="space-v1-count">50 News Scraped</div>
+                  <div style="font-size: 1.05rem; font-weight: 700; color: var(--primary-purple);" id="space-v1-count">133 News Scraped</div>
                   <span class="btn-node-inspect" style="margin-top: 2px; padding: 3px 8px; font-size: 0.72rem;">Open Console 🔍</span>
                 </div>
               </div>
@@ -65,7 +65,7 @@ const SpacePage = {
               <div class="connector-line" style="height: 16px;"></div>
               <div class="connector-badge" style="padding: 2px 10px; font-size: 0.68rem;">
                 <i data-lucide="arrow-down" style="width: 14px; height: 14px; color: var(--primary-purple);"></i>
-                <span>50 Raw Scraped Articles Flow Down</span>
+                <span>Raw Scraped Articles Flow to Custom AI Agent Rules</span>
               </div>
             </div>
 
@@ -127,7 +127,7 @@ const SpacePage = {
               <div class="connector-line" style="border-color: #c13584; height: 16px;"></div>
               <div class="connector-badge" style="border-color: rgba(193,53,132,0.3); color: #c13584; padding: 2px 10px; font-size: 0.68rem;">
                 <i data-lucide="arrow-down" style="width: 14px; height: 14px; color: #c13584;"></i>
-                <span>40 Slide Cards Ready for API Dispatch</span>
+                <span>Top 10 Refined Decks Ready for App 2 Gateway</span>
               </div>
             </div>
 
@@ -188,18 +188,27 @@ const SpacePage = {
 
   async loadSpaceData() {
     try {
-      const data = await App.fetchApi('/api/articles?limit=50');
-      let articles = data.articles || [];
+      const top10Res = await App.fetchApi('/api/ranking/top10');
+      const top10 = top10Res.top10 || [];
+      const totalScraped = top10Res.total_scraped || 0;
+      this.articles = top10;
 
-      articles.sort((a, b) => (b.rank_score || 75) - (a.rank_score || 75));
-      this.articles = articles;
+      // Update Node Live Counts
+      const elV1 = document.getElementById('space-v1-count');
+      const elV2 = document.getElementById('space-v2-count');
+      const elV3 = document.getElementById('space-v3-count');
+      const elV4 = document.getElementById('space-v4-count');
 
-      const top10 = articles.slice(0, 10);
+      if (elV1) elV1.textContent = `16 Sources · ${totalScraped} Scraped`;
+      if (elV2) elV2.textContent = `Top 10 AI Ranked`;
+      if (elV3) elV3.textContent = `${top10.length * 4} Slide Cards`;
+      if (elV4) elV4.textContent = `App 2 Sync Ready`;
+
       const select = document.getElementById('space-article-select');
       
       if (select && top10.length > 0) {
         select.innerHTML = '<option value="">-- Select Top 10 Article --</option>' +
-          top10.map(a => `<option value="${a.id}">Article #${a.id} [Score ${a.rank_score || 75}/100]: ${a.title.substring(0, 40)}...</option>`).join('');
+          top10.map(a => `<option value="${a.id}">#${a.rank} (${a.rank_score}/100): ${a.source} - ${a.title.substring(0, 38)}...</option>`).join('');
         
         select.value = top10[0].id;
         this.renderDefaultSlides(top10[0].id);

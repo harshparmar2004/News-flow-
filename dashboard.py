@@ -30,6 +30,9 @@ if hasattr(sys.stdout, "reconfigure"):
 
 load_dotenv()
 
+from run import setup_logging
+setup_logging()
+
 from src.db.models import init_db
 from src.api.routes import router as api_router
 
