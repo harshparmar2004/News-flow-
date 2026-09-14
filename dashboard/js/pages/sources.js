@@ -25,6 +25,41 @@ const SourcesPage = {
           </div>
         </div>
 
+        <!-- Monitored Feeds & Pipeline Metrics Overview Grid -->
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div class="glass-card stat-card total" style="padding: 16px;">
+            <div class="stat-icon"><i data-lucide="rss"></i></div>
+            <div class="stat-data">
+              <h3 id="src-stat-sources" style="font-size: 1.2rem;">16 Active</h3>
+              <p style="font-size: 0.78rem;">Monitored Sources Links</p>
+            </div>
+          </div>
+
+          <div class="glass-card stat-card scraped" style="padding: 16px;">
+            <div class="stat-icon"><i data-lucide="database"></i></div>
+            <div class="stat-data">
+              <h3 id="src-stat-total" style="font-size: 1.2rem;">0 Items</h3>
+              <p style="font-size: 0.78rem;">Scraped Raw News Data</p>
+            </div>
+          </div>
+
+          <div class="glass-card stat-card ready" style="padding: 16px;">
+            <div class="stat-icon"><i data-lucide="award"></i></div>
+            <div class="stat-data">
+              <h3 id="src-stat-ranked" style="font-size: 1.2rem;">0 Stories</h3>
+              <p style="font-size: 0.78rem;">AI Ranked Stories (1-100)</p>
+            </div>
+          </div>
+
+          <div class="glass-card stat-card published" style="padding: 16px;">
+            <div class="stat-icon"><i data-lucide="zap"></i></div>
+            <div class="stat-data">
+              <h3 id="src-stat-ready" style="font-size: 1.2rem;">0 Ready</h3>
+              <p style="font-size: 0.78rem;">App 2 Sync Ready Decks</p>
+            </div>
+          </div>
+        </div>
+
         <!-- 18 Permanent Feeds Grid -->
         <div class="sources-grid" id="sources-grid">
           <div class="glass-card"><p>Loading monitored web & RSS feeds...</p></div>
@@ -43,6 +78,24 @@ const SourcesPage = {
     if (!grid) return;
 
     try {
+      // Fetch live stats for overview cards
+      try {
+        const stats = await App.fetchApi('/api/stats');
+        const summary = stats.summary || {};
+
+        const elSrc = document.getElementById('src-stat-sources');
+        const elTot = document.getElementById('src-stat-total');
+        const elRnk = document.getElementById('src-stat-ranked');
+        const elRdy = document.getElementById('src-stat-ready');
+
+        if (elSrc) elSrc.textContent = `${summary.monitored_sources || 16} Active`;
+        if (elTot) elTot.textContent = `${summary.total || 0} Items`;
+        if (elRnk) elRnk.textContent = `${summary.ranked || 0} Stories`;
+        if (elRdy) elRdy.textContent = `${summary.ready || 0} Ready`;
+      } catch (e) {
+        console.warn("Could not load stats on sources page", e);
+      }
+
       const data = await App.fetchApi('/api/sources');
       this.sourcesData = data.sources || [];
 

@@ -30,37 +30,37 @@ const DashboardPage = {
           </span>
         </div>
         
-        <!-- Stats Cards Row -->
+        <!-- Stats Overview Row -->
         <div class="stats-grid">
           <div class="glass-card stat-card total">
-            <div class="stat-icon"><i data-lucide="layers"></i></div>
+            <div class="stat-icon"><i data-lucide="rss"></i></div>
+            <div class="stat-data">
+              <h3 id="stat-sources">16 Active</h3>
+              <p>Monitored Sources Links</p>
+            </div>
+          </div>
+
+          <div class="glass-card stat-card scraped">
+            <div class="stat-icon"><i data-lucide="database"></i></div>
             <div class="stat-data">
               <h3 id="stat-total">0</h3>
-              <p>Total Scraped Articles</p>
+              <p>Scraped Raw Data Items</p>
             </div>
           </div>
 
           <div class="glass-card stat-card ready">
             <div class="stat-icon"><i data-lucide="award"></i></div>
             <div class="stat-data">
-              <h3 id="stat-ready">0</h3>
-              <p>AI Ranked & Refined</p>
-            </div>
-          </div>
-
-          <div class="glass-card stat-card scraped">
-            <div class="stat-icon"><i data-lucide="wand-2"></i></div>
-            <div class="stat-data">
-              <h3 id="stat-scraped">0</h3>
-              <p>Nano Banana Decks Built</p>
+              <h3 id="stat-ranked">0</h3>
+              <p>AI Ranked Stories (1-100)</p>
             </div>
           </div>
 
           <div class="glass-card stat-card published">
-            <div class="stat-icon"><i data-lucide="share-2"></i></div>
+            <div class="stat-icon"><i data-lucide="zap"></i></div>
             <div class="stat-data">
-              <h3 id="stat-published">0</h3>
-              <p>Ready for App 2 Transfer</p>
+              <h3 id="stat-ready">0</h3>
+              <p>App 2 Sync Ready Decks</p>
             </div>
           </div>
         </div>
@@ -130,10 +130,16 @@ const DashboardPage = {
       const articles = await App.fetchApi(`/api/articles?limit=8${this.currentDashboardFilter !== 'all' ? '&status=' + this.currentDashboardFilter : ''}`);
 
       // Update counters
-      document.getElementById('stat-total').textContent = stats.summary.total || 0;
-      document.getElementById('stat-scraped').textContent = stats.summary.ready || 0;
-      document.getElementById('stat-ready').textContent = stats.summary.ready || 0;
-      document.getElementById('stat-published').textContent = stats.summary.ready || 0;
+      const summary = stats.summary || {};
+      const elSources = document.getElementById('stat-sources');
+      const elTotal = document.getElementById('stat-total');
+      const elRanked = document.getElementById('stat-ranked');
+      const elReady = document.getElementById('stat-ready');
+
+      if (elSources) elSources.textContent = `${summary.monitored_sources || 16} Active`;
+      if (elTotal) elTotal.textContent = `${summary.total || 0} Items`;
+      if (elRanked) elRanked.textContent = `${summary.ranked || 0} Stories`;
+      if (elReady) elReady.textContent = `${summary.ready || 0} Ready`;
 
       // Update navbar badges
       const navArticles = document.getElementById('nav-count-articles');
