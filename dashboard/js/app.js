@@ -307,14 +307,14 @@ const App = {
         const summary = statsData.summary || {};
 
         const mSources = document.getElementById('top-metric-sources');
-        const mScraped = document.getElementById('top-metric-scraped');
-        const mRanked = document.getElementById('top-metric-ranked');
-        const mReady = document.getElementById('top-metric-ready');
+        // Update sidebar badges dynamically
+        const bSources = document.getElementById('nav-badge-sources');
+        const bScraped = document.getElementById('nav-badge-scraped');
+        const bArticles = document.getElementById('nav-count-articles');
 
-        if (mSources) mSources.textContent = `${summary.monitored_sources || 16} Active`;
-        if (mScraped) mScraped.textContent = `${summary.total || 0} Items`;
-        if (mRanked) mRanked.textContent = `${summary.ranked || 0} Stories`;
-        if (mReady) mReady.textContent = `${summary.ready || 0} Ready`;
+        if (bSources) bSources.textContent = summary.monitored_sources || 16;
+        if (bScraped) bScraped.textContent = summary.total || 0;
+        if (bArticles) bArticles.textContent = summary.ready || 0;
       }
     } catch (e) {
       console.warn("Status check failed", e);

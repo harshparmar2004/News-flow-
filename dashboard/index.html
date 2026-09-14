@@ -26,77 +26,81 @@
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="app-sidebar">
       <div class="brand">
-        <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="brand-wrapper">
           <div class="brand-logo">
             <i data-lucide="zap"></i>
           </div>
           <div class="brand-info">
-            <h2>NewsFlow</h2>
-            <span class="version-badge">v1.0 • Gemini 2.5</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <h2>NewsFlow</h2>
+              <span class="version-badge">v1.2</span>
+            </div>
+            <span class="sub-brand">AI Research & Studio</span>
           </div>
         </div>
-        <button class="btn-icon" id="sidebar-toggle-btn" style="width: 28px; height: 28px; border-radius: 6px; cursor: pointer;" title="Toggle Sidebar Collapse">
+        <button class="btn-icon sidebar-collapse-btn" id="sidebar-toggle-btn" title="Toggle Sidebar">
           <i data-lucide="panel-left-close"></i>
         </button>
       </div>
 
       <nav class="nav-menu">
+        <div class="nav-section-label">Overview</div>
         <a href="#dashboard" class="nav-item active" data-page="dashboard">
           <i data-lucide="layout-dashboard"></i>
           <span>Dashboard Overview</span>
         </a>
         <a href="#sources" class="nav-item" data-page="sources">
           <i data-lucide="rss"></i>
-          <span>News Sources Links</span>
-          <span class="nav-badge muted">18</span>
+          <span>News Sources</span>
+          <span class="nav-badge" id="nav-badge-sources">16</span>
         </a>
         <a href="#space" class="nav-item" data-page="space">
           <i data-lucide="box"></i>
-          <span>🌌 3D Agentic Space</span>
-          <span class="nav-badge warning">3D</span>
+          <span>3D Agent Space</span>
+          <span class="nav-badge accent">3D</span>
         </a>
 
-        <div style="margin: 14px 0 6px 12px; font-size: 0.68rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em;">
-          Research & Studio Pillars
-        </div>
-
+        <div class="nav-section-label">Core Pipeline</div>
         <a href="#scraped" class="nav-item" data-page="scraped">
           <i data-lucide="database"></i>
-          <span>1. Research Scraped Data</span>
-          <span class="nav-badge ready">80 Items</span>
+          <span>1. Scraped Data</span>
+          <span class="nav-badge" id="nav-badge-scraped">133</span>
         </a>
         <a href="#ranking" class="nav-item" data-page="ranking">
           <i data-lucide="award"></i>
-          <span>2. AI News Rank & Refine</span>
-          <span class="nav-badge ready">1-100</span>
+          <span>2. AI Rank & Refine</span>
+          <span class="nav-badge rank-pill">1–100</span>
         </a>
         <a href="#media" class="nav-item" data-page="media">
           <i data-lucide="wand-2"></i>
-          <span>3. Studio (Nano Banana)</span>
+          <span>3. Nano Banana Studio</span>
+          <span class="nav-badge studio-pill">Studio</span>
         </a>
+
+        <div class="nav-section-label">Vault & System</div>
         <a href="#articles" class="nav-item" data-page="articles">
           <i data-lucide="newspaper"></i>
-          <span>Refined Content Vault</span>
+          <span>Content Vault</span>
           <span class="nav-badge" id="nav-count-articles">0</span>
         </a>
         <a href="#pipeline" class="nav-item" data-page="pipeline">
           <i data-lucide="git-merge"></i>
-          <span>Workflow Diagram</span>
+          <span>Pipeline Workflow</span>
         </a>
-        <a href="#settings" class="nav-item" data-page="settings" style="margin-top: 16px;">
+        <a href="#settings" class="nav-item" data-page="settings">
           <i data-lucide="settings"></i>
           <span>API Keys & Config</span>
         </a>
       </nav>
 
       <div class="sidebar-footer">
-        <div class="cost-badge">
-          <i data-lucide="piggy-bank"></i>
-          <span>Monthly Cost: <strong>$0.00</strong></span>
-        </div>
-        <div class="system-status">
+        <div class="footer-status-row">
           <span class="status-indicator online"></span>
-          <span>Pipeline Engine Ready</span>
+          <span class="footer-status-text">Engine Ready · Port 8000</span>
+        </div>
+        <div class="footer-cost-row">
+          <i data-lucide="piggy-bank"></i>
+          <span>Monthly Cost: <strong>$0.00 (Free)</strong></span>
         </div>
       </div>
     </aside>
