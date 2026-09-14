@@ -15,7 +15,7 @@ from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
 from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy import func, desc
 
-from src.db.models import Article, get_session
+from src.db.models import Article, PipelineRun, get_session
 from src.orchestrator import run_pipeline, load_sources
 
 logger = logging.getLogger(__name__)
@@ -144,15 +144,48 @@ def get_timeline(days: int = 14):
 # Article Management Endpoints
 # ---------------------------------------------------------------------------
 
+@router.get("/articles/dates")
+def get_article_dates():
+    """Returns article count aggregated by scraped date (YYYY-MM-DD) and month (YYYY-MM)."""
+    from sqlalchemy import func
+    with get_session() as session:
+        # Group by YYYY-MM-DD
+        date_counts = session.query(
+            func.strftime('%Y-%m-%d', Article.scraped_at).label('date'),
+            func.count(Article.id).label('count')
+        ).group_by('date').order_by(desc('date')).all()
+
+        formatted_dates = [{"date": d[0] or "Unknown", "count": d[1]} for d in date_counts if d[0]]
+
+        # Group by YYYY-MM
+        month_counts = session.query(
+            func.strftime('%Y-%m', Article.scraped_at).label('month'),
+            func.count(Article.id).label('count')
+        ).group_by('month').order_by(desc('month')).all()
+
+        formatted_months = [{"month": m[0] or "Unknown", "count": m[1]} for m in month_counts if m[0]]
+
+        return {
+            "dates": formatted_dates,
+            "months": formatted_months,
+            "total": sum(d["count"] for d in formatted_dates)
+        }
+
+
 @router.get("/articles")
 def list_articles(
     status: Optional[str] = None,
     source: Optional[str] = None,
     search: Optional[str] = None,
+    date_str: Optional[str] = None,
+    month_str: Optional[str] = None,
+    run_scope: Optional[str] = "all",
+    top_ranked_only: bool = False,
     page: int = 1,
-    limit: int = 20
+    limit: int = 100
 ):
-    """Paginated list of articles with filtering and search."""
+    """Paginated list of articles with date, month, status, source, run scope, top ranked, and search filtering."""
+    from sqlalchemy import func
     with get_session() as session:
         query = session.query(Article)
 
@@ -162,6 +195,12 @@ def list_articles(
         if source and source != "all":
             query = query.filter(Article.source == source)
 
+        if date_str and date_str != "all":
+            query = query.filter(func.strftime('%Y-%m-%d', Article.scraped_at) == date_str)
+
+        if month_str and month_str != "all":
+            query = query.filter(func.strftime('%Y-%m', Article.scraped_at) == month_str)
+
         if search:
             search_pattern = f"%{search}%"
             query = query.filter(
@@ -170,10 +209,23 @@ def list_articles(
                 (Article.source.ilike(search_pattern))
             )
 
-        total_count = query.count()
-        query = query.order_by(desc(Article.id))
-        query = query.offset((page - 1) * limit).limit(limit)
-        items = query.all()
+        if run_scope == "latest":
+            last_run = session.query(PipelineRun).order_by(PipelineRun.id.desc()).first()
+            if last_run and last_run.started_at:
+                query = query.filter(Article.scraped_at >= last_run.started_at)
+        elif run_scope in ("last100", "last10"):
+            subq = session.query(Article.id).order_by(desc(Article.id)).limit(100)
+            query = query.filter(Article.id.in_(subq))
+
+        if top_ranked_only:
+            query = query.order_by(desc(Article.rank_score)).limit(10)
+            items = query.all()
+            total_count = len(items)
+        else:
+            total_count = query.count()
+            query = query.order_by(desc(Article.id))
+            query = query.offset((page - 1) * limit).limit(limit)
+            items = query.all()
 
         articles_data = []
         for a in items:
@@ -186,6 +238,8 @@ def list_articles(
                 "category": a.category,
                 "subreddit": a.subreddit,
                 "status": a.status,
+                "rank_score": getattr(a, "rank_score", 75),
+                "rank_reason": getattr(a, "rank_reason", None),
                 "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None,
                 "published_at": a.published_at.isoformat() if a.published_at else None,
                 "has_image": bool(a.image_path and os.path.exists(a.image_path)),
@@ -747,6 +801,8 @@ ENV_KEYS = [
     "ANTHROPIC_API_KEY",
     "LLM_PROVIDER",
     "NICHE_FOCUS",
+    "RANKING_PROMPT_INSTRUCTIONS",
+    "NANO_BANANA_PROMPT_TEMPLATE",
     "REDDIT_CLIENT_ID",
     "REDDIT_CLIENT_SECRET",
     "REDDIT_USERNAME",
@@ -767,6 +823,46 @@ def _mask_val(val: Optional[str]) -> str:
     if len(val) <= 8:
         return "*******"
     return val[:4] + "..." + val[-4:]
+
+
+@router.get("/prompts")
+def get_prompts():
+    """Returns stored AI ranking instructions and Nano Banana custom prompt instructions."""
+    return {
+        "ranking_prompt": os.getenv("RANKING_PROMPT_INSTRUCTIONS", "Rank stories higher if they cover major AI breakthroughs, tech startup funding, or robotics. Assign low scores under 50 to app sales, freebies, or minor bug reports..."),
+        "nano_banana_prompt": os.getenv("NANO_BANANA_PROMPT_TEMPLATE", "High-contrast professional editorial news card. Dark obsidian background, bold serif title typography, glowing coral accent graphics, warm minimalist aesthetic.")
+    }
+
+
+@router.post("/prompts/ranking")
+def save_ranking_prompt(payload: Dict[str, str]):
+    """Saves custom AI Ranking Instructions to .env and os.environ."""
+    prompt = payload.get("prompt", "").strip()
+    if not prompt:
+        raise HTTPException(status_code=400, detail="Ranking prompt cannot be empty")
+        
+    os.environ["RANKING_PROMPT_INSTRUCTIONS"] = prompt
+    
+    # Save to .env
+    env_path = os.path.join(PROJECT_ROOT, ".env")
+    update_settings({"RANKING_PROMPT_INSTRUCTIONS": prompt})
+    
+    return {"success": True, "message": "AI Ranking Instructions saved permanently!"}
+
+
+@router.post("/prompts/nano-banana")
+def save_nano_banana_prompt(payload: Dict[str, str]):
+    """Saves custom Nano Banana Prompt Instructions to .env and os.environ."""
+    prompt = payload.get("prompt", "").strip()
+    if not prompt:
+        raise HTTPException(status_code=400, detail="Nano Banana prompt cannot be empty")
+        
+    os.environ["NANO_BANANA_PROMPT_TEMPLATE"] = prompt
+    
+    # Save to .env
+    update_settings({"NANO_BANANA_PROMPT_TEMPLATE": prompt})
+    
+    return {"success": True, "message": "Nano Banana Prompt Instructions saved permanently!"}
 
 
 @router.get("/settings")
@@ -812,11 +908,122 @@ def update_settings(settings: Dict[str, str]):
                 existing[k] = new_val
                 os.environ[k] = new_val
 
-    # Write updated .env
+    # Write updated .env with clean quotes
     with open(env_path, "w", encoding="utf-8") as f:
         f.write("# News Auto-Pipeline Environment Keys (Saved via Web Dashboard)\n")
         for k, v in existing.items():
-            f.write(f"{k}={v}\n")
+            clean_v = v.replace("\n", "\\n").replace("\r", "").strip('"').strip("'")
+            f.write(f'{k}="{clean_v}"\n')
 
     return {"success": True, "message": ".env settings updated successfully!"}
+
+
+# ---------------------------------------------------------------------------
+# APP 2 INTEGRATION REST API — Export Refined Content & Nano Banana Images
+# ---------------------------------------------------------------------------
+
+@router.get("/v1/export/status")
+def get_app2_integration_status():
+    """Returns API integration status and documentation for App 2 (Social Media Dispatch App)."""
+    return {
+        "service": "NewsFlow Research & Image Studio Engine (App 1)",
+        "version": "1.0.0",
+        "app2_integration_ready": True,
+        "endpoints": {
+            "get_refined_posts": "/api/v1/export/refined-posts?min_score=75&limit=10",
+            "get_single_post": "/api/v1/export/posts/{article_id}",
+            "mark_synced": "/api/v1/export/posts/{article_id}/mark-synced",
+            "image_media_cdn": "/api/images/{article_id}.png"
+        }
+    }
+
+
+@router.get("/v1/export/refined-posts")
+def export_refined_posts(
+    min_score: int = 75,
+    limit: int = 20,
+    status: str = "ready",
+    date_str: Optional[str] = None
+):
+    """
+    Dedicated REST API for App 2 to fetch top-ranked news articles,
+    refined content, and generated Nano Banana image bundles.
+    """
+    from sqlalchemy import func
+    with get_session() as session:
+        query = session.query(Article)
+
+        if min_score > 0:
+            query = query.filter(Article.rank_score >= min_score)
+
+        if status and status != "all":
+            query = query.filter(Article.status == status)
+
+        if date_str and date_str != "all":
+            query = query.filter(func.strftime('%Y-%m-%d', Article.scraped_at) == date_str)
+
+        items = query.order_by(desc(Article.rank_score), desc(Article.id)).limit(limit).all()
+
+        posts_bundle = []
+        for a in items:
+            has_img = bool(a.image_path and os.path.exists(a.image_path))
+            
+            # Check for 4-slide carousel deck images
+            slide_urls = []
+            for s_idx in range(1, 5):
+                slide_file = os.path.join(IMAGES_DIR, f"{a.id}_slide{s_idx}.png")
+                if os.path.exists(slide_file):
+                    slide_urls.append(f"/api/images/{a.id}_slide{s_idx}.png")
+
+            posts_bundle.append({
+                "article_id": a.id,
+                "title": a.title,
+                "source": a.source,
+                "url": a.url,
+                "author": a.author,
+                "category": a.category or "tech",
+                "subreddit": a.subreddit or "technology",
+                "rank_score": getattr(a, "rank_score", 75),
+                "rank_reason": getattr(a, "rank_reason", None),
+                "status": a.status,
+                "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None,
+                "refined_content": {
+                    "raw_body": a.body,
+                    "summary_snippet": (a.body or "")[:300],
+                    "twitter_text": getattr(a, "twitter_text", None),
+                    "reddit_title": getattr(a, "reddit_title", None),
+                    "reddit_text": getattr(a, "reddit_text", None),
+                },
+                "media_assets": {
+                    "has_main_image": has_img,
+                    "main_image_url": f"/api/images/{a.id}.png" if has_img else None,
+                    "carousel_slides_count": len(slide_urls),
+                    "carousel_slide_urls": slide_urls
+                }
+            })
+
+    return {
+        "success": True,
+        "count": len(posts_bundle),
+        "min_score": min_score,
+        "posts": posts_bundle
+    }
+
+
+@router.post("/v1/export/posts/{article_id}/mark-synced")
+def mark_post_synced_to_app2(article_id: int):
+    """Allows App 2 to acknowledge receipt and synchronization of a post bundle."""
+    with get_session() as session:
+        a = session.query(Article).filter(Article.id == article_id).first()
+        if not a:
+            raise HTTPException(status_code=404, detail="Article not found")
+        
+        a.status = "synced_to_app2"
+        session.commit()
+        return {
+            "success": True,
+            "message": f"Article #{article_id} marked as synced to App 2 (Social Media Dispatch App)!",
+            "article_id": article_id,
+            "status": "synced_to_app2"
+        }
 

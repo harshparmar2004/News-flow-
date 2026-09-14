@@ -62,13 +62,13 @@ const PipelinePage = {
 
             <i data-lucide="arrow-right" style="color: var(--text-muted); width: 24px; height: 24px; flex-shrink: 0;"></i>
 
-            <!-- Node 4: Multi-Channel Publishing -->
+            <!-- Node 4: Omni-Channel Agent Integration Gateway -->
             <div class="glass-card" style="flex: 1; min-width: 190px; text-align: center; border: 2px solid #2e7d32; background: var(--bg-surface); padding: 18px 14px;">
               <div style="width: 42px; height: 42px; border-radius: 8px; background: rgba(46,125,50,0.15); color: #2e7d32; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto;">
-                <i data-lucide="send" style="width: 22px; height: 22px;"></i>
+                <i data-lucide="share-2" style="width: 22px; height: 22px;"></i>
               </div>
-              <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600;">4. Multi-API Publisher</h4>
-              <p style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;">Reddit, Twitter, Insta, LinkedIn</p>
+              <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600;">4. App 2 Sync Gateway</h4>
+              <p style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;">Omni-Channel Agent REST Transfer</p>
               <div style="margin-top: 10px; font-size: 1.3rem; font-weight: 700; color: #2e7d32;" id="node-4-count">--</div>
             </div>
 
@@ -79,7 +79,7 @@ const PipelinePage = {
         <div class="glass-card table-card">
           <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
             <h4 style="font-family: var(--font-serif); font-size: 1.15rem;">Live Content Lifecycle Progress Board</h4>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">Step 1 (Ingest) ➔ Step 2 (Curate) ➔ Step 3 (Studio) ➔ Step 4 (Publish)</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">1. Ingest ➔ 2. AI Rank & Refine ➔ 3. Nano Banana Studio ➔ 4. Omni-Channel App 2 Transfer</span>
           </div>
 
           <table class="data-table">

@@ -206,49 +206,42 @@ def stage_image_gen(max_articles: int | None = None) -> int:
     return image_count
 
 
-def stage_publish() -> dict[str, int]:
-    """Stage 4: Multi-API Social Posting."""
+def stage_sync_to_app2() -> dict[str, int]:
+    """Stage 4: App 2 (Omni-Channel AI Agent) Integration Gateway REST Transfer."""
     logger.info("=" * 60)
-    logger.info("STAGE 4: MULTI-API SOCIAL PUBLISHING")
+    logger.info("STAGE 4: OMNI-CHANNEL AI AGENT (APP 2) REST TRANSFER GATEWAY")
     logger.info("=" * 60)
-
-    results = {"reddit": 0, "twitter": 0, "instagram": 0, "linkedin": 0}
 
     if is_abort_requested():
-        logger.warning("Stage 4 aborted by user.")
-        return results
+        logger.warning("Stage 4 App 2 Transfer aborted by user.")
+        return {"synced_to_app2": 0}
 
-    try:
-        results["reddit"] = publish_all_to_reddit()
-    except Exception as e:
-        logger.error(f"Reddit posting failed: {e}")
+    synced_count = 0
+    with get_session() as session:
+        # Fetch articles that have been rewritten & have Nano Banana images built
+        ready_articles = session.query(Article).filter(
+            Article.status.in_(["ready", "scraped"]),
+            Article.image_path.isnot(None)
+        ).all()
 
-    try:
-        results["twitter"] = publish_all_to_twitter()
-    except Exception as e:
-        logger.error(f"Twitter posting failed: {e}")
+        for a in ready_articles:
+            a.status = "ready"
+            synced_count += 1
+        
+        session.commit()
 
-    try:
-        results["instagram"] = queue_all_for_instagram()
-    except Exception as e:
-        logger.error(f"Instagram processing failed: {e}")
-
-    try:
-        results["linkedin"] = queue_all_for_linkedin()
-    except Exception as e:
-        logger.error(f"LinkedIn processing failed: {e}")
-
-    return results
+    logger.info(f"Stage 4 complete: {synced_count} refined articles + Nano Banana image decks ready on REST API /api/v1/export/refined-posts for App 2 sync!")
+    return {"synced_to_app2": synced_count}
 
 
 def run_pipeline(max_articles: int | None = None):
-    """Runs full automation pipeline."""
+    """Runs full automation pipeline (Scrape ➔ AI Rank/Refine ➔ Nano Banana Studio ➔ App 2 REST Gateway)."""
     global _ABORT_REQUESTED
     _ABORT_REQUESTED = False  # Reset flag at start
     start_time = time.time()
 
     logger.info("==========================================================")
-    logger.info("         NEWS AUTO-PIPELINE — Starting Run                ")
+    logger.info("  NEWSFLOW RESEARCH & IMAGE ENGINE — Starting Pipeline Run ")
     logger.info("==========================================================")
 
     init_db()
@@ -258,10 +251,10 @@ def run_pipeline(max_articles: int | None = None):
     ranked_count = stage_rank(max_articles)
     rewritten = stage_rewrite(max_articles)
     images = stage_image_gen(max_articles)
-    publish_results = stage_publish()
+    sync_results = stage_sync_to_app2()
 
     elapsed = time.time() - start_time
-    total_pub = sum(publish_results.values())
+    synced_count = sync_results.get("synced_to_app2", 0)
     status_label = "stopped_by_user" if is_abort_requested() else "completed"
 
     try:
@@ -274,7 +267,7 @@ def run_pipeline(max_articles: int | None = None):
                 articles_scraped=new_articles,
                 articles_rewritten=rewritten,
                 images_generated=images,
-                published_count=total_pub,
+                published_count=synced_count,
                 duration_seconds=round(elapsed, 2)
             )
             session.add(pr)
@@ -286,11 +279,8 @@ def run_pipeline(max_articles: int | None = None):
     logger.info(f"|   PIPELINE RUN {status_label.upper():<36}|")
     logger.info("+----------------------------------------------------------+")
     logger.info(f"|  New articles scraped:    {new_articles:<30}|")
-    logger.info(f"|  Articles rewritten:      {rewritten:<30}|")
-    logger.info(f"|  Images generated:        {images:<30}|")
-    logger.info(f"|  Reddit posted:           {publish_results.get('reddit', 0):<30}|")
-    logger.info(f"|  Twitter posted:          {publish_results.get('twitter', 0):<30}|")
-    logger.info(f"|  Instagram queued:        {publish_results.get('instagram', 0):<30}|")
-    logger.info(f"|  LinkedIn queued:         {publish_results.get('linkedin', 0):<30}|")
-    logger.info(f"|  Total time:              {elapsed:.1f}s{' ' * (29 - len(f'{elapsed:.1f}s'))}|")
+    logger.info(f"|  Articles ranked/refined: {rewritten:<30}|")
+    logger.info(f"|  Nano Banana images gen:  {images:<30}|")
+    logger.info(f"|  Ready for App 2 Transfer:{synced_count:<30}|")
+    logger.info(f"|  Total execution time:    {elapsed:.1f}s{' ' * (29 - len(f'{elapsed:.1f}s'))}|")
     logger.info("+----------------------------------------------------------+")

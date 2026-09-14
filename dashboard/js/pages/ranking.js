@@ -101,7 +101,16 @@ const RankingPage = {
 
   async loadRankedNews() {
     try {
-      const data = await App.fetchApi('/api/articles?limit=80');
+      const [data, promptData] = await Promise.all([
+        App.fetchApi('/api/articles?limit=80'),
+        App.fetchApi('/api/prompts')
+      ]);
+
+      const input = document.getElementById('ranking-prompt-input');
+      if (input && promptData && promptData.ranking_prompt) {
+        input.value = promptData.ranking_prompt;
+      }
+
       let articles = data.articles || [];
 
       // Sort by rank_score descending
@@ -212,7 +221,7 @@ const RankingPage = {
               <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.76rem;" onclick="RankingPage.boostScore(${a.id})" title="Boost Score to Top 10">
                 🚀 Boost to Top 10
               </button>
-              <button class="btn btn-primary btn-glow" style="padding: 5px 14px; font-size: 0.76rem;" onclick="App.navigateTo('space')">
+              <button class="btn btn-primary btn-glow" style="padding: 5px 14px; font-size: 0.76rem;" onclick="RankingPage.generateSlides(${a.id})">
                 🎨 Generate 4-Slide Deck →
               </button>
             </div>
@@ -231,7 +240,16 @@ const RankingPage = {
       App.showToast('Please enter AI ranking rules!', 'warning');
       return;
     }
-    App.showToast('AI Ranking Rules saved successfully!', 'success');
+    try {
+      const res = await App.fetchApi('/api/prompts/ranking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: text })
+      });
+      App.showToast(res.message, 'success');
+    } catch (e) {
+      App.showToast(`Failed to save prompt: ${e.message}`, 'error');
+    }
   },
 
   boostScore(articleId) {
@@ -241,6 +259,19 @@ const RankingPage = {
       art.rank_reason = "Manually boosted by user to Top 10 Leaderboard.";
       App.showToast(`Article #${articleId} boosted to Score 96/100!`, 'success');
       this.loadRankedNews();
+    }
+  },
+
+  async generateSlides(articleId) {
+    try {
+      App.showToast(`Generating 4-Slide Deck for Article #${articleId}...`, 'info');
+      const res = await App.fetchApi(`/api/articles/${articleId}/slides`, { method: 'POST' });
+      if (res && res.success) {
+        App.showToast(`4-Slide Deck generated successfully!`, 'success');
+        App.openArticleModal(articleId);
+      }
+    } catch (e) {
+      App.showToast(`Nano Banana generation: ${e.message}`, 'error');
     }
   }
 };

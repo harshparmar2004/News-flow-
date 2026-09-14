@@ -52,37 +52,69 @@ const SourcesPage = {
       }
 
       grid.innerHTML = this.sourcesData.map((s, idx) => `
-        <div class="glass-card source-card" style="display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div class="source-header">
-              <h3>${s.name}</h3>
-              <span class="tier-tag tier-${s.tier}">TIER ${s.tier}</span>
+        <div style="display: flex; flex-direction: column; justify-content: space-between; border-radius: 18px; border: 1px solid #E8E0D4; background: #FFFFFF; overflow: hidden;">
+          
+          <!-- Header: logo mark + name + tier badge -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid #E8E0D4;">
+            <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: #FCEEE3; color: #D97B3F; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i data-lucide="newspaper" style="width: 18px; height: 18px;"></i>
+              </div>
+              <h3 style="font-family: Georgia, serif; font-size: 1.1rem; font-weight: 700; color: #2B2622; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${s.name}
+              </h3>
+            </div>
+            <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; padding: 4px 12px; border-radius: 20px; background: #FCEEE3; color: #D97B3F; flex-shrink: 0;">
+              TIER ${s.tier}
+            </span>
+          </div>
+
+          <!-- Meta rows -->
+          <div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i data-lucide="tag" style="width: 15px; height: 15px; color: #8A8175;"></i>
+              <span style="color: #8A8175;">Category:</span>
+              <strong style="color: #2B2622; font-weight: 600;">${s.category || 'tech'}</strong>
             </div>
 
-            <div class="source-meta">
-              <div><i data-lucide="folder" style="width: 14px; display: inline;"></i> Category: <strong>${s.category || 'general'}</strong></div>
-              <div><i data-lucide="message-square" style="width: 14px; display: inline;"></i> Subreddit: <strong>r/${s.subreddit || 'technology'}</strong></div>
-              <div><i data-lucide="clock" style="width: 14px; display: inline;"></i> Delay: <strong>${s.delay_seconds}s</strong></div>
-              <div style="margin-top: 4px; font-size: 0.78rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                ${s.feed_url || s.url}
-              </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i data-lucide="message-square" style="width: 15px; height: 15px; color: #8A8175;"></i>
+              <span style="color: #8A8175;">Subreddit:</span>
+              <strong style="color: #2B2622; font-weight: 600;">r/${s.subreddit || 'technology'}</strong>
+            </div>
 
-              <!-- Articles Scraped Metric Placed On Top -->
-              <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
-                Articles scraped: <strong style="font-size: 1.1rem; color: var(--primary-purple);">${s.article_count}</strong>
-              </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i data-lucide="clock" style="width: 15px; height: 15px; color: #8A8175;"></i>
+              <span style="color: #8A8175;">Delay:</span>
+              <strong style="color: #2B2622; font-weight: 600;">${s.delay_seconds}s</strong>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 0.8rem;">
+              <i data-lucide="link-2" style="width: 15px; height: 15px; color: #8A8175; flex-shrink: 0;"></i>
+              <span style="color: #8A8175; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${s.feed_url || s.url}</span>
             </div>
           </div>
 
-          <!-- Bottom Action Buttons -->
-          <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
-            <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.78rem;" onclick="SourcesPage.openEditModal(${idx})" title="Edit Source">
-              <i data-lucide="edit-2" style="width: 13px;"></i> Edit
+          <!-- Stat -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid #E8E0D4; background: #FFFFFF;">
+            <span style="font-size: 0.86rem; color: #8A8175; font-weight: 500;">
+              Articles scraped
+            </span>
+            <span style="font-size: 1.35rem; font-weight: 800; color: #D97B3F;">
+              ${s.article_count || 0}
+            </span>
+          </div>
+
+          <!-- Actions: Edit left, Delete right -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; gap: 14px;">
+            <button onclick="SourcesPage.openEditModal(${idx})" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; font-size: 0.85rem; font-weight: 600; border-radius: 12px; border: 1px solid #E8E0D4; background: #FFFFFF; color: #2B2622; cursor: pointer;">
+              <i data-lucide="pencil" style="width: 15px; height: 15px;"></i> Edit
             </button>
-            <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; color: var(--status-failed);" onclick="SourcesPage.deleteSource(${idx}, '${s.name}')" title="Delete Source">
-              <i data-lucide="trash-2" style="width: 13px;"></i> Delete
+            <button onclick="SourcesPage.deleteSource(${idx}, '${s.name}')" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; font-size: 0.85rem; font-weight: 600; border-radius: 12px; border: 1px solid #F3D9CE; background: #FFFFFF; color: #C0432A; cursor: pointer;">
+              <i data-lucide="trash-2" style="width: 15px; height: 15px;"></i> Delete
             </button>
           </div>
+
         </div>
       `).join('');
 

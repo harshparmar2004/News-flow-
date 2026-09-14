@@ -19,6 +19,16 @@ const App = {
       });
     });
 
+    // Sidebar toggle handler
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    const sidebar = document.getElementById('app-sidebar');
+    if (sidebarToggleBtn && sidebar) {
+      sidebarToggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        document.body.classList.toggle('sidebar-collapsed-mode');
+      });
+    }
+
     // Handle hash change in URL
     window.addEventListener('hashchange', () => {
       const hash = window.location.hash.replace('#', '') || 'dashboard';
@@ -150,17 +160,16 @@ const App = {
     });
 
     const pageTitles = {
-      scraped: { title: '📦 Raw Scraped Data Vault', subtitle: 'View all raw content, headlines, and text scraped directly from website feeds' },
-      space: { title: '🌌 3D Interactive Agentic Space', subtitle: 'Observe, prompt, and execute the end-to-end AI content automation pipeline in 3D' },
-      dashboard: { title: 'Dashboard Overview', subtitle: 'Real-time 4-pillar content automation analytics and live system status' },
-      sources: { title: 'Pillar 1: News Ingestion & Web Scrapers', subtitle: 'Manage news source links, RSS feeds, and trigger automated crawlers' },
-      ranking: { title: 'Pillar 2: AI News Agent Ranking & Filter', subtitle: 'Scores news from 1 to 100 based on custom AI Ranking Rules and viral potential' },
-      media: { title: 'Pillar 3: Nano Banana MCP Studio & AI Rewriter', subtitle: 'Custom AI prompt sandbox, style presets, and 1080x1080 slide deck studio' },
-      queue: { title: 'Pillar 4: Local Queue & Multi-API Dispatch', subtitle: 'Prepared post bundles for 1-click publishing to Instagram, LinkedIn, Twitter & Reddit' },
-      articles: { title: 'Articles Vault', subtitle: 'Database of all scraped articles, AI rewrites, and platform status' },
-      pipeline: { title: 'Pipeline Workflow', subtitle: 'n8n-style agentic workflow node visualizer & live content progression' },
+      scraped: { title: '1. Research Scraped Data Vault', subtitle: 'View raw content, extracted headlines, and text scraped from monitored web sources' },
+      space: { title: '🌌 3D Interactive Agentic Space', subtitle: 'Observe research, refinement, and image generation progression in 3D' },
+      dashboard: { title: 'Dashboard Overview', subtitle: 'Real-time research analytics, news ranking, and Nano Banana image studio' },
+      sources: { title: 'News Sources & Web Links', subtitle: 'Manage news source links, RSS feeds, and trigger automated crawlers' },
+      ranking: { title: '2. AI News Rank & Refine Engine', subtitle: 'Scores news from 1 to 100 based on custom AI parameters and refines raw text' },
+      media: { title: '3. Studio (Nano Banana Graphic Engine)', subtitle: 'Custom visual prompt studio & 4-slide catalog carousel generator powered by Nano Banana 2' },
+      articles: { title: 'Refined Content Vault & Calendar Archive', subtitle: 'Database of refined news, scores, and generated Nano Banana visual assets' },
+      pipeline: { title: 'Research & Graphic Workflow Diagram', subtitle: 'Scrape ➔ Rank & Refine ➔ Nano Banana Image Generation workflow' },
       logs: { title: 'System Logs Stream', subtitle: 'Live terminal stream from pipeline.log' },
-      settings: { title: 'API Keys & Configuration', subtitle: 'Manage Groq, OpenAI, Gemini, Reddit, Twitter, Instagram & LinkedIn credentials' }
+      settings: { title: 'API Keys & Configuration', subtitle: 'Manage Groq, OpenAI, Gemini, and research pipeline credentials' }
     };
 
     const header = pageTitles[page] || pageTitles.dashboard;
@@ -332,7 +341,7 @@ const App = {
     const meta = document.getElementById('modal-article-meta');
     const badge = document.getElementById('modal-status-badge');
 
-    body.innerHTML = '<p>Loading article details...</p>';
+    body.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--text-muted);">Loading article details...</p>';
     modal.classList.add('active');
 
     try {
@@ -340,57 +349,68 @@ const App = {
       
       title.textContent = data.title;
       meta.textContent = `${data.source} • Scraped: ${this.formatTimestamp(data.scraped_at)} • Category: ${data.category || 'General'}`;
-      badge.textContent = data.status;
-      badge.className = `badge badge-${data.status.toLowerCase()}`;
+      badge.textContent = data.status ? data.status.toUpperCase() : 'SCRAPED';
+      badge.className = `badge badge-${(data.status || 'scraped').toLowerCase()}`;
 
-      let html = '';
+      const score = data.rank_score || 75;
+      const scoreColor = score >= 80 ? '#2e7d32' : score >= 60 ? '#2b7bb9' : '#d97757';
 
-      if (data.image_url) {
-        html += `
-          <div class="modal-section">
-            <h4>Generated Thumbnail Image</h4>
-            <div class="queue-img-wrapper" style="height: 240px;">
-              <img src="${data.image_url}" alt="Article Thumbnail" />
+      let html = `
+        <!-- AI Rank Score & Research Evaluation -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface); padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <div style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">AI Relevance & Virality Score</div>
+            <div style="font-size: 1.2rem; font-weight: 800; color: ${scoreColor}; margin-top: 2px;">
+              ★ ${score} / 100
             </div>
           </div>
-        `;
-      }
-
-      html += `
-        <div class="modal-section">
-          <h4>Social Media Platforms Rewrites</h4>
-          
-          <div class="platform-preview-box">
-            <strong style="color: var(--color-twitter);">Twitter / X (Text Only)</strong>
-            <p style="margin-top: 6px;">${data.ai_content.twitter_text || 'Not generated yet'}</p>
-          </div>
-
-          <div class="platform-preview-box">
-            <strong style="color: var(--color-reddit);">Reddit Post</strong>
-            <p style="margin-top: 6px; font-weight: 600;">Title: ${data.ai_content.reddit_title || 'N/A'}</p>
-            <p style="margin-top: 4px;">${data.ai_content.reddit_body || 'N/A'}</p>
-          </div>
-
-          <div class="platform-preview-box">
-            <strong style="color: var(--color-instagram);">Instagram Caption</strong>
-            <p style="margin-top: 6px;">${data.ai_content.instagram_caption || 'N/A'}</p>
-          </div>
-
-          <div class="platform-preview-box">
-            <strong style="color: var(--color-linkedin);">LinkedIn Post</strong>
-            <p style="margin-top: 6px;">${data.ai_content.linkedin_text || 'N/A'}</p>
+          <div style="text-align: right;">
+            <div style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">App 2 Integration Status</div>
+            <span style="font-size: 0.78rem; font-weight: 700; color: #2e7d32; background: rgba(46, 125, 50, 0.12); padding: 4px 10px; border-radius: 6px; display: inline-block; margin-top: 3px;">
+              📡 Ready for App 2 REST Transfer
+            </span>
           </div>
         </div>
 
+        ${data.rank_reason ? `
+          <div style="background: rgba(43, 123, 185, 0.08); border: 1px solid rgba(43, 123, 185, 0.25); padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;">
+            <strong style="font-size: 0.78rem; color: #2b7bb9; text-transform: uppercase;">🧠 AI Ranking Evaluation:</strong>
+            <p style="font-size: 0.84rem; color: var(--text-main); margin-top: 4px; line-height: 1.4;">${data.rank_reason}</p>
+          </div>
+        ` : ''}
+
+        <!-- Nano Banana Generated 4-Slide Graphic Deck -->
+        <div class="modal-section" style="margin-bottom: 16px;">
+          <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; margin-bottom: 10px;">🎨 Nano Banana 4-Slide Graphic Deck</h4>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+            ${[1, 2, 3, 4].map(num => `
+              <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: #ffffff; padding: 6px; text-align: center;">
+                <div style="height: 90px; background: var(--bg-surface); border-radius: 6px; overflow: hidden; margin-bottom: 4px;">
+                  <img src="/api/images/${data.id}_slide${num}.png" alt="Slide ${num}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.src='/api/placeholder/400/220'" />
+                </div>
+                <span style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted);">Slide ${num}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Original Extracted Body Content -->
         <div class="modal-section">
-          <h4>Original Full Body Text</h4>
-          <div class="queue-content-text" style="max-height: 200px;">${data.body}</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700;">📄 Raw Extracted Web Text</h4>
+            <a href="${data.url}" target="_blank" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.76rem; text-decoration: none;">
+              🌐 Source Website Link ↗
+            </a>
+          </div>
+          <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-main); line-height: 1.5; max-height: 200px; overflow-y: auto;">
+            ${data.body}
+          </div>
         </div>
       `;
 
       body.innerHTML = html;
     } catch (err) {
-      body.innerHTML = '<p class="error">Failed to load article details.</p>';
+      body.innerHTML = '<p class="error" style="padding: 20px; text-align: center; color: var(--status-failed);">Failed to load article details.</p>';
     }
   },
 

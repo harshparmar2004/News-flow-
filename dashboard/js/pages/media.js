@@ -75,8 +75,11 @@ const MediaPage = {
               </div>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
-              <button class="btn btn-primary btn-glow" style="padding: 10px 24px;" onclick="MediaPage.generateCustomNanoBananaImage()">
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+              <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 0.88rem; font-weight: 600; background: #ffffff; border: 1.5px solid var(--primary-purple); color: var(--primary-purple); cursor: pointer;" onclick="MediaPage.saveNanoBananaPrompt()">
+                <i data-lucide="save"></i> 💾 Save Nano Banana Prompt Instructions
+              </button>
+              <button class="btn btn-primary btn-glow" style="padding: 10px 24px; font-size: 0.88rem; font-weight: 600;" onclick="MediaPage.generateCustomNanoBananaImage()">
                 <i data-lucide="sparkles"></i> 🎨 Generate Image with Nano Banana MCP
               </button>
             </div>
@@ -106,26 +109,38 @@ const MediaPage = {
     const grid = document.getElementById('media-catalog-grid');
     const countLabel = document.getElementById('media-catalog-count');
     const articleSelect = document.getElementById('nano-banana-target-article');
+    const promptInput = document.getElementById('nano-banana-prompt-text');
     if (!grid) return;
 
     try {
-      const data = await App.fetchApi('/api/articles?limit=50');
-      this.articles = data.articles || [];
+      const [data, promptData] = await Promise.all([
+        App.fetchApi('/api/articles?top_ranked_only=true'),
+        App.fetchApi('/api/prompts')
+      ]);
 
-      if (countLabel) countLabel.textContent = `Showing ${this.articles.length} media items`;
+      if (promptInput && promptData && promptData.nano_banana_prompt) {
+        promptInput.value = promptData.nano_banana_prompt;
+      }
 
-      // Populate article target dropdown
+      // Sort by rank score descending (Top 10 AI Ranked News only)
+      let articles = data.articles || [];
+      articles.sort((a, b) => (b.rank_score || 75) - (a.rank_score || 75));
+      this.articles = articles.slice(0, 10);
+
+      if (countLabel) countLabel.textContent = `Showing Top ${this.articles.length} AI Ranked News Stories`;
+
+      // Populate article target dropdown with Top 10 Ranked News ONLY
       if (articleSelect && this.articles.length > 0) {
-        articleSelect.innerHTML = '<option value="">-- Apply to All Scraped Articles --</option>' +
-          this.articles.map(a => `<option value="${a.id}">Article #${a.id}: ${a.title.substring(0, 45)}...</option>`).join('');
+        articleSelect.innerHTML = '<option value="">-- Apply to All Top 10 AI Ranked Stories --</option>' +
+          this.articles.map(a => `<option value="${a.id}">🔥 Rank #${a.rank_score || 75}: Article #${a.id} - ${a.title.substring(0, 40)}...</option>`).join('');
       }
 
       if (!this.articles || this.articles.length === 0) {
         grid.innerHTML = `
           <div class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
             <i data-lucide="image" style="width: 48px; height: 48px; color: var(--primary-purple); margin-bottom: 12px;"></i>
-            <h4 style="font-family: var(--font-serif); font-size: 1.2rem; margin-bottom: 6px;">No Scraped Articles Found</h4>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Click "Run Image Studio Generator" above to fetch news and build Nano Banana slide images!</p>
+            <h4 style="font-family: var(--font-serif); font-size: 1.2rem; margin-bottom: 6px;">No Top 10 Ranked News Found</h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Run the pipeline to rank scraped news and generate Nano Banana slide graphics!</p>
             <button class="btn btn-primary btn-glow" onclick="App.triggerPipeline()">
               <i data-lucide="play"></i> Start Pipeline Now
             </button>
@@ -140,6 +155,9 @@ const MediaPage = {
           <div>
             <div class="queue-img-wrapper" style="height: 200px; position: relative;">
               <img src="/api/images/${a.id}.png" alt="${a.title}" />
+              <span style="position: absolute; top: 10px; right: 10px; font-size: 0.76rem; font-weight: 800; color: #ffffff; background: var(--primary-purple); padding: 4px 10px; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                ★ ${a.rank_score || 75}/100
+              </span>
             </div>
 
             <div style="margin-top: 12px;">
@@ -211,6 +229,24 @@ const MediaPage = {
       this.loadMediaCatalog();
     } catch (err) {
       App.showToast(`Publishing failed: ${err.message}`, 'error');
+    }
+  },
+
+  async saveNanoBananaPrompt() {
+    const text = document.getElementById('nano-banana-prompt-text').value.trim();
+    if (!text) {
+      App.showToast('Please enter prompt instructions!', 'warning');
+      return;
+    }
+    try {
+      const res = await App.fetchApi('/api/prompts/nano-banana', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: text })
+      });
+      App.showToast(res.message, 'success');
+    } catch (e) {
+      App.showToast(`Failed to save prompt: ${e.message}`, 'error');
     }
   }
 };

@@ -17,22 +17,27 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <!-- Dashboard CSS -->
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/styles.css?v=13">
 </head>
 <body class="dark-theme">
 
   <div class="app-layout">
     
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="app-sidebar">
       <div class="brand">
-        <div class="brand-logo">
-          <i data-lucide="zap"></i>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="brand-logo">
+            <i data-lucide="zap"></i>
+          </div>
+          <div class="brand-info">
+            <h2>NewsFlow</h2>
+            <span class="version-badge">v1.0 • Gemini 2.5</span>
+          </div>
         </div>
-        <div class="brand-info">
-          <h2>NewsFlow</h2>
-          <span class="version-badge">v1.0 • Gemini 2.5</span>
-        </div>
+        <button class="btn-icon" id="sidebar-toggle-btn" style="width: 28px; height: 28px; border-radius: 6px; cursor: pointer;" title="Toggle Sidebar Collapse">
+          <i data-lucide="panel-left-close"></i>
+        </button>
       </div>
 
       <nav class="nav-menu">
@@ -52,36 +57,31 @@
         </a>
 
         <div style="margin: 14px 0 6px 12px; font-size: 0.68rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em;">
-          Pipeline Pillars
+          Research & Studio Pillars
         </div>
 
         <a href="#scraped" class="nav-item" data-page="scraped">
           <i data-lucide="database"></i>
-          <span>1. Scraped Data Vault</span>
+          <span>1. Research Scraped Data</span>
           <span class="nav-badge ready">80 Items</span>
         </a>
         <a href="#ranking" class="nav-item" data-page="ranking">
           <i data-lucide="award"></i>
-          <span>2. AI News Ranker</span>
+          <span>2. AI News Rank & Refine</span>
           <span class="nav-badge ready">1-100</span>
         </a>
         <a href="#media" class="nav-item" data-page="media">
           <i data-lucide="wand-2"></i>
           <span>3. Studio (Nano Banana)</span>
         </a>
-        <a href="#queue" class="nav-item" data-page="queue">
-          <i data-lucide="send"></i>
-          <span>4. Dispatch & Queue</span>
-          <span class="nav-badge warning" id="nav-count-queue">0</span>
-        </a>
         <a href="#articles" class="nav-item" data-page="articles">
           <i data-lucide="newspaper"></i>
-          <span>Articles Vault</span>
+          <span>Refined Content Vault</span>
           <span class="nav-badge" id="nav-count-articles">0</span>
         </a>
         <a href="#pipeline" class="nav-item" data-page="pipeline">
           <i data-lucide="git-merge"></i>
-          <span>Pipeline Workflow</span>
+          <span>Workflow Diagram</span>
         </a>
         <a href="#settings" class="nav-item" data-page="settings" style="margin-top: 16px;">
           <i data-lucide="settings"></i>
@@ -118,20 +118,19 @@
           </div>
 
           <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; background: var(--bg-card); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer;" title="Automatically check sources for news every 15 minutes">
-            <input type="checkbox" id="autopilot-toggle-chk" style="accent-color: var(--primary-purple); cursor: pointer;" />
-            <span style="font-weight: 600;" id="autopilot-toggle-label">Auto-Pilot: OFF</span>
+            <input type="checkbox" id="autopilot-toggle-chk" style="cursor: pointer;">
+            <span style="font-weight: 600;">Auto-Pilot: <span id="autopilot-label" style="color: var(--text-muted);">OFF</span></span>
           </label>
 
-          <button id="run-pipeline-btn" class="btn btn-primary btn-glow">
-            <i data-lucide="play"></i>
-            <span>Run Pipeline</span>
+          <button class="btn btn-primary btn-glow" id="run-pipeline-btn">
+            <i data-lucide="play"></i> Run Pipeline
           </button>
         </div>
       </header>
 
       <!-- Dynamic Page Container -->
-      <div id="page-container" class="page-container">
-        <!-- Content will be injected dynamically via JavaScript -->
+      <div class="page-container" id="page-container">
+        <div class="glass-card"><p>Loading NewsFlow Dashboard...</p></div>
       </div>
 
     </main>
@@ -221,17 +220,16 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- JavaScript Modules -->
-  <script src="/js/pages/dashboard.js?v=4"></script>
-  <script src="/js/pages/space.js?v=4"></script>
-  <script src="/js/pages/articles.js?v=4"></script>
-  <script src="/js/pages/sources.js?v=4"></script>
-  <script src="/js/pages/scraped.js?v=4"></script>
-  <script src="/js/pages/ranking.js?v=3"></script>
-  <script src="/js/pages/queue.js?v=3"></script>
-  <script src="/js/pages/media.js?v=3"></script>
-  <script src="/js/pages/pipeline.js?v=3"></script>
-  <script src="/js/pages/settings.js?v=3"></script>
-  <script src="/js/app.js?v=3"></script>
+  <script src="/js/pages/dashboard.js?v=25"></script>
+  <script src="/js/pages/space.js?v=25"></script>
+  <script src="/js/pages/articles.js?v=25"></script>
+  <script src="/js/pages/sources.js?v=25"></script>
+  <script src="/js/pages/scraped.js?v=25"></script>
+  <script src="/js/pages/ranking.js?v=25"></script>
+  <script src="/js/pages/media.js?v=25"></script>
+  <script src="/js/pages/pipeline.js?v=25"></script>
+  <script src="/js/pages/settings.js?v=25"></script>
+  <script src="/js/app.js?v=25"></script>
 
 </body>
 </html>

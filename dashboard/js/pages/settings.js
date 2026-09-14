@@ -147,142 +147,40 @@ const SettingsPage = {
           </div>
         </div>
 
-        <!-- Step 2: Instagram Graph API -->
-        <div class="glass-card">
+        <!-- App 2 Integration REST Transfer Gateway Settings -->
+        <div class="glass-card" style="border: 1px solid #2e7d32;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
             <div style="display: flex; align-items: center; gap: 12px;">
-              <div class="stat-icon" style="color: var(--color-instagram); background: rgba(193, 53, 132, 0.12); width: 40px; height: 40px; border-radius: 8px;">
-                <i data-lucide="instagram"></i>
+              <div class="stat-icon" style="color: #2e7d32; background: rgba(46, 125, 50, 0.12); width: 40px; height: 40px; border-radius: 8px;">
+                <i data-lucide="share-2"></i>
               </div>
               <div>
-                <h3 style="font-family: var(--font-serif); font-size: 1.15rem;">2. Instagram Graph API (Auto-Upload Post)</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted);">Live auto-posting. Leave empty to use local queue folder.</p>
+                <h3 style="font-family: var(--font-serif); font-size: 1.15rem;">📡 App 2 (Omni-Channel AI Agent) Integration Gateway</h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">Configures REST API transfer endpoints so App 2 can fetch refined news & Nano Banana graphics</p>
               </div>
             </div>
-            <span class="badge" style="font-size: 0.7rem; background: rgba(31,30,27,0.06); color: var(--text-muted);">OPTIONAL</span>
+            <span class="badge" style="font-size: 0.7rem; background: rgba(46, 125, 50, 0.15); color: #2e7d32;">INTEGRATION READY</span>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">INSTAGRAM_ACCESS_TOKEN</label>
-              <input type="password" id="input-INSTAGRAM_ACCESS_TOKEN" class="filter-select" placeholder="Meta Graph API Token" />
+          <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-surface); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.84rem; font-weight: 700;">REST API Export Endpoint:</span>
+              <code style="font-size: 0.82rem; color: var(--primary-purple); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-color);">http://127.0.0.1:8000/api/v1/export/refined-posts</code>
             </div>
-
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">INSTAGRAM_ACCOUNT_ID</label>
-              <input type="text" id="input-INSTAGRAM_ACCOUNT_ID" class="filter-select" placeholder="Business Account ID" />
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.84rem; font-weight: 700;">Integration Health Endpoint:</span>
+              <code style="font-size: 0.82rem; color: #2b7bb9; background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-color);">http://127.0.0.1:8000/api/v1/export/status</code>
             </div>
+            <span style="font-size: 0.76rem; color: var(--text-muted);">
+              All social media account credentials, auto-posting, and multi-channel scheduling are managed by <strong>App 2 (Omni-Channel AI Agent)</strong>.
+            </span>
           </div>
         </div>
-
-        <!-- Step 3: Twitter / X API -->
-        <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div class="stat-icon" style="color: var(--color-twitter); background: rgba(43, 123, 185, 0.12); width: 40px; height: 40px; border-radius: 8px;">
-                <i data-lucide="twitter"></i>
-              </div>
-              <div>
-                <h3 style="font-family: var(--font-serif); font-size: 1.15rem;">3. Twitter / X API (Live Text Tweets)</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted);">Posts news summaries directly to Twitter via Tweepy (1,500 free tweets/month)</p>
-              </div>
-            </div>
-            <span class="badge" style="font-size: 0.7rem; background: rgba(31,30,27,0.06); color: var(--text-muted);">OPTIONAL</span>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">TWITTER_API_KEY</label>
-              <input type="text" id="input-TWITTER_API_KEY" class="filter-select" placeholder="API Key" />
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">TWITTER_API_SECRET</label>
-              <input type="password" id="input-TWITTER_API_SECRET" class="filter-select" placeholder="API Secret" />
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">TWITTER_ACCESS_TOKEN</label>
-              <input type="text" id="input-TWITTER_ACCESS_TOKEN" class="filter-select" placeholder="Access Token" />
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">TWITTER_ACCESS_SECRET</label>
-              <input type="password" id="input-TWITTER_ACCESS_SECRET" class="filter-select" placeholder="Access Secret" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 4: Reddit API -->
-        <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div class="stat-icon" style="color: var(--color-reddit); background: rgba(224, 83, 38, 0.12); width: 40px; height: 40px; border-radius: 8px;">
                 <i data-lucide="message-square"></i>
-              </div>
-              <div>
-                <h3 style="font-family: var(--font-serif); font-size: 1.15rem;">4. Reddit API (Live Posting)</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted);">Auto-posts text & images directly to targeted subreddits via PRAW</p>
-              </div>
-            </div>
-            <span class="badge" style="font-size: 0.7rem; background: rgba(31,30,27,0.06); color: var(--text-muted);">OPTIONAL</span>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">REDDIT_CLIENT_ID</label>
-              <input type="text" id="input-REDDIT_CLIENT_ID" class="filter-select" placeholder="Client ID" />
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">REDDIT_CLIENT_SECRET</label>
-              <input type="password" id="input-REDDIT_CLIENT_SECRET" class="filter-select" placeholder="Client Secret" />
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">REDDIT_USERNAME</label>
-              <input type="text" id="input-REDDIT_USERNAME" class="filter-select" placeholder="Reddit Username" />
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">REDDIT_PASSWORD</label>
-              <input type="password" id="input-REDDIT_PASSWORD" class="filter-select" placeholder="Reddit Password" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 5: LinkedIn API -->
-        <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div class="stat-icon" style="color: var(--color-linkedin); background: rgba(0, 119, 181, 0.12); width: 40px; height: 40px; border-radius: 8px;">
-                <i data-lucide="linkedin"></i>
-              </div>
-              <div>
-                <h3 style="font-family: var(--font-serif); font-size: 1.15rem;">5. LinkedIn REST API (Live Auto-Post)</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted);">Direct live posting via LinkedIn API. Leave empty to use local queue folder.</p>
-              </div>
-            </div>
-            <span class="badge" style="font-size: 0.7rem; background: rgba(31,30,27,0.06); color: var(--text-muted);">OPTIONAL</span>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">LINKEDIN_ACCESS_TOKEN</label>
-              <input type="password" id="input-LINKEDIN_ACCESS_TOKEN" class="filter-select" placeholder="OAuth Access Token" />
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <label style="font-size: 0.84rem; font-weight: 600;">LINKEDIN_AUTHOR_URN</label>
-              <input type="text" id="input-LINKEDIN_AUTHOR_URN" class="filter-select" placeholder="urn:li:person:XXXXXX or Org URN" />
-            </div>
-          </div>
-        </div>
-
         <!-- Bottom Save Button -->
         <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px; margin-bottom: 30px;">
           <button class="btn btn-primary btn-glow" onclick="SettingsPage.saveSettings()" style="padding: 14px 40px; font-size: 1rem;">
-            <i data-lucide="zap"></i> Activate & Save All API Keys
+            <i data-lucide="zap"></i> Save Research Engine Configuration
           </button>
         </div>
 
