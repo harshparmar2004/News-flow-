@@ -1045,3 +1045,19 @@ body.sidebar-collapsed-mode .main-content {
   border-radius: 6px;
   border: 1px solid var(--border-color);
 }
+
+/* Spin Animation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+/* Range Slider Styling */
+input[type="range"] {
+  accent-color: var(--primary-purple);
+}

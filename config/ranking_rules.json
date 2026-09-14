@@ -1,0 +1,27 @@
+{
+  "profile_name": "AI Breakthroughs & Deep Tech",
+  "target_niche": "AI, Autonomous Agents, LLMs & Silicon Breakthroughs",
+  "min_threshold_score": 75,
+  "ranking_prompt": "Rank stories based on technological breakthrough novelty, viral reader interest, practical application, and industry disruption. Heavily prioritize foundational model releases, GPU/chip milestones, AI agent autonomy, and major startup funding rounds.",
+  "positive_topics": [
+    "AI Models & LLMs",
+    "GPU & Chips",
+    "Autonomous Agents",
+    "Robotics",
+    "Founding & Funding",
+    "Quantum Computing"
+  ],
+  "negative_filters": [
+    "Discount Deals & Coupons",
+    "Wallpapers & Accessories",
+    "Minor Version Bug Fixes",
+    "Generic Top 10 Lists",
+    "Sponsored PR Posts"
+  ],
+  "weights": {
+    "novelty": 35,
+    "viral": 25,
+    "impact": 25,
+    "authority": 15
+  }
+}

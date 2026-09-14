@@ -798,6 +798,61 @@ def get_pipeline_history(limit: int = 50):
 
 
 # ---------------------------------------------------------------------------
+# Custom AI Agent Ranking Rules & Re-Rank Endpoints
+# ---------------------------------------------------------------------------
+
+@router.get("/ranking/rules")
+def get_ai_ranking_rules():
+    """Returns the current structured Custom AI Agent Ranking Rules."""
+    from src.ai.ranker import get_ranking_rules
+    return get_ranking_rules()
+
+
+@router.post("/ranking/rules")
+def update_ai_ranking_rules(rules_data: Dict[str, Any]):
+    """Updates and persists the structured Custom AI Agent Ranking Rules."""
+    from src.ai.ranker import save_ranking_rules, get_ranking_rules
+    current = get_ranking_rules()
+    current.update(rules_data)
+    success = save_ranking_rules(current)
+    return {
+        "success": success,
+        "message": "Custom AI Agent Ranking Rules saved successfully!",
+        "rules": current
+    }
+
+
+@router.post("/ranking/rerank")
+def rerank_all_stories():
+    """Executes AI ranking agent evaluation across all articles using active rules."""
+    from src.ai.ranker import rank_all_articles
+    count = rank_all_articles(force_all=True)
+    return {
+        "success": True,
+        "message": f"Successfully evaluated and re-ranked {count} articles using active AI rules!",
+        "ranked_count": count
+    }
+
+
+@router.get("/prompts")
+def get_prompts():
+    """Legacy prompts retrieval."""
+    from src.ai.ranker import get_ranking_rules
+    rules = get_ranking_rules()
+    return {"ranking_prompt": rules.get("ranking_prompt", "")}
+
+
+@router.post("/prompts/ranking")
+def save_ranking_prompt(data: Dict[str, Any]):
+    """Legacy prompt updater."""
+    from src.ai.ranker import get_ranking_rules, save_ranking_rules
+    rules = get_ranking_rules()
+    rules["ranking_prompt"] = data.get("prompt", rules.get("ranking_prompt", ""))
+    save_ranking_rules(rules)
+    return {"success": True, "message": "Ranking prompt updated!"}
+
+
+# ---------------------------------------------------------------------------
 # Settings & API Keys Management
 # ---------------------------------------------------------------------------
 
