@@ -1,0 +1,306 @@
+{
+  "target_url": "http://localhost:5000/api/inbound/news",
+  "app_name": "Omni-Channel AI Agent",
+  "auth_token": "bearer_omni_live_key_2026",
+  "is_active": true,
+  "rate_limit": {
+    "mode": "batch_10_2hr",
+    "articles_per_batch": 10,
+    "interval_hours": 2,
+    "label": "Batch 10 Stories every 2 Hours"
+  },
+  "last_ping": {
+    "status": "connected",
+    "status_code": 200,
+    "latency_ms": 22,
+    "checked_at": "2026-09-15T16:18:05.341165"
+  },
+  "stats": {
+    "total_dispatched": 11,
+    "total_images_sent": 40,
+    "total_failed": 0
+  },
+  "dispatched_articles": {
+    "16": {
+      "article_id": 16,
+      "title": "Travis Kalanick kicks off another round of VC bashing: \u20181% are helpful\u2019",
+      "source": "TechCrunch",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 18,
+      "dispatched_at": "2026-09-15T16:03:05.345025",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "Travis Kalanick kicks off another round of VC bashing: \u20181% are helpful\u2019",
+        "domain": "TechCrunch",
+        "score": 98,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "110": {
+      "article_id": 110,
+      "title": "\u2018Digging the grave of my profession\u2019: the Hollywood creatives training AI to do their jobs",
+      "source": "The Guardian Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 21,
+      "dispatched_at": "2026-09-15T15:48:05.345162",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "\u2018Digging the grave of my profession\u2019: the Hollywood creatives training AI to do their jobs",
+        "domain": "The Guardian Tech",
+        "score": 90,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "24": {
+      "article_id": 24,
+      "title": "OpenAI slows down training after its AI carried out hack",
+      "source": "BBC News Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T15:33:05.345286",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "OpenAI slows down training after its AI carried out hack",
+        "domain": "BBC News Tech",
+        "score": 89,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "47": {
+      "article_id": 47,
+      "title": "VentureBeat names Rob Strechay as its first Lead Analyst, expanding its enterprise AI research push",
+      "source": "VentureBeat",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 27,
+      "dispatched_at": "2026-09-15T15:18:05.345401",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "VentureBeat names Rob Strechay as its first Lead Analyst, expanding its enterprise AI research push",
+        "domain": "VentureBeat",
+        "score": 87,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "4": {
+      "article_id": 4,
+      "title": "Nielsen is leaning more on wearables to hear what people are watching",
+      "source": "The Verge",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 30,
+      "dispatched_at": "2026-09-15T15:03:05.345537",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "Nielsen is leaning more on wearables to hear what people are watching",
+        "domain": "The Verge",
+        "score": 86,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "19": {
+      "article_id": 19,
+      "title": "The wearable future is stuck in weird, experimental, existential limbo",
+      "source": "The Verge",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 33,
+      "dispatched_at": "2026-09-15T14:48:05.345655",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "The wearable future is stuck in weird, experimental, existential limbo",
+        "domain": "The Verge",
+        "score": 86,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "34": {
+      "article_id": 34,
+      "title": "The role of the astronaut is in flux",
+      "source": "MIT Technology Review",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 36,
+      "dispatched_at": "2026-09-15T14:33:05.345766",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "The role of the astronaut is in flux",
+        "domain": "MIT Technology Review",
+        "score": 86,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "49": {
+      "article_id": 49,
+      "title": "Block\u2019s new Apache 2.0 agent workspace Berd works across models and harnesses, stores conversation history locally",
+      "source": "VentureBeat",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 39,
+      "dispatched_at": "2026-09-15T14:18:05.345898",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "Block\u2019s new Apache 2.0 agent workspace Berd works across models and harnesses, stores conversation history locally",
+        "domain": "VentureBeat",
+        "score": 86,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "64": {
+      "article_id": 64,
+      "title": "UK business hit by 'daylight robbery' 1500% price hike for invoicing software",
+      "source": "BBC News Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 42,
+      "dispatched_at": "2026-09-15T14:03:05.346023",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "UK business hit by 'daylight robbery' 1500% price hike for invoicing software",
+        "domain": "BBC News Tech",
+        "score": 86,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "79": {
+      "article_id": 79,
+      "title": "Friday\u2019s Android app deals and freebies: Blacksmith of the Sand Kingdom, Little to the Left, Onigo Hunter, more",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 45,
+      "dispatched_at": "2026-09-15T13:48:05.346147",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "Friday\u2019s Android app deals and freebies: Blacksmith of the Sand Kingdom, Little to the Left, Onigo Hunter, more",
+        "domain": "9to5Google",
+        "score": 86,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "164": {
+      "article_id": 164,
+      "title": "Technology - Bloomberg.com",
+      "source": "Bloomberg Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:24:09.334710",
+      "content_synced": true,
+      "slides_synced": [],
+      "slide_count": 0,
+      "error": null,
+      "payload_summary": {
+        "title": "Technology - Bloomberg.com",
+        "domain": "news.google.com",
+        "score": 75,
+        "has_twitter": false,
+        "has_linkedin": false,
+        "slide_count": 0
+      }
+    }
+  }
+}

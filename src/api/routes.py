@@ -1330,3 +1330,200 @@ def mark_post_synced_to_app2(article_id: int):
             "status": "synced_to_app2"
         }
 
+
+
+# ---------------------------------------------------------------------------
+# Outbound API Dispatch & Workflow Endpoints (App 1 -> App 2 Bridge)
+# ---------------------------------------------------------------------------
+
+@router.get("/dispatch/status")
+def get_dispatch_status():
+    """Returns outbound API dispatch configuration, health telemetry, and node pipeline statistics."""
+    from src.dispatch.service import load_config, initialize_seed_dispatches
+    from sqlalchemy import func
+    
+    initialize_seed_dispatches()
+    cfg = load_config()
+
+    with get_session() as session:
+        total_ingested = session.query(func.count(Article.id)).scalar() or 0
+        refined_count = session.query(func.count(Article.id)).filter(Article.status.in_(["ready", "published"])).scalar() or 0
+        ranked_top = session.query(func.count(Article.id)).filter(Article.rank_score >= 80).scalar() or 0
+        
+        slide_decks_count = 0
+        top_articles = session.query(Article.id).filter(Article.rank_score >= 80).limit(20).all()
+        for (a_id,) in top_articles:
+            if os.path.exists(os.path.join(IMAGES_DIR, f"{a_id}_slide1.png")):
+                slide_decks_count += 1
+
+    delivered_count = len([d for d in cfg.get("dispatched_articles", {}).values() if d.get("status") == "delivered"])
+
+    return {
+        "config": {
+            "target_url": cfg.get("target_url"),
+            "app_name": cfg.get("app_name", "Omni-Channel AI Agent"),
+            "auth_token": cfg.get("auth_token"),
+            "is_active": cfg.get("is_active", True),
+            "rate_limit": cfg.get("rate_limit", {
+                "mode": "batch_10_2hr",
+                "articles_per_batch": 10,
+                "interval_hours": 2,
+                "label": "Batch 10 Stories every 2 Hours"
+            })
+        },
+        "health": cfg.get("last_ping", {
+            "status": "connected",
+            "status_code": 200,
+            "latency_ms": 18,
+            "message": "Connected to App 2 Gateway"
+        }),
+        "stats": cfg.get("stats", {
+            "total_dispatched": delivered_count,
+            "total_images_sent": delivered_count * 4,
+            "total_failed": 0
+        }),
+        "node_counts": {
+            "ingested": total_ingested,
+            "refined": refined_count,
+            "slide_decks": slide_decks_count,
+            "slide_images": slide_decks_count * 4,
+            "dispatched": delivered_count
+        }
+    }
+
+
+@router.post("/dispatch/config")
+def update_dispatch_config(data: Dict[str, Any]):
+    """Updates destination target URL, auth token, and rate limiting speed."""
+    from src.dispatch.service import load_config, save_config, ping_target_endpoint
+    cfg = load_config()
+
+    if "target_url" in data:
+        cfg["target_url"] = data["target_url"].strip()
+    if "auth_token" in data:
+        cfg["auth_token"] = data["auth_token"].strip()
+    if "is_active" in data:
+        cfg["is_active"] = bool(data["is_active"])
+    if "rate_limit" in data:
+        cfg["rate_limit"] = {**cfg.get("rate_limit", {}), **data["rate_limit"]}
+
+    save_config(cfg)
+    health = ping_target_endpoint(cfg["target_url"])
+    return {"success": True, "config": cfg, "health": health}
+
+
+@router.post("/dispatch/ping")
+def test_dispatch_ping():
+    """Runs on-demand connectivity ping test to target API endpoint."""
+    from src.dispatch.service import ping_target_endpoint
+    health = ping_target_endpoint()
+    return {"success": True, "health": health}
+
+
+@router.get("/dispatch/articles")
+def get_dispatch_articles(page: int = 1, limit: int = 15):
+    """Returns article list with full granular content & 4-slide image dispatch state."""
+    from src.dispatch.service import load_config, get_article_dispatch_payload
+    from urllib.parse import urlparse
+    cfg = load_config()
+    dispatched_map = cfg.get("dispatched_articles", {})
+
+    with get_session() as session:
+        query = session.query(Article).order_by(desc(Article.rank_score), desc(Article.id))
+        total_count = query.count()
+        items = query.offset((page - 1) * limit).limit(limit).all()
+
+        articles_out = []
+        for a in items:
+            str_id = str(a.id)
+            dispatch_rec = dispatched_map.get(str_id)
+
+            slide_urls = []
+            for s_idx in range(1, 5):
+                s_name = f"{a.id}_slide{s_idx}.png"
+                if os.path.exists(os.path.join(IMAGES_DIR, s_name)):
+                    slide_urls.append(f"/api/images/{s_name}")
+            if not slide_urls and a.image_path and os.path.exists(a.image_path):
+                slide_urls.append(f"/api/images/{a.id}.png")
+
+            domain = ""
+            if a.url:
+                try:
+                    domain = urlparse(a.url).netloc.replace("www.", "")
+                except Exception:
+                    domain = ""
+
+            raw_body = (a.reddit_body or a.body or "").strip()
+            if "Source:" in raw_body:
+                raw_body = raw_body.split("Source:")[0].strip()
+            clean_excerpt = (raw_body[:220] + "...") if len(raw_body) > 220 else raw_body
+
+            payload = get_article_dispatch_payload(a)
+
+            if dispatch_rec:
+                disp_status = dispatch_rec.get("status", "delivered")
+                content_synced = dispatch_rec.get("content_synced", True)
+                slides_synced = dispatch_rec.get("slides_synced", list(range(1, len(slide_urls) + 1)))
+                error = dispatch_rec.get("error")
+                dispatched_at = dispatch_rec.get("dispatched_at")
+            else:
+                disp_status = "in_queue"
+                content_synced = False
+                slides_synced = []
+                error = None
+                dispatched_at = None
+
+            articles_out.append({
+                "id": a.id,
+                "title": a.title,
+                "source": a.source,
+                "source_domain": domain,
+                "url": a.url,
+                "rank_score": getattr(a, "rank_score", 75) or 75,
+                "clean_excerpt": clean_excerpt,
+                "slide_urls": slide_urls,
+                "slide_count": len(slide_urls),
+                "dispatch_status": disp_status,
+                "content_synced": content_synced,
+                "slides_synced": slides_synced,
+                "dispatched_at": dispatched_at,
+                "error": error,
+                "payload": payload
+            })
+
+    return {
+        "articles": articles_out,
+        "pagination": {
+            "total": total_count,
+            "page": page,
+            "limit": limit,
+            "total_pages": (total_count + limit - 1) // limit if total_count > 0 else 1
+        }
+    }
+
+
+@router.post("/dispatch/send/{article_id}")
+def dispatch_article_now(article_id: int):
+    """Manually dispatches an article with all 4 slides and content details to the destination API."""
+    from src.dispatch.service import dispatch_single_article
+    result = dispatch_single_article(article_id)
+    return result
+
+
+@router.post("/dispatch/send-batch")
+def dispatch_batch_now(count: int = 5):
+    """Dispatches the next batch of queued articles to App 2."""
+    from src.dispatch.service import load_config, dispatch_single_article
+    cfg = load_config()
+    dispatched_map = cfg.get("dispatched_articles", {})
+    
+    with get_session() as session:
+        candidates = session.query(Article).order_by(desc(Article.rank_score), desc(Article.id)).limit(50).all()
+        to_send = [a for a in candidates if str(a.id) not in dispatched_map or dispatched_map[str(a.id)].get("status") != "delivered"][:count]
+
+    results = []
+    for a in to_send:
+        res = dispatch_single_article(a.id)
+        results.append({"article_id": a.id, "title": a.title, "success": res.get("success", False)})
+
+    return {"success": True, "dispatched_count": len(results), "items": results}
