@@ -37,62 +37,7 @@ const PipelinePage = {
           </div>
         </div>
 
-        <!-- 1. Streamlined 4-Node Visual Architecture -->
-        <div class="glass-card" style="padding: 18px 20px; background: #ffffff;">
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; overflow-x: auto; padding: 4px 0;">
-            
-            <!-- Node 1: Ingest -->
-            <div class="glass-card" style="flex: 1; min-width: 190px; text-align: center; border: 1.5px solid rgba(217, 119, 87, 0.4); background: var(--bg-surface); padding: 14px 10px; border-radius: 10px;">
-              <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(217,119,87,0.15); color: var(--primary-purple); display: flex; align-items: center; justify-content: center; margin: 0 auto 6px auto;">
-                <i data-lucide="rss" style="width: 18px; height: 18px;"></i>
-              </div>
-              <h4 style="font-family: var(--font-serif); font-size: 0.95rem; font-weight: 700;">1. News Ingestion</h4>
-              <p style="font-size: 0.72rem; color: var(--text-muted);">16 Monitored Sources</p>
-              <div style="margin-top: 6px; font-size: 1.2rem; font-weight: 800; color: var(--primary-purple);" id="node-1-count">164 Ingested</div>
-            </div>
 
-            <i data-lucide="arrow-right" style="color: var(--text-muted); width: 18px; height: 18px; flex-shrink: 0;"></i>
-
-            <!-- Node 2: AI Rank -->
-            <div class="glass-card" style="flex: 1; min-width: 190px; text-align: center; border: 1.5px solid rgba(43, 123, 185, 0.4); background: var(--bg-surface); padding: 14px 10px; border-radius: 10px;">
-              <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(43,123,185,0.15); color: #2b7bb9; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px auto;">
-                <i data-lucide="sparkles" style="width: 18px; height: 18px;"></i>
-              </div>
-              <h4 style="font-family: var(--font-serif); font-size: 0.95rem; font-weight: 700;">2. AI Agent Curator</h4>
-              <p style="font-size: 0.72rem; color: var(--text-muted);">Score 1-100 & Refinement</p>
-              <div style="margin-top: 6px; font-size: 1.2rem; font-weight: 800; color: #2b7bb9;" id="node-2-count">82 Refined</div>
-            </div>
-
-            <i data-lucide="arrow-right" style="color: var(--text-muted); width: 18px; height: 18px; flex-shrink: 0;"></i>
-
-            <!-- Node 3: Studio -->
-            <div class="glass-card" style="flex: 1; min-width: 190px; text-align: center; border: 1.5px solid rgba(193, 53, 132, 0.4); background: var(--bg-surface); padding: 14px 10px; border-radius: 10px;">
-              <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(193,53,132,0.15); color: #c13584; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px auto;">
-                <i data-lucide="palette" style="width: 18px; height: 18px;"></i>
-              </div>
-              <h4 style="font-family: var(--font-serif); font-size: 0.95rem; font-weight: 700;">3. Nano Banana Studio</h4>
-              <p style="font-size: 0.72rem; color: var(--text-muted);">4-Slide Visual Decks</p>
-              <div style="margin-top: 6px; font-size: 1.2rem; font-weight: 800; color: #c13584;" id="node-3-count">10 Decks (40 Slides)</div>
-            </div>
-
-            <!-- Active Pulse Arrow 3 -> 4 -->
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 32px; flex-shrink: 0;">
-              <span style="font-size: 0.6rem; font-weight: 800; color: #2e7d32;">SYNC</span>
-              <i data-lucide="zap" style="width: 16px; height: 16px; color: #2e7d32;"></i>
-            </div>
-
-            <!-- Node 4: Outbound Sync Gateway -->
-            <div class="glass-card" id="node-4-card" style="flex: 1.1; min-width: 210px; text-align: center; border: 2px solid #2e7d32; background: var(--bg-surface); padding: 14px 10px; border-radius: 10px;">
-              <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(46,125,50,0.15); color: #2e7d32; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px auto;">
-                <i data-lucide="share-2" style="width: 18px; height: 18px;"></i>
-              </div>
-              <h4 style="font-family: var(--font-serif); font-size: 0.95rem; font-weight: 700;">4. App 2 Sync Gateway</h4>
-              <p style="font-size: 0.72rem; color: var(--text-muted);" id="node-4-target-label">Omni-Channel REST Transfer</p>
-              <div style="margin-top: 6px; font-size: 1.2rem; font-weight: 800; color: #2e7d32;" id="node-4-count">10 Dispatched</div>
-            </div>
-
-          </div>
-        </div>
 
         <!-- 2. Integrated Connection Health & Speed Controller -->
         <div class="glass-card" style="padding: 18px 22px;">
