@@ -153,8 +153,9 @@ def get_timeline(days: int = 14):
 
 @router.get("/articles/dates")
 def get_article_dates():
-    """Returns article count aggregated by scraped date (YYYY-MM-DD) and month (YYYY-MM)."""
+    """Returns article count aggregated by scraped date (YYYY-MM-DD) and month (YYYY-MM) with human labels."""
     from sqlalchemy import func
+    from datetime import datetime
     with get_session() as session:
         # Group by YYYY-MM-DD
         date_counts = session.query(
@@ -162,7 +163,21 @@ def get_article_dates():
             func.count(Article.id).label('count')
         ).group_by('date').order_by(desc('date')).all()
 
-        formatted_dates = [{"date": d[0] or "Unknown", "count": d[1]} for d in date_counts if d[0]]
+        formatted_dates = []
+        for d in date_counts:
+            if not d[0]:
+                continue
+            date_val = d[0]
+            try:
+                dt = datetime.strptime(date_val, "%Y-%m-%d")
+                label = dt.strftime("%b %d, %Y")
+            except Exception:
+                label = date_val
+            formatted_dates.append({
+                "date": date_val,
+                "label": label,
+                "count": d[1]
+            })
 
         # Group by YYYY-MM
         month_counts = session.query(
@@ -187,12 +202,14 @@ def list_articles(
     date_str: Optional[str] = None,
     month_str: Optional[str] = None,
     run_scope: Optional[str] = "all",
+    score_tier: Optional[str] = None,
     top_ranked_only: bool = False,
     page: int = 1,
     limit: int = 100
 ):
-    """Paginated list of articles with date, month, status, source, run scope, top ranked, and search filtering."""
+    """Paginated list of articles with date, month, status, source, run scope, score tier, and search filtering."""
     from sqlalchemy import func
+    from urllib.parse import urlparse
     with get_session() as session:
         query = session.query(Article)
 
@@ -207,6 +224,13 @@ def list_articles(
 
         if month_str and month_str != "all":
             query = query.filter(func.strftime('%Y-%m', Article.scraped_at) == month_str)
+
+        if score_tier == "top":
+            query = query.filter(Article.rank_score >= 85)
+        elif score_tier == "high":
+            query = query.filter(Article.rank_score >= 75, Article.rank_score < 85)
+        elif score_tier == "standard":
+            query = query.filter((Article.rank_score < 75) | (Article.rank_score.is_(None)))
 
         if search:
             search_pattern = f"%{search}%"
@@ -236,21 +260,55 @@ def list_articles(
 
         articles_data = []
         for a in items:
+            # Clean domain
+            domain = ""
+            if a.url:
+                try:
+                    domain = urlparse(a.url).netloc.replace("www.", "")
+                except Exception:
+                    domain = ""
+
+            # Refined body preview
+            raw_body = (a.reddit_body or a.body or "").strip()
+            if "Source:" in raw_body:
+                raw_body = raw_body.split("Source:")[0].strip()
+            if len(raw_body) > 260:
+                truncated = raw_body[:260]
+                last_punc = max(truncated.rfind('.'), truncated.rfind('!'), truncated.rfind('?'))
+                if last_punc > 80:
+                    raw_body = truncated[:last_punc + 1].strip()
+                else:
+                    raw_body = truncated.rsplit(' ', 1)[0].strip() + '...'
+
+            # Slide URLs check
+            slide_urls = []
+            for s_idx in range(1, 5):
+                s_name = f"{a.id}_slide{s_idx}.png"
+                s_path = os.path.join("images", s_name)
+                if os.path.exists(s_path):
+                    slide_urls.append(f"/api/images/{s_name}")
+            if not slide_urls and a.image_path and os.path.exists(a.image_path):
+                slide_urls.append(f"/api/images/{a.id}.png")
+
             articles_data.append({
                 "id": a.id,
                 "title": a.title,
                 "source": a.source,
+                "source_domain": domain,
                 "url": a.url,
                 "author": a.author,
                 "category": a.category,
                 "subreddit": a.subreddit,
                 "status": a.status,
-                "rank_score": getattr(a, "rank_score", 75),
+                "rank_score": getattr(a, "rank_score", 75) or 75,
                 "rank_reason": getattr(a, "rank_reason", None),
+                "refined_body": raw_body,
                 "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None,
                 "published_at": a.published_at.isoformat() if a.published_at else None,
-                "has_image": bool(a.image_path and os.path.exists(a.image_path)),
-                "image_url": f"/api/images/{a.id}.png" if a.image_path and os.path.exists(a.image_path) else None,
+                "has_image": len(slide_urls) > 0,
+                "image_url": slide_urls[0] if slide_urls else None,
+                "slide_urls": slide_urls,
+                "slide_count": len(slide_urls),
                 "platforms": {
                     "reddit": a.reddit_posted,
                     "twitter": a.twitter_posted,
