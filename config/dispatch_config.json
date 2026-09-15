@@ -17,8 +17,8 @@
     "message": "Internal Sync Bridge active (Simulated 200 OK)"
   },
   "stats": {
-    "total_dispatched": 33,
-    "total_images_sent": 65,
+    "total_dispatched": 83,
+    "total_images_sent": 118,
     "total_failed": 0
   },
   "dispatched_articles": {
@@ -807,6 +807,1159 @@
         "title": "Why your best-interviewing AI candidate may not be your best AI hire",
         "domain": "techradar.com",
         "score": 81,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "39": {
+      "article_id": 39,
+      "title": "The Binding of Isaac: Repentance+ Online release goes head-to-head with GTA 6 on November 19",
+      "source": "Engadget",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:50.774030",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "The Binding of Isaac: Repentance+ Online release goes head-to-head with GTA 6 on November 19",
+        "domain": "engadget.com",
+        "score": 81,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "9": {
+      "article_id": 9,
+      "title": "Samsung is holding another Galaxy Event on August 27",
+      "source": "Engadget",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:54.902010",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Samsung is holding another Galaxy Event on August 27",
+        "domain": "engadget.com",
+        "score": 81,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "73": {
+      "article_id": 73,
+      "title": "Get up to 51% off fleeces from Patagonia, The North Face, Passenger, Adidas, and more \u2014 cosy and cool jackets for autumn",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:59.005437",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Get up to 51% off fleeces from Patagonia, The North Face, Passenger, Adidas, and more \u2014 cosy and cool jackets for autumn",
+        "domain": "techradar.com",
+        "score": 80,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "58": {
+      "article_id": 58,
+      "title": "Mid-week Android app deals and freebies: Last Day, Siralim, Ninja Hero Cats, Lovecraft\u2019s Untold Stories, more",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:03.115396",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Mid-week Android app deals and freebies: Last Day, Siralim, Ninja Hero Cats, Lovecraft\u2019s Untold Stories, more",
+        "domain": "9to5toys.com",
+        "score": 80,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "43": {
+      "article_id": 43,
+      "title": "Can MainstreamOS finally make Linux a household name? I tried it to find out",
+      "source": "ZDNet",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:07.243393",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Can MainstreamOS finally make Linux a household name? I tried it to find out",
+        "domain": "zdnet.com",
+        "score": 80,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "28": {
+      "article_id": 28,
+      "title": "Why Microsoft Entertainment Pack had a sticker announcing that it had Tetris?",
+      "source": "Hacker News",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:11.381495",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Why Microsoft Entertainment Pack had a sticker announcing that it had Tetris?",
+        "domain": "devblogs.microsoft.com",
+        "score": 80,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "13": {
+      "article_id": 13,
+      "title": "Gboard starts rolling out new \u2018Emoji size\u2019 setting",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:15.501492",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Gboard starts rolling out new \u2018Emoji size\u2019 setting",
+        "domain": "9to5google.com",
+        "score": 80,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "77": {
+      "article_id": 77,
+      "title": "Pixelated 113: Made You (Camera) Look",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:19.644348",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Pixelated 113: Made You (Camera) Look",
+        "domain": "9to5google.com",
+        "score": 79,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "62": {
+      "article_id": 62,
+      "title": "Binance now lets AI agents trade, but keeping them in check is largely up to users",
+      "source": "TechCrunch",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:23.724886",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Binance now lets AI agents trade, but keeping them in check is largely up to users",
+        "domain": "techcrunch.com",
+        "score": 79,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "32": {
+      "article_id": 32,
+      "title": "The Download: how people really use AI, and Flock\u2019s design choices",
+      "source": "MIT Technology Review",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:27.857007",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "The Download: how people really use AI, and Flock\u2019s design choices",
+        "domain": "technologyreview.com",
+        "score": 79,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "17": {
+      "article_id": 17,
+      "title": "Google Gemini is getting a dedicated student hub",
+      "source": "The Verge",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:31.967588",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Google Gemini is getting a dedicated student hub",
+        "domain": "theverge.com",
+        "score": 79,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "66": {
+      "article_id": 66,
+      "title": "Unlocking hidden revenue streams with market models",
+      "source": "MIT Technology Review",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:36.078643",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Unlocking hidden revenue streams with market models",
+        "domain": "technologyreview.com",
+        "score": 78,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "51": {
+      "article_id": 51,
+      "title": "How to stream Premier League 2026/27 free with trial offers",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:40.204061",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "How to stream Premier League 2026/27 free with trial offers",
+        "domain": "techradar.com",
+        "score": 78,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "36": {
+      "article_id": 36,
+      "title": "It used to be our imperfect bodies that made us insecure. With AI, it\u2019s our minds as well",
+      "source": "The Guardian Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:44.324519",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "It used to be our imperfect bodies that made us insecure. With AI, it\u2019s our minds as well",
+        "domain": "theguardian.com",
+        "score": 78,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "21": {
+      "article_id": 21,
+      "title": "Framework responds to complaints that BIOS update bricks Ryzen 7040 laptops",
+      "source": "Ars Technica",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:48.457219",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Framework responds to complaints that BIOS update bricks Ryzen 7040 laptops",
+        "domain": "arstechnica.com",
+        "score": 78,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "6": {
+      "article_id": 6,
+      "title": "Monzo says issue with card payments and transfers now resolved",
+      "source": "BBC News Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:52.566619",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Monzo says issue with card payments and transfers now resolved",
+        "domain": "bbc.co.uk",
+        "score": 78,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "70": {
+      "article_id": 70,
+      "title": "How to use your TV as a PC monitor in 3 simple steps (and without buying anything)",
+      "source": "ZDNet",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:44:56.678826",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "How to use your TV as a PC monitor in 3 simple steps (and without buying anything)",
+        "domain": "zdnet.com",
+        "score": 77,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "55": {
+      "article_id": 55,
+      "title": "Samsung confirms August 27 event for the \u2018newest addition to the Galaxy S26 family\u2019",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:00.789272",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Samsung confirms August 27 event for the \u2018newest addition to the Galaxy S26 family\u2019",
+        "domain": "9to5google.com",
+        "score": 77,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "40": {
+      "article_id": 40,
+      "title": "Valve Steam Frame videos show how to wear the headset, perfect the fit and sign in",
+      "source": "Engadget",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:04.900552",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Valve Steam Frame videos show how to wear the headset, perfect the fit and sign in",
+        "domain": "engadget.com",
+        "score": 77,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "25": {
+      "article_id": 25,
+      "title": "The critical tech staying safe by going underground",
+      "source": "BBC News Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:09.016831",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "The critical tech staying safe by going underground",
+        "domain": "bbc.co.uk",
+        "score": 77,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "10": {
+      "article_id": 10,
+      "title": "Is leasing an iPhone right for you? How Apple's Upgrade Program works and who it's for",
+      "source": "ZDNet",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:13.125213",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Is leasing an iPhone right for you? How Apple's Upgrade Program works and who it's for",
+        "domain": "zdnet.com",
+        "score": 77,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "74": {
+      "article_id": 74,
+      "title": "How to watch stream football free on CazeTV \u2014 Premier League, La Liga, Ligue 1 and Serie A",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:17.249243",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "How to watch stream football free on CazeTV \u2014 Premier League, La Liga, Ligue 1 and Serie A",
+        "domain": "techradar.com",
+        "score": 76,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "59": {
+      "article_id": 59,
+      "title": "LG\u2019s new OLED breakthrough can boost display lifespans",
+      "source": "The Verge",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:21.329779",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "LG\u2019s new OLED breakthrough can boost display lifespans",
+        "domain": "theverge.com",
+        "score": 76,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "44": {
+      "article_id": 44,
+      "title": "Your Comcast router doubles as a motion detector now - and a potential police informant",
+      "source": "ZDNet",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:25.438532",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Your Comcast router doubles as a motion detector now - and a potential police informant",
+        "domain": "zdnet.com",
+        "score": 76,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "29": {
+      "article_id": 29,
+      "title": "Feature Request: Support AGENTS.md",
+      "source": "Hacker News",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:29.532378",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Feature Request: Support AGENTS.md",
+        "domain": "github.com",
+        "score": 76,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "123": {
+      "article_id": 123,
+      "title": "Pixel Watch 4 vs. Pixel Watch 5: Is Google's new model worth it? It comes down to this",
+      "source": "ZDNet",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:33.636131",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Pixel Watch 4 vs. Pixel Watch 5: Is Google's new model worth it? It comes down to this",
+        "domain": "zdnet.com",
+        "score": 75,
+        "has_twitter": false,
+        "has_linkedin": false,
+        "slide_count": 1
+      }
+    },
+    "78": {
+      "article_id": 78,
+      "title": "Pixel Watch 5 lets you customize double pinch to dismiss alarms, skip music, & more",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:37.763481",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Pixel Watch 5 lets you customize double pinch to dismiss alarms, skip music, & more",
+        "domain": "9to5google.com",
+        "score": 75,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "63": {
+      "article_id": 63,
+      "title": "Sennheiser\u2019s new Momentum 5 earbuds feature easily replaceable batteries",
+      "source": "The Verge",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:41.869024",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Sennheiser\u2019s new Momentum 5 earbuds feature easily replaceable batteries",
+        "domain": "theverge.com",
+        "score": 75,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "48": {
+      "article_id": 48,
+      "title": "GLM-5.3 hits the API at $1.4/$4.4 per million tokens",
+      "source": "VentureBeat",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:45.975112",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "GLM-5.3 hits the API at $1.4/$4.4 per million tokens",
+        "domain": "venturebeat.com",
+        "score": 75,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "33": {
+      "article_id": 33,
+      "title": "We still don\u2019t know how people are really using AI",
+      "source": "MIT Technology Review",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:50.075227",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "We still don\u2019t know how people are really using AI",
+        "domain": "technologyreview.com",
+        "score": 75,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "3": {
+      "article_id": 3,
+      "title": "Waymo\u2019s cheaper, next-gen robotaxi is now open to all riders in these three cities",
+      "source": "TechCrunch",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:54.180167",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Waymo\u2019s cheaper, next-gen robotaxi is now open to all riders in these three cities",
+        "domain": "techcrunch.com",
+        "score": 75,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "2": {
+      "article_id": 2,
+      "title": "Does giving a camera wings dodge the FCC\u2019s drone ban?",
+      "source": "The Verge",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:45:58.286327",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Does giving a camera wings dodge the FCC\u2019s drone ban?",
+        "domain": "theverge.com",
+        "score": 75,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "1": {
+      "article_id": 1,
+      "title": "Stripe didn\u2019t really buy OpenRouter because of the \u2018singularity\u2019",
+      "source": "TechCrunch",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:02.406033",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "Stripe didn\u2019t really buy OpenRouter because of the \u2018singularity\u2019",
+        "domain": "techcrunch.com",
+        "score": 75,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "67": {
+      "article_id": 67,
+      "title": "NASA calls off mission to rescue the falling Swift observatory",
+      "source": "Engadget",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:06.526364",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "NASA calls off mission to rescue the falling Swift observatory",
+        "domain": "engadget.com",
+        "score": 74,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "52": {
+      "article_id": 52,
+      "title": "How to watch BMW Championship 2026: Free Live Streams, TV Channels & Preview",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:10.633128",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "How to watch BMW Championship 2026: Free Live Streams, TV Channels & Preview",
+        "domain": "techradar.com",
+        "score": 74,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "37": {
+      "article_id": 37,
+      "title": "Did someone wearing Meta Glasses film you today? Are you sure?",
+      "source": "The Guardian Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:14.749522",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Did someone wearing Meta Glasses film you today? Are you sure?",
+        "domain": "theguardian.com",
+        "score": 74,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "22": {
+      "article_id": 22,
+      "title": "Flight attendants freaked out that Google is buying tons of Spirit employee data",
+      "source": "Ars Technica",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:18.863503",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Flight attendants freaked out that Google is buying tons of Spirit employee data",
+        "domain": "arstechnica.com",
+        "score": 74,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "7": {
+      "article_id": 7,
+      "title": "NASA calls off mission to rescue Swift gamma-ray observatory",
+      "source": "Ars Technica",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:22.963389",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "NASA calls off mission to rescue Swift gamma-ray observatory",
+        "domain": "arstechnica.com",
+        "score": 74,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "71": {
+      "article_id": 71,
+      "title": "Creality Falcon A1C review: I was instantly impressed with this compact, affordable, beginner-friendly laser engraver",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:27.072640",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Creality Falcon A1C review: I was instantly impressed with this compact, affordable, beginner-friendly laser engraver",
+        "domain": "techradar.com",
+        "score": 73,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "56": {
+      "article_id": 56,
+      "title": "Google Pixel 11 gets dbrand\u2019s full case lineup, including Tank for the first time [Gallery]",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:31.199918",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Google Pixel 11 gets dbrand\u2019s full case lineup, including Tank for the first time [Gallery]",
+        "domain": "9to5google.com",
+        "score": 73,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "41": {
+      "article_id": 41,
+      "title": "Waymo Ojai vans are now available for all riders in three cities",
+      "source": "Engadget",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:35.323171",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Waymo Ojai vans are now available for all riders in three cities",
+        "domain": "engadget.com",
+        "score": 73,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "26": {
+      "article_id": 26,
+      "title": "Meta hooked children on Facebook and Instagram, US court hears",
+      "source": "BBC News Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:39.437843",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Meta hooked children on Facebook and Instagram, US court hears",
+        "domain": "bbc.co.uk",
+        "score": 73,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "11": {
+      "article_id": 11,
+      "title": "TrueFoundry's open source AI agent harness TrueForge boasts 30%-75% cheaper task completion than Claude Managed Agents",
+      "source": "VentureBeat",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:43.542908",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "TrueFoundry's open source AI agent harness TrueForge boasts 30%-75% cheaper task completion than Claude Managed Agents",
+        "domain": "venturebeat.com",
+        "score": 73,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "75": {
+      "article_id": 75,
+      "title": "350-Ton Longking ZL230E electric mining rig packs colossal 1,400 kWh battery, claims 10-90% charge in just 25 minutes",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:47.666897",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "350-Ton Longking ZL230E electric mining rig packs colossal 1,400 kWh battery, claims 10-90% charge in just 25 minutes",
+        "domain": "techradar.com",
+        "score": 72,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "60": {
+      "article_id": 60,
+      "title": "Support networks aim to help kids through the polycrisis",
+      "source": "MIT Technology Review",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:51.789018",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Support networks aim to help kids through the polycrisis",
+        "domain": "technologyreview.com",
+        "score": 72,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "45": {
+      "article_id": 45,
+      "title": "After testing the Pixel 11, I feel fine about skipping the Pro models - here's why",
+      "source": "ZDNet",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:46:55.924390",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "After testing the Pixel 11, I feel fine about skipping the Pro models - here's why",
+        "domain": "zdnet.com",
+        "score": 72,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "30": {
+      "article_id": 30,
+      "title": "The Download: AI\u2019s self-improvement problem, and what\u2019s driving the heat",
+      "source": "MIT Technology Review",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:47:00.031555",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "The Download: AI\u2019s self-improvement problem, and what\u2019s driving the heat",
+        "domain": "technologyreview.com",
+        "score": 72,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "15": {
+      "article_id": 15,
+      "title": "Cognition CEO denies report that SpaceX tried to acquire the startup",
+      "source": "TechCrunch",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:47:04.163624",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Cognition CEO denies report that SpaceX tried to acquire the startup",
+        "domain": "techcrunch.com",
+        "score": 72,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "42": {
+      "article_id": 42,
+      "title": "Pok\u00e9mon and Polaroid are collaborating on three new adorable cameras",
+      "source": "Engadget",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:47:08.306548",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Pok\u00e9mon and Polaroid are collaborating on three new adorable cameras",
+        "domain": "engadget.com",
+        "score": 69,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "18": {
+      "article_id": 18,
+      "title": "Watch Valve set up the Steam Frame in its own leaked videos",
+      "source": "The Verge",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:47:12.440447",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Watch Valve set up the Steam Frame in its own leaked videos",
+        "domain": "theverge.com",
+        "score": 60,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
