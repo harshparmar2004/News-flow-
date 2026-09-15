@@ -213,21 +213,52 @@ def stage_sync_to_app2() -> dict[str, int]:
         logger.warning("Stage 4 App 2 Transfer aborted by user.")
         return {"synced_to_app2": 0}
 
+    from src.dispatch.service import load_config, dispatch_single_article
+    cfg = load_config()
+    is_active = cfg.get("is_active", True)
+    rate_mode = cfg.get("rate_limit", {}).get("mode", "batch_10_2hr")
+
     synced_count = 0
     with get_session() as session:
         # Fetch articles that have been rewritten & have Nano Banana images built
         ready_articles = session.query(Article).filter(
             Article.status.in_(["ready", "scraped"]),
             Article.image_path.isnot(None)
-        ).all()
+        ).order_by(Article.rank_score.desc(), Article.id.desc()).all()
 
         for a in ready_articles:
             a.status = "ready"
-            synced_count += 1
-        
         session.commit()
 
-    logger.info(f"Stage 4 complete: {synced_count} refined articles + Nano Banana image decks ready on REST API /api/v1/export/refined-posts for App 2 sync!")
+        if not is_active:
+            logger.info("ℹ️ Outbound API Dispatch is currently PAUSED in configuration. Articles marked ready in queue.")
+            return {"synced_to_app2": 0}
+
+        # Determine how many articles to dispatch based on rate limit mode
+        if rate_mode == "instant":
+            to_dispatch = ready_articles
+            logger.info(f"⚡ Instant Dispatch Mode: Transmitting all {len(to_dispatch)} ready stories to connected App 2...")
+        elif rate_mode in ("batch_10_2hr", "batch_10_1hr"):
+            to_dispatch = ready_articles[:10]
+            logger.info(f"📦 Batch Mode ({rate_mode}): Transmitting batch of {len(to_dispatch)} top stories to connected App 2...")
+        elif rate_mode == "1_per_hour":
+            to_dispatch = ready_articles[:1]
+            logger.info(f"⏱️ 1-per-hour Mode: Transmitting single top story #{to_dispatch[0].id if to_dispatch else 'None'} to connected App 2...")
+        else:
+            to_dispatch = ready_articles[:10]
+
+        target_url = cfg.get("target_url", "http://localhost:5000/api/inbound/news")
+        for a in to_dispatch:
+            if is_abort_requested():
+                break
+            res = dispatch_single_article(a.id)
+            if res.get("success"):
+                synced_count += 1
+                logger.info(f" ✓ [App 2 Outbound API] Story #{a.id} ('{a.title[:35]}...') + 4 slides dispatched to {target_url} (HTTP {res.get('status_code')})")
+            else:
+                logger.warning(f" ⚠️ [App 2 Outbound API] Story #{a.id} dispatch warning: {res.get('error')}")
+
+    logger.info(f"Stage 4 complete: {synced_count} refined articles + Nano Banana image decks transferred to App 2 REST Gateway!")
     return {"synced_to_app2": synced_count}
 
 

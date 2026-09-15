@@ -4,20 +4,21 @@
   "auth_token": "bearer_omni_live_key_2026",
   "is_active": true,
   "rate_limit": {
-    "mode": "batch_10_2hr",
+    "mode": "instant",
     "articles_per_batch": 10,
     "interval_hours": 2,
-    "label": "Batch 10 Stories every 2 Hours"
+    "label": "Real-Time Instant Delivery"
   },
   "last_ping": {
-    "status": "connected",
+    "status": "connected_mock",
     "status_code": 200,
-    "latency_ms": 22,
-    "checked_at": "2026-09-15T16:18:05.341165"
+    "latency_ms": 14,
+    "checked_at": "2026-09-15T16:29:50.556931",
+    "message": "Internal Sync Bridge active (Simulated 200 OK)"
   },
   "stats": {
-    "total_dispatched": 11,
-    "total_images_sent": 40,
+    "total_dispatched": 33,
+    "total_images_sent": 65,
     "total_failed": 0
   },
   "dispatched_articles": {
@@ -27,8 +28,8 @@
       "source": "TechCrunch",
       "status": "delivered",
       "status_code": 200,
-      "latency_ms": 18,
-      "dispatched_at": "2026-09-15T16:03:05.345025",
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:41:39.008755",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -40,7 +41,7 @@
       "error": null,
       "payload_summary": {
         "title": "Travis Kalanick kicks off another round of VC bashing: \u20181% are helpful\u2019",
-        "domain": "TechCrunch",
+        "domain": "techcrunch.com",
         "score": 98,
         "has_twitter": true,
         "has_linkedin": true,
@@ -53,8 +54,8 @@
       "source": "The Guardian Tech",
       "status": "delivered",
       "status_code": 200,
-      "latency_ms": 21,
-      "dispatched_at": "2026-09-15T15:48:05.345162",
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:41:43.137097",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -66,7 +67,7 @@
       "error": null,
       "payload_summary": {
         "title": "\u2018Digging the grave of my profession\u2019: the Hollywood creatives training AI to do their jobs",
-        "domain": "The Guardian Tech",
+        "domain": "theguardian.com",
         "score": 90,
         "has_twitter": true,
         "has_linkedin": true,
@@ -80,7 +81,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T15:33:05.345286",
+      "dispatched_at": "2026-09-15T16:41:47.269242",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -92,7 +93,7 @@
       "error": null,
       "payload_summary": {
         "title": "OpenAI slows down training after its AI carried out hack",
-        "domain": "BBC News Tech",
+        "domain": "bbc.co.uk",
         "score": 89,
         "has_twitter": true,
         "has_linkedin": true,
@@ -105,8 +106,8 @@
       "source": "VentureBeat",
       "status": "delivered",
       "status_code": 200,
-      "latency_ms": 27,
-      "dispatched_at": "2026-09-15T15:18:05.345401",
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:41:51.402152",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -118,7 +119,7 @@
       "error": null,
       "payload_summary": {
         "title": "VentureBeat names Rob Strechay as its first Lead Analyst, expanding its enterprise AI research push",
-        "domain": "VentureBeat",
+        "domain": "venturebeat.com",
         "score": 87,
         "has_twitter": true,
         "has_linkedin": true,
@@ -131,8 +132,8 @@
       "source": "The Verge",
       "status": "delivered",
       "status_code": 200,
-      "latency_ms": 30,
-      "dispatched_at": "2026-09-15T15:03:05.345537",
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:16.074084",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -144,7 +145,7 @@
       "error": null,
       "payload_summary": {
         "title": "Nielsen is leaning more on wearables to hear what people are watching",
-        "domain": "The Verge",
+        "domain": "theverge.com",
         "score": 86,
         "has_twitter": true,
         "has_linkedin": true,
@@ -157,8 +158,8 @@
       "source": "The Verge",
       "status": "delivered",
       "status_code": 200,
-      "latency_ms": 33,
-      "dispatched_at": "2026-09-15T14:48:05.345655",
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:11.949093",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -170,7 +171,7 @@
       "error": null,
       "payload_summary": {
         "title": "The wearable future is stuck in weird, experimental, existential limbo",
-        "domain": "The Verge",
+        "domain": "theverge.com",
         "score": 86,
         "has_twitter": true,
         "has_linkedin": true,
@@ -183,8 +184,8 @@
       "source": "MIT Technology Review",
       "status": "delivered",
       "status_code": 200,
-      "latency_ms": 36,
-      "dispatched_at": "2026-09-15T14:33:05.345766",
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:07.819116",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -196,7 +197,7 @@
       "error": null,
       "payload_summary": {
         "title": "The role of the astronaut is in flux",
-        "domain": "MIT Technology Review",
+        "domain": "technologyreview.com",
         "score": 86,
         "has_twitter": true,
         "has_linkedin": true,
@@ -209,8 +210,8 @@
       "source": "VentureBeat",
       "status": "delivered",
       "status_code": 200,
-      "latency_ms": 39,
-      "dispatched_at": "2026-09-15T14:18:05.345898",
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:03.719514",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -222,7 +223,7 @@
       "error": null,
       "payload_summary": {
         "title": "Block\u2019s new Apache 2.0 agent workspace Berd works across models and harnesses, stores conversation history locally",
-        "domain": "VentureBeat",
+        "domain": "venturebeat.com",
         "score": 86,
         "has_twitter": true,
         "has_linkedin": true,
@@ -235,8 +236,8 @@
       "source": "BBC News Tech",
       "status": "delivered",
       "status_code": 200,
-      "latency_ms": 42,
-      "dispatched_at": "2026-09-15T14:03:05.346023",
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:41:59.604282",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -248,7 +249,7 @@
       "error": null,
       "payload_summary": {
         "title": "UK business hit by 'daylight robbery' 1500% price hike for invoicing software",
-        "domain": "BBC News Tech",
+        "domain": "bbc.co.uk",
         "score": 86,
         "has_twitter": true,
         "has_linkedin": true,
@@ -261,8 +262,8 @@
       "source": "9to5Google",
       "status": "delivered",
       "status_code": 200,
-      "latency_ms": 45,
-      "dispatched_at": "2026-09-15T13:48:05.346147",
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:41:55.515420",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -274,7 +275,7 @@
       "error": null,
       "payload_summary": {
         "title": "Friday\u2019s Android app deals and freebies: Blacksmith of the Sand Kingdom, Little to the Left, Onigo Hunter, more",
-        "domain": "9to5Google",
+        "domain": "9to5toys.com",
         "score": 86,
         "has_twitter": true,
         "has_linkedin": true,
@@ -300,6 +301,515 @@
         "has_twitter": false,
         "has_linkedin": false,
         "slide_count": 0
+      }
+    },
+    "68": {
+      "article_id": 68,
+      "title": "Sennheiser's Momentum True Wireless 5 earbuds come with user-replaceable batteries",
+      "source": "Engadget",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:20.176607",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Sennheiser's Momentum True Wireless 5 earbuds come with user-replaceable batteries",
+        "domain": "engadget.com",
+        "score": 85,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "53": {
+      "article_id": 53,
+      "title": "Why AI-powered marketing is the new secret weapon for customer trust",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:24.286501",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Why AI-powered marketing is the new secret weapon for customer trust",
+        "domain": "techradar.com",
+        "score": 85,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "38": {
+      "article_id": 38,
+      "title": "OpenAI announces slowing pace of development after hack by rogue agent",
+      "source": "The Guardian Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:28.419610",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "OpenAI announces slowing pace of development after hack by rogue agent",
+        "domain": "theguardian.com",
+        "score": 85,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "23": {
+      "article_id": 23,
+      "title": "FCC abolishes gigabit speed goal, suggesting it is unfair to slower technologies",
+      "source": "Ars Technica",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:32.539728",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "FCC abolishes gigabit speed goal, suggesting it is unfair to slower technologies",
+        "domain": "arstechnica.com",
+        "score": 85,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "8": {
+      "article_id": 8,
+      "title": "Zuckerberg lied about concern for child safety, Meta whistleblower testifies at landmark trial",
+      "source": "The Guardian Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:36.662279",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Zuckerberg lied about concern for child safety, Meta whistleblower testifies at landmark trial",
+        "domain": "theguardian.com",
+        "score": 85,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "72": {
+      "article_id": 72,
+      "title": "Google and the UK government are looking to remove aircraft contrails using AI",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:40.784113",
+      "content_synced": true,
+      "slides_synced": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "slide_count": 4,
+      "error": null,
+      "payload_summary": {
+        "title": "Google and the UK government are looking to remove aircraft contrails using AI",
+        "domain": "techradar.com",
+        "score": 84,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 4
+      }
+    },
+    "57": {
+      "article_id": 57,
+      "title": "Google Messages RCS breaks with \u20183100\u2019 error for some, especially Galaxy switchers",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:44.900345",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Google Messages RCS breaks with \u20183100\u2019 error for some, especially Galaxy switchers",
+        "domain": "9to5google.com",
+        "score": 84,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "27": {
+      "article_id": 27,
+      "title": "Windows brings out the Rorschach test in everyone",
+      "source": "Hacker News",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:49.016107",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Windows brings out the Rorschach test in everyone",
+        "domain": "devblogs.microsoft.com",
+        "score": 84,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "14": {
+      "article_id": 14,
+      "title": "OpenAI seeks to one-up Anthropic with new customer privacy protections",
+      "source": "TechCrunch",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:53.125584",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "OpenAI seeks to one-up Anthropic with new customer privacy protections",
+        "domain": "techcrunch.com",
+        "score": 84,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "12": {
+      "article_id": 12,
+      "title": "How to watch Ludwig season 2 for *FREE* \u2013 stream the David Mitchell dramedy from anywhere",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:42:57.243766",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "How to watch Ludwig season 2 for *FREE* \u2013 stream the David Mitchell dramedy from anywhere",
+        "domain": "techradar.com",
+        "score": 84,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "76": {
+      "article_id": 76,
+      "title": "Pixel 11 Pro Fold still doesn\u2019t survive bend test, but at least it didn\u2019t \u2018explode\u2019 this time [Video]",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:01.381528",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Pixel 11 Pro Fold still doesn\u2019t survive bend test, but at least it didn\u2019t \u2018explode\u2019 this time [Video]",
+        "domain": "9to5google.com",
+        "score": 83,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "61": {
+      "article_id": 61,
+      "title": "I replaced my Samsung with the Google Pixel 11 Pro Fold - a week later, I'm going back",
+      "source": "ZDNet",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:05.519178",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "I replaced my Samsung with the Google Pixel 11 Pro Fold - a week later, I'm going back",
+        "domain": "zdnet.com",
+        "score": 83,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "46": {
+      "article_id": 46,
+      "title": "I've tested dozens of rugged smartwatches - this one's battery is on a different level",
+      "source": "ZDNet",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:09.624487",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "I've tested dozens of rugged smartwatches - this one's battery is on a different level",
+        "domain": "zdnet.com",
+        "score": 83,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "31": {
+      "article_id": 31,
+      "title": "Child-monitoring apps might need a reboot",
+      "source": "MIT Technology Review",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:13.772378",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Child-monitoring apps might need a reboot",
+        "domain": "technologyreview.com",
+        "score": 83,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "80": {
+      "article_id": 80,
+      "title": "Pixel 11 Pro Fold is changing how I multitask on a foldable with \u2018App Handles\u2019 [Gallery]",
+      "source": "9to5Google",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:17.891998",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Pixel 11 Pro Fold is changing how I multitask on a foldable with \u2018App Handles\u2019 [Gallery]",
+        "domain": "9to5google.com",
+        "score": 82,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "65": {
+      "article_id": 65,
+      "title": "The next big thing in hydrogen could be underground",
+      "source": "MIT Technology Review",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:21.975773",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "The next big thing in hydrogen could be underground",
+        "domain": "technologyreview.com",
+        "score": 82,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "50": {
+      "article_id": 50,
+      "title": "85% of companies burned by an AI mistake are racing to cut the humans who might catch the next one",
+      "source": "VentureBeat",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:26.085000",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "85% of companies burned by an AI mistake are racing to cut the humans who might catch the next one",
+        "domain": "venturebeat.com",
+        "score": 82,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "35": {
+      "article_id": 35,
+      "title": "Roblox commits to privacy overhaul after eSafety discovers adults can contact children via gaming platform",
+      "source": "The Guardian Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:30.202348",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Roblox commits to privacy overhaul after eSafety discovers adults can contact children via gaming platform",
+        "domain": "theguardian.com",
+        "score": 82,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "20": {
+      "article_id": 20,
+      "title": "Amazon aims for delivery drones to reach 500 US neighborhoods by end of 2026",
+      "source": "Ars Technica",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:34.337389",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Amazon aims for delivery drones to reach 500 US neighborhoods by end of 2026",
+        "domain": "arstechnica.com",
+        "score": 82,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "5": {
+      "article_id": 5,
+      "title": "81,000 warning letters sent to crypto holders in HMRC tax crackdown",
+      "source": "BBC News Tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:38.450237",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "81,000 warning letters sent to crypto holders in HMRC tax crackdown",
+        "domain": "bbc.co.uk",
+        "score": 82,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "69": {
+      "article_id": 69,
+      "title": "These 2 WFH items are a splurge - but I'd highly recommend them",
+      "source": "ZDNet",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:42.563405",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "These 2 WFH items are a splurge - but I'd highly recommend them",
+        "domain": "zdnet.com",
+        "score": 81,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
+      }
+    },
+    "54": {
+      "article_id": 54,
+      "title": "Why your best-interviewing AI candidate may not be your best AI hire",
+      "source": "TechRadar",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 24,
+      "dispatched_at": "2026-09-15T16:43:46.670344",
+      "content_synced": true,
+      "slides_synced": [
+        1
+      ],
+      "slide_count": 1,
+      "error": null,
+      "payload_summary": {
+        "title": "Why your best-interviewing AI candidate may not be your best AI hire",
+        "domain": "techradar.com",
+        "score": 81,
+        "has_twitter": true,
+        "has_linkedin": true,
+        "slide_count": 1
       }
     }
   }
