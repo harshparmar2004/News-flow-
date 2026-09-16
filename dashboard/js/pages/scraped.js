@@ -129,7 +129,7 @@ const ScrapedPage = {
           <div>
             <!-- Header: Source Pill + Raw Badge -->
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-              <span style="background: #231F1C; color: #ffffff; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; padding: 4px 10px; border-radius: 6px;">
+              <span style="background: rgba(217, 119, 87, 0.12); color: #cc6343; border: 1px solid rgba(217, 119, 87, 0.28); font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; padding: 4px 10px; border-radius: 6px;">
                 ${a.source || 'Web Source'}
               </span>
               <span style="font-size: 0.68rem; font-weight: 700; color: #8A8175; background: #F6F1EA; padding: 4px 8px; border-radius: 6px; text-transform: uppercase;">

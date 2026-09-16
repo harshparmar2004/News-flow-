@@ -731,14 +731,19 @@ body.sidebar-collapsed-mode .main-content {
   display: inline-flex;
   align-items: center;
   padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 0.68rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  background: #2d2b28;
-  color: #faf7f2;
-  border: 1px solid #45413c;
+  background: rgba(217, 119, 87, 0.12);
+  color: #cc6343;
+  border: 1px solid rgba(217, 119, 87, 0.28);
+}
+
+.source-pill:hover {
+  background: rgba(217, 119, 87, 0.18);
+  border-color: rgba(217, 119, 87, 0.45);
 }
 
 /* ------------------------------------------------------------
