@@ -1,0 +1,25 @@
+{
+  "topic": "Python OOPs",
+  "title": "Object-Oriented Programming",
+  "badge_tag": "OOPs Notes",
+  "slug": "python_oops",
+  "page_count": 5,
+  "brand_handle": "by @PyCode.Hubb",
+  "pdf_path": "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\data\\notes\\python_oops\\python_oops_notes.pdf",
+  "pdf_url": "/api/notes/python_oops/pdf",
+  "slide_paths": [
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\python_oops\\slide_01.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\python_oops\\slide_02.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\python_oops\\slide_03.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\python_oops\\slide_04.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\python_oops\\slide_05.png"
+  ],
+  "slide_urls": [
+    "/images/notes/python_oops/slide_01.png",
+    "/images/notes/python_oops/slide_02.png",
+    "/images/notes/python_oops/slide_03.png",
+    "/images/notes/python_oops/slide_04.png",
+    "/images/notes/python_oops/slide_05.png"
+  ],
+  "created_at": "2026-09-23T18:02:21.455233Z"
+}

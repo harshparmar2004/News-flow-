@@ -68,11 +68,17 @@ async def add_no_cache_headers(request, call_next):
         response.headers["Expires"] = "0"
     return response
 
-# Mount static frontend directory
-DASHBOARD_DIR = os.path.join(PROJECT_ROOT, "dashboard")
-if not os.path.exists(DASHBOARD_DIR):
-    os.makedirs(DASHBOARD_DIR, exist_ok=True)
+# Mount static media and assets directories
+IMAGES_DIR = os.path.join(PROJECT_ROOT, "images")
+os.makedirs(IMAGES_DIR, exist_ok=True)
+app.mount("/images", StaticFiles(directory=IMAGES_DIR), name="images")
 
+ASSETS_DIR = os.path.join(PROJECT_ROOT, "assets")
+os.makedirs(ASSETS_DIR, exist_ok=True)
+app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+
+DASHBOARD_DIR = os.path.join(PROJECT_ROOT, "dashboard")
+os.makedirs(DASHBOARD_DIR, exist_ok=True)
 app.mount("/", StaticFiles(directory=DASHBOARD_DIR, html=True), name="static")
 
 

@@ -1527,3 +1527,129 @@ def dispatch_batch_now(count: int = 5):
         results.append({"article_id": a.id, "title": a.title, "success": res.get("success", False)})
 
     return {"success": True, "dispatched_count": len(results), "items": results}
+
+
+# ---------------------------------------------------------
+# TECH NOTES & INSTAGRAM CAROUSEL GENERATOR API
+# ---------------------------------------------------------
+
+@router.get("/notes/documents")
+def list_notes_documents():
+    """Lists all generated notes documents and carousel slide sets."""
+    import os, json
+    notes_data_dir = os.path.join(PROJECT_ROOT, "data", "notes")
+    if not os.path.exists(notes_data_dir):
+        return {"documents": []}
+
+    docs = []
+    for item in os.listdir(notes_data_dir):
+        meta_file = os.path.join(notes_data_dir, item, "meta.json")
+        if os.path.isfile(meta_file):
+            try:
+                with open(meta_file, "r", encoding="utf-8") as f:
+                    docs.append(json.load(f))
+            except Exception:
+                pass
+
+    docs.sort(key=lambda d: d.get("created_at", ""), reverse=True)
+    return {"documents": docs}
+
+
+@router.post("/notes/generate")
+def generate_notes_endpoint(payload: Dict[str, Any]):
+    """
+    Generates handwritten spiral-notebook PDF and 1080x1350 PNG carousel slides
+    for any tech topic (Python, Docker, Kubernetes, ChatGPT, MERN, DSA, SQL, etc.).
+    """
+    from src.generators.notes_generator import NotebookNotesGenerator
+    from src.generators.content_synthesizer import get_template_for_topic
+
+    topic = payload.get("topic", "Python OOPs").strip()
+    brand_handle = payload.get("brand_handle", "by @PyCode.Hubb").strip()
+    custom_title = payload.get("custom_title")
+    badge_tag = payload.get("badge_tag")
+    pages_data = payload.get("pages_data")
+
+    if not pages_data:
+        template = get_template_for_topic(topic)
+        title = custom_title or template.get("title", f"{topic} Mastery Guide")
+        badge = badge_tag or template.get("badge_tag", f"{topic} Notes")
+        pages = template.get("pages", [])
+    else:
+        title = custom_title or f"{topic} Notes"
+        badge = badge_tag or f"{topic} Notes"
+        pages = pages_data
+
+    generator = NotebookNotesGenerator(brand_handle=brand_handle)
+    result = generator.generate_document(
+        topic=topic,
+        title=title,
+        badge_tag=badge,
+        pages_data=pages,
+        brand_handle=brand_handle
+    )
+
+    return {"success": True, "document": result}
+
+
+@router.get("/notes/{slug}/pdf")
+def download_notes_pdf(slug: str):
+    """Downloads the compiled multi-page vector PDF for a tech topic."""
+    import os
+    pdf_path = os.path.join(PROJECT_ROOT, "data", "notes", slug, f"{slug}_notes.pdf")
+    if not os.path.exists(pdf_path):
+        raise HTTPException(status_code=404, detail="Notes PDF document not found")
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename=f"{slug}_notes.pdf"
+    )
+
+
+@router.get("/notes/{slug}/slides")
+def get_notes_slides(slug: str):
+    """Returns all 1080x1350 PNG carousel slides for preview or Instagram export."""
+    import os, json
+    meta_path = os.path.join(PROJECT_ROOT, "data", "notes", slug, "meta.json")
+    if not os.path.exists(meta_path):
+        raise HTTPException(status_code=404, detail="Notes document not found")
+
+    with open(meta_path, "r", encoding="utf-8") as f:
+        meta = json.load(f)
+    return meta
+
+
+@router.post("/notes/{slug}/dispatch")
+def dispatch_notes_carousel(slug: str):
+    """
+    Dispatches the generated notes document and all carousel slides to App 2 (Omni-Channel API).
+    """
+    import os, json
+    meta_path = os.path.join(PROJECT_ROOT, "data", "notes", slug, "meta.json")
+    if not os.path.exists(meta_path):
+        raise HTTPException(status_code=404, detail="Notes document not found")
+
+    with open(meta_path, "r", encoding="utf-8") as f:
+        meta = json.load(f)
+
+    from src.dispatch.service import get_dispatch_client
+    client = get_dispatch_client()
+
+    payload = {
+        "article_id": f"notes_{slug}",
+        "title": meta.get("title", slug),
+        "topic": meta.get("topic", slug),
+        "content_type": "carousel_notes",
+        "badge": meta.get("badge_tag", "Notes"),
+        "brand": meta.get("brand_handle", "@NewsFlow"),
+        "slide_count": meta.get("page_count", len(meta.get("slide_urls", []))),
+        "slide_urls": meta.get("slide_urls", []),
+        "pdf_url": meta.get("pdf_url", f"/api/notes/{slug}/pdf")
+    }
+
+    resp = client.dispatch_article(payload, meta.get("slide_paths", []))
+    return {
+        "success": resp.get("status") in ["delivered", "queued"],
+        "dispatch_response": resp,
+        "payload": payload
+    }

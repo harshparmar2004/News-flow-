@@ -1,0 +1,23 @@
+{
+  "topic": "Kubernetes",
+  "title": "Kubernetes Architecture & Orchestration",
+  "badge_tag": "K8s Notes",
+  "slug": "kubernetes",
+  "page_count": 4,
+  "brand_handle": "by @CloudNative.Notes",
+  "pdf_path": "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\data\\notes\\kubernetes\\kubernetes_notes.pdf",
+  "pdf_url": "/api/notes/kubernetes/pdf",
+  "slide_paths": [
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\kubernetes\\slide_01.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\kubernetes\\slide_02.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\kubernetes\\slide_03.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\kubernetes\\slide_04.png"
+  ],
+  "slide_urls": [
+    "/images/notes/kubernetes/slide_01.png",
+    "/images/notes/kubernetes/slide_02.png",
+    "/images/notes/kubernetes/slide_03.png",
+    "/images/notes/kubernetes/slide_04.png"
+  ],
+  "created_at": "2026-09-23T18:02:21.902547Z"
+}

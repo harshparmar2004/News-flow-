@@ -1,0 +1,21 @@
+{
+  "topic": "DSA & Algorithms",
+  "title": "DSA & ALGORITHMS MASTERY",
+  "badge_tag": "Dsa Notes",
+  "slug": "dsa___algorithms",
+  "page_count": 3,
+  "brand_handle": "by @AlgoDaily",
+  "pdf_path": "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\data\\notes\\dsa___algorithms\\dsa___algorithms_notes.pdf",
+  "pdf_url": "/api/notes/dsa___algorithms/pdf",
+  "slide_paths": [
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\dsa___algorithms\\slide_01.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\dsa___algorithms\\slide_02.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\dsa___algorithms\\slide_03.png"
+  ],
+  "slide_urls": [
+    "/images/notes/dsa___algorithms/slide_01.png",
+    "/images/notes/dsa___algorithms/slide_02.png",
+    "/images/notes/dsa___algorithms/slide_03.png"
+  ],
+  "created_at": "2026-09-23T18:02:22.454623Z"
+}

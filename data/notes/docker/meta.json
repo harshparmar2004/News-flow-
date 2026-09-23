@@ -1,0 +1,23 @@
+{
+  "topic": "Docker",
+  "title": "Docker Architecture & CLI",
+  "badge_tag": "Docker Notes",
+  "slug": "docker",
+  "page_count": 4,
+  "brand_handle": "by @DevOps.Notes",
+  "pdf_path": "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\data\\notes\\docker\\docker_notes.pdf",
+  "pdf_url": "/api/notes/docker/pdf",
+  "slide_paths": [
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\docker\\slide_01.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\docker\\slide_02.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\docker\\slide_03.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\docker\\slide_04.png"
+  ],
+  "slide_urls": [
+    "/images/notes/docker/slide_01.png",
+    "/images/notes/docker/slide_02.png",
+    "/images/notes/docker/slide_03.png",
+    "/images/notes/docker/slide_04.png"
+  ],
+  "created_at": "2026-09-23T18:02:21.672448Z"
+}

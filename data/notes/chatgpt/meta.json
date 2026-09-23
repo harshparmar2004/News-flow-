@@ -1,0 +1,21 @@
+{
+  "topic": "ChatGPT",
+  "title": "CHATGPT MASTERY",
+  "badge_tag": "ChatGPT Notes",
+  "slug": "chatgpt",
+  "page_count": 3,
+  "brand_handle": "by @AI.CheatSheet",
+  "pdf_path": "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\data\\notes\\chatgpt\\chatgpt_notes.pdf",
+  "pdf_url": "/api/notes/chatgpt/pdf",
+  "slide_paths": [
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\chatgpt\\slide_01.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\chatgpt\\slide_02.png",
+    "C:\\Users\\harsh parmar\\Desktop\\news-auto-pipeline\\images\\notes\\chatgpt\\slide_03.png"
+  ],
+  "slide_urls": [
+    "/images/notes/chatgpt/slide_01.png",
+    "/images/notes/chatgpt/slide_02.png",
+    "/images/notes/chatgpt/slide_03.png"
+  ],
+  "created_at": "2026-09-23T18:02:22.079875Z"
+}
