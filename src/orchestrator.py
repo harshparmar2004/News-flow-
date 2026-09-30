@@ -282,8 +282,17 @@ def run_pipeline(max_articles: int | None = None):
     images = stage_image_gen(top_limit)
     sync_results = stage_sync_to_app2()
 
+    # Stage 5: Publish top-ranked stories directly to NewsFlow Web
+    web_published_count = 0
+    try:
+        from src.publishers.web_publisher import publish_all_ready
+        web_published_count = publish_all_ready(limit=top_limit)
+        logger.info(f"🌐 [NewsFlow Web] Published {web_published_count} high-impact stories directly to public website!")
+    except Exception as web_ex:
+        logger.warning(f"⚠️ [NewsFlow Web] Publishing warning: {web_ex}")
+
     elapsed = time.time() - start_time
-    synced_count = sync_results.get("synced_to_app2", 0)
+    synced_count = sync_results.get("synced_to_app2", 0) + web_published_count
     status_label = "stopped_by_user" if is_abort_requested() else "completed"
 
     try:
@@ -304,12 +313,14 @@ def run_pipeline(max_articles: int | None = None):
     except Exception as ex:
         logger.warning(f"Failed to record PipelineRun history: {ex}")
 
+    app2_count = sync_results.get("synced_to_app2", 0)
     logger.info("+----------------------------------------------------------+")
     logger.info(f"|   PIPELINE RUN {status_label.upper():<36}|")
     logger.info("+----------------------------------------------------------+")
     logger.info(f"|  New articles scraped:    {new_articles:<30}|")
     logger.info(f"|  Articles ranked/refined: {rewritten:<30}|")
     logger.info(f"|  Nano Banana images gen:  {images:<30}|")
-    logger.info(f"|  Ready for App 2 Transfer:{synced_count:<30}|")
+    logger.info(f"|  Synced to App 2:         {app2_count:<30}|")
+    logger.info(f"|  🌐 NewsFlow Web published:{web_published_count:<30}|")
     logger.info(f"|  Total execution time:    {elapsed:.1f}s{' ' * (29 - len(f'{elapsed:.1f}s'))}|")
     logger.info("+----------------------------------------------------------+")

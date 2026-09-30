@@ -193,10 +193,9 @@ class NotebookNotesGenerator:
         c.line(68, 44, PAGE_WIDTH - 25, 44)
 
         # Left series title
-        c.setFont("Kalam-Bold", 12.0)
+        c.setFont("Kalam-Bold", 12.5)
         c.setFillColor(colors.HexColor("#1e3a8a"))
-        left_text = f"NewsFlow · {topic}" if len(topic) <= 16 else f"NewsFlow · {topic[:14]}..."
-        c.drawString(70, 26, left_text)
+        c.drawString(70, 26, f"NewsFlow · {topic} Cheat Sheet")
 
         # Right watermark and page number
         c.setFont("Kalam-Bold", 12.5)

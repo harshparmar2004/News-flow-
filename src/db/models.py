@@ -86,6 +86,7 @@ class Article(Base):
     twitter_posted: Mapped[bool] = mapped_column(Boolean, default=False)
     instagram_queued: Mapped[bool] = mapped_column(Boolean, default=False)
     linkedin_queued: Mapped[bool] = mapped_column(Boolean, default=False)
+    web_posted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     def __repr__(self) -> str:
         return (
@@ -155,6 +156,9 @@ def init_db() -> None:
                 conn.commit()
             if "rank_reason" not in columns:
                 conn.execute(text("ALTER TABLE articles ADD COLUMN rank_reason TEXT"))
+                conn.commit()
+            if "web_posted" not in columns:
+                conn.execute(text("ALTER TABLE articles ADD COLUMN web_posted BOOLEAN DEFAULT 0"))
                 conn.commit()
     except Exception as ex:
         pass

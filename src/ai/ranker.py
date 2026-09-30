@@ -104,6 +104,25 @@ def rank_article(article_id: int, rules: Optional[Dict[str, Any]] = None) -> boo
         score = 75
         reason = "Meets baseline criteria for tech coverage."
 
+        # 0. Try TypeSafe Jev System 1 High-Speed Parallel Decision (Sub-150ms)
+        from src.ai.jev_triage import is_jev_configured, evaluate_with_jev
+        if is_jev_configured():
+            try:
+                jev_res = evaluate_with_jev(clean_title, body_sample, article.source or "Live Source")
+                if jev_res.get("success"):
+                    score = jev_res.get("rank_score", 75)
+                    domain = jev_res.get("domain", "tech")
+                    conf = int(jev_res.get("confidence", 0.95) * 100)
+                    lat = jev_res.get("latency_ms", 95)
+                    reason = f"TypeSafe Jev System 1 ({lat}ms): Domain [{domain}], Score {score}/100 (Conf: {conf}%)."
+                    article.rank_score = max(1, min(100, score))
+                    article.rank_reason = reason
+                    session.commit()
+                    logger.info(f"⚡ Article #{article_id} Jev Ranked Score {score}/100 in {lat}ms: {reason}")
+                    return True
+            except Exception as jerr:
+                logger.warning(f"TypeSafe Jev ranking failed: {jerr}. Proceeding to fallback.")
+
         # 1. Try Groq Llama 3.3 70B AI Agent Evaluation
         if groq_key and not groq_key.startswith("your_"):
             try:

@@ -146,7 +146,7 @@ const App = {
   },
 
   navigateTo(page, updateHash = true) {
-    if (!['scraped', 'space', 'dashboard', 'articles', 'sources', 'ranking', 'queue', 'media', 'notes', 'pipeline', 'logs', 'settings'].includes(page)) {
+    if (!['scraped', 'space', 'dashboard', 'articles', 'sources', 'ranking', 'queue', 'media', 'pipeline', 'logs', 'settings'].includes(page)) {
       page = 'dashboard';
     }
 
@@ -166,7 +166,6 @@ const App = {
       sources: { title: 'News Sources & Web Links', subtitle: 'Manage news source links, RSS feeds, and trigger automated crawlers' },
       ranking: { title: '2. AI News Rank & Refine Engine', subtitle: 'Scores news from 1 to 100 based on custom AI parameters and refines raw text' },
       media: { title: '3. Studio (Nano Banana Graphic Engine)', subtitle: 'Custom visual prompt studio & 4-slide catalog carousel generator powered by Nano Banana 2' },
-      notes: { title: '4. Tech Notes & Instagram Carousel Studio', subtitle: 'Handwritten spiral-notebook cheat sheets, architecture diagrams, and 1080x1350 PNG carousels with tech logos' },
       articles: { title: 'Refined Content Vault & Calendar Archive', subtitle: 'Database of refined news, scores, and generated Nano Banana visual assets' },
       pipeline: { title: 'Research & Graphic Workflow Diagram', subtitle: 'Scrape ➔ Rank & Refine ➔ Nano Banana Image Generation workflow' },
       logs: { title: 'System Logs Stream', subtitle: 'Live terminal stream from pipeline.log' },
@@ -196,8 +195,6 @@ const App = {
       QueuePage.render(container);
     } else if (page === 'media' && typeof MediaPage !== 'undefined') {
       MediaPage.render(container);
-    } else if (page === 'notes' && typeof NotesStudioPage !== 'undefined') {
-      NotesStudioPage.render(container);
     } else if (page === 'pipeline' && typeof PipelinePage !== 'undefined') {
       PipelinePage.render(container);
     } else if (page === 'logs' && typeof LogsPage !== 'undefined') {
