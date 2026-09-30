@@ -1,0 +1,86 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Category {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  slug          String    @unique
+  description   String?
+  display_order Int       @default(0)
+  articles      Article[]
+  created_at    DateTime  @default(now())
+}
+
+model Article {
+  id                   String    @id @default(cuid())
+  slug                 String    @unique
+  title                String
+  summary              String
+  body                 String
+  cover_image_url      String?
+  gallery_images       String?
+  categoryId           String
+  category             Category  @relation(fields: [categoryId], references: [id])
+  tags                 String?
+  author               String    @default("NewsFlow AI")
+  published_at         DateTime  @default(now())
+  status               String    @default("published")
+  rank_score           Int       @default(75)
+  is_featured          Boolean   @default(false)
+  views_count          Int       @default(0)
+  reading_time_minutes Int       @default(3)
+  source_url           String?
+  affiliate_links      String?
+  seo_meta             String?
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([status, published_at])
+}
+
+model NewsletterSubscriber {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  subscribed_at DateTime @default(now())
+  status        String   @default("active")
+}
+
+model AdminUser {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+}
+
+model SystemSetting {
+  key        String   @id
+  value      String
+  updated_at DateTime @updatedAt
+}
+
+model DomainAd {
+  id          String   @id @default(cuid())
+  domain      String   // "global", "ai-robotics", "startups-vc", "gadgets-hardware", "cybersecurity", "policy-big-tech", "tech"
+  slot        String   // "top_300x250" or "bottom_300x600"
+  ad_type     String   @default("banner") // "banner" | "custom_html"
+  title       String?
+  sponsor     String?
+  image_url   String?
+  link_url    String?
+  html_code   String?
+  is_active   Boolean  @default(true)
+  impressions Int      @default(0)
+  clicks      Int      @default(0)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@unique([domain, slot])
+  @@index([domain, slot, is_active])
+}
