@@ -519,17 +519,20 @@ const ArticlesPage = {
                 const domain = a.source_domain || (a.url ? a.url.split('/')[2] : '');
                 const cleanExcerpt = a.refined_body || '';
 
-                // Slide deck badge
+                // Slide deck or Authentic Scraped Photo badge
                 const hasDeck = (a.slide_count && a.slide_count >= 4) || (a.slide_urls && a.slide_urls.length >= 4);
+                const hasScraped = Boolean(a.scraped_image_path || a.scraped_image_url);
                 const hasAnyImage = a.has_image || (a.slide_urls && a.slide_urls.length > 0);
 
                 let slideHtml = '';
                 if (hasDeck) {
                   slideHtml = `<span class="badge" style="background: rgba(193, 53, 132, 0.12); color: #c13584; border: 1px solid rgba(193, 53, 132, 0.3); font-weight: 700;">✨ 4 Slides Deck</span>`;
+                } else if (hasScraped) {
+                  slideHtml = `<span class="badge" style="background: rgba(46, 125, 50, 0.12); color: #2e7d32; border: 1px solid rgba(46, 125, 50, 0.3); font-weight: 700;">📷 Editorial Photo</span>`;
                 } else if (hasAnyImage) {
                   slideHtml = `<span class="badge" style="background: rgba(43, 123, 185, 0.1); color: #2b7bb9; border: 1px solid rgba(43, 123, 185, 0.3);">1 Visual</span>`;
                 } else {
-                  slideHtml = `<span style="font-size: 0.72rem; color: var(--text-dim);">Queue Render</span>`;
+                  slideHtml = `<span style="font-size: 0.72rem; color: var(--text-dim);">No Photo</span>`;
                 }
 
                 // Platform badges
@@ -634,9 +637,10 @@ const ArticlesPage = {
           const domain = a.source_domain || (a.url ? a.url.split('/')[2] : '');
           const cleanExcerpt = a.refined_body || '';
 
-          // Slides preview
+          // Photo / Slides preview
           const slides = a.slide_urls || [];
-          const hasCover = a.image_url || (slides.length > 0 ? slides[0] : null);
+          const scrapedImg = a.scraped_image_path || null;
+          const hasCover = scrapedImg || a.image_url || (slides.length > 0 ? slides[0] : null);
 
           return `
             <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 14px; padding: 18px; border-radius: 12px; transition: transform 0.15s ease, border-color 0.15s ease;" onmouseenter="this.style.borderColor='rgba(217, 119, 87, 0.4)'" onmouseleave="this.style.borderColor='var(--border-color)'">
@@ -673,8 +677,15 @@ const ArticlesPage = {
                   </p>
                 ` : ''}
 
-                <!-- Slide Deck Preview Strip (if available) -->
-                ${slides.length > 0 ? `
+                <!-- Authentic Editorial Photo or Slide Deck Preview Strip -->
+                ${scrapedImg ? `
+                  <div style="margin-bottom: 12px; border-radius: 8px; overflow: hidden; max-height: 200px; border: 1px solid var(--border-color); position: relative; background: var(--bg-surface);">
+                    <img src="${scrapedImg}" alt="Editorial Photo" style="width: 100%; height: 200px; object-fit: cover;" onerror="this.parentElement.style.display='none'">
+                    <span style="position: absolute; bottom: 6px; left: 8px; font-size: 0.68rem; font-weight: 700; background: rgba(0,0,0,0.7); color: #fff; padding: 2px 8px; border-radius: 4px; backdrop-filter: blur(4px);">
+                      📷 Authentic Scraped Photo
+                    </span>
+                  </div>
+                ` : slides.length > 0 ? `
                   <div style="display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px;">
                     ${slides.map((s, idx) => `
                       <a href="${s}" target="_blank" style="flex-shrink: 0; width: 64px; height: 42px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-color); position: relative; display: block;" title="Slide ${idx + 1}">

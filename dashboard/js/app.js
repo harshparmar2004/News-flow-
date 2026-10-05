@@ -400,20 +400,30 @@ const App = {
           </div>
         ` : ''}
 
-        <!-- Nano Banana Generated 4-Slide Graphic Deck -->
-        <div class="modal-section" style="margin-bottom: 16px;">
-          <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; margin-bottom: 10px;">🎨 Nano Banana 4-Slide Graphic Deck</h4>
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-            ${[1, 2, 3, 4].map(num => `
-              <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: #ffffff; padding: 6px; text-align: center;">
-                <div style="height: 90px; background: var(--bg-surface); border-radius: 6px; overflow: hidden; margin-bottom: 4px;">
-                  <img src="/api/images/${data.id}_slide${num}.png" alt="Slide ${num}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.src='/api/placeholder/400/220'" />
-                </div>
-                <span style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted);">Slide ${num}</span>
-              </div>
-            `).join('')}
+        <!-- Visual Asset: Authentic Editorial Photo -->
+        ${data.scraped_image_path ? `
+          <div class="modal-section" style="margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700;">📷 Authentic Editorial Photo (Scraped)</h4>
+              <a href="${data.scraped_image_path}" target="_blank" class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.72rem; text-decoration: none;">
+                Open Full Size ↗
+              </a>
+            </div>
+            <div style="border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-surface); max-height: 280px; text-align: center;">
+              <img src="${data.scraped_image_path}" alt="Scraped Editorial Photo" style="width: 100%; max-height: 280px; object-fit: cover;" onerror="this.parentElement.style.display='none'">
+            </div>
           </div>
-        </div>
+        ` : ''}
+
+        <!-- Synthesized Structured Tech Notes -->
+        ${(data.ai_content && (data.ai_content.instagram_caption || data.ai_content.linkedin_text)) ? `
+          <div class="modal-section" style="margin-bottom: 16px;">
+            <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; margin-bottom: 8px;">📓 Synthesized Tech Notes & Executive Brief</h4>
+            <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color); font-size: 0.84rem; color: var(--text-main); line-height: 1.55; white-space: pre-wrap; font-family: var(--font-mono); max-height: 220px; overflow-y: auto;">
+${data.ai_content.instagram_caption || data.ai_content.linkedin_text}
+            </div>
+          </div>
+        ` : ''}
 
         <!-- Original Extracted Body Content -->
         <div class="modal-section">

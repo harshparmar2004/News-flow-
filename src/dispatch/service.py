@@ -136,15 +136,28 @@ def get_article_dispatch_payload(article: Article) -> dict:
                 "resolution": "1080x1350"
             })
 
-    if not slide_urls and article.image_path and os.path.exists(article.image_path):
-        slide_urls.append(f"/api/images/{article.id}.png")
-        slide_details.append({
-            "slide_index": 1,
-            "role": "Single Visual Asset",
-            "url": f"/api/images/{article.id}.png",
-            "file_size": os.path.getsize(article.image_path),
-            "resolution": "1080x1350"
-        })
+    if not slide_urls:
+        if getattr(article, "scraped_image_path", None) and os.path.exists(article.scraped_image_path):
+            scraped_filename = os.path.basename(article.scraped_image_path)
+            scraped_local_url = f"/images/scraped/{scraped_filename}"
+            slide_urls.append(scraped_local_url)
+            slide_details.append({
+                "slide_index": 1,
+                "role": "Authentic Editorial Photo",
+                "url": scraped_local_url,
+                "file_size": os.path.getsize(article.scraped_image_path),
+                "resolution": "Original Scraped Editorial"
+            })
+        elif article.image_path and os.path.exists(article.image_path):
+            img_filename = os.path.basename(article.image_path)
+            slide_urls.append(f"/images/{img_filename}")
+            slide_details.append({
+                "slide_index": 1,
+                "role": "Single Visual Asset",
+                "url": f"/images/{img_filename}",
+                "file_size": os.path.getsize(article.image_path),
+                "resolution": "1080x1350"
+            })
 
     return {
         "metadata": {

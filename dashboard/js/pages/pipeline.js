@@ -21,7 +21,7 @@ const PipelinePage = {
               Pipeline Workflow & API Dispatch Engine
             </h3>
             <p style="font-size: 0.85rem; color: var(--text-muted);">
-              Automated multi-stage flow: Web Ingest ➔ AI Rank & Refine ➔ Nano Banana 4-Slide Studio ➔ Partner App Transfer.
+              Automated multi-stage flow: Web Ingest & Photos ➔ AI Rank & Score ➔ Tech-Notes Synthesis ➔ Partner App Transfer.
             </p>
           </div>
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
@@ -80,7 +80,7 @@ const PipelinePage = {
                 Dispatch Pacing & Throttle Speed:
               </span>
               <span style="font-size: 0.76rem; color: var(--text-muted);">
-                Controls how many articles & 4-slide decks are transmitted to App 2
+                Controls how many articles & authentic editorial photos are transmitted to App 2
               </span>
             </div>
 
@@ -153,7 +153,7 @@ const PipelinePage = {
                 Outbound API Dispatch Roster
               </h4>
               <p style="font-size: 0.8rem; color: var(--text-muted);">
-                Clean verified status of content and 4-slide visual decks sent to your connected partner application.
+                Verified status of Tech Notes and authentic editorial photos sent to your connected partner application.
               </p>
             </div>
             <button class="btn btn-secondary" onclick="PipelinePage.loadDispatchData()" style="padding: 4px 10px; font-size: 0.76rem;">
@@ -404,8 +404,8 @@ const PipelinePage = {
             <!-- Col 2: Assets Package (Simple, theme-matched) -->
             <td style="padding: 12px 14px; text-align: center; vertical-align: middle;">
               <div style="display: inline-flex; flex-direction: column; align-items: center; gap: 3px;">
-                <span class="badge" style="font-size: 0.72rem; font-weight: 700; ${hasDeck ? 'background: rgba(193, 53, 132, 0.12); color: #c13584; border: 1px solid rgba(193, 53, 132, 0.3);' : 'background: var(--bg-surface); color: var(--text-muted);'}">
-                  ${hasDeck ? '✨ 4 Slides Deck + Text' : `${slides.length} Image + Text`}
+                <span class="badge" style="font-size: 0.72rem; font-weight: 700; ${hasDeck ? 'background: rgba(193, 53, 132, 0.12); color: #c13584; border: 1px solid rgba(193, 53, 132, 0.3);' : (a.scraped_image_path || slides.length) ? 'background: rgba(46,125,50,0.12); color: #2e7d32; border: 1px solid rgba(46,125,50,0.3);' : 'background: var(--bg-surface); color: var(--text-muted);'}">
+                  ${hasDeck ? '✨ 4 Slides Deck + Text' : (a.scraped_image_path || slides.length) ? '📷 Editorial Photo + Tech Notes' : '📝 Tech Notes'}
                 </span>
                 <span style="font-size: 0.68rem; color: var(--text-muted);">
                   ${isDelivered ? 'Done & Synced ✅' : 'Ready for transfer'}
@@ -463,7 +463,7 @@ const PipelinePage = {
   },
 
   async dispatchSingleArticle(articleId) {
-    App.showToast(`Transmitting story #${articleId} + 4-slide deck to App 2...`, 'info');
+    App.showToast(`Transmitting story #${articleId} + authentic photo to App 2...`, 'info');
     try {
       const res = await App.fetchApi(`/api/dispatch/send/${articleId}`, { method: 'POST' });
       if (res.success) {
@@ -486,7 +486,7 @@ const PipelinePage = {
 
     try {
       const res = await App.fetchApi('/api/dispatch/send-batch?count=5', { method: 'POST' });
-      App.showToast(`Transmitted batch of ${res.dispatched_count} stories with slides to App 2!`, 'success');
+      App.showToast(`Transmitted batch of ${res.dispatched_count} stories with authentic photos to App 2!`, 'success');
       await this.loadPipelineData();
       await this.loadDispatchData();
     } catch (e) {

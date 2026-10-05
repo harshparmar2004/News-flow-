@@ -258,6 +258,54 @@ def download_and_cache_image(image_url: str, article_id: Any) -> Optional[str]:
         return None
 
 
+def scrape_and_cache_article_image(article_id: int) -> Optional[str]:
+    """
+    Ensures the authentic editorial image for a given article is scraped and cached locally.
+    1. If article already has valid scraped_image_path on disk, returns it.
+    2. If article has scraped_image_url, attempts to download and cache it.
+    3. If neither, fetches article HTML from article.url, extracts lead image, downloads & caches it.
+    Updates the database record and returns the cached local path, or None.
+    """
+    from src.db.models import Article, get_session
+    import trafilatura
+
+    with get_session() as session:
+        art = session.query(Article).filter(Article.id == article_id).first()
+        if not art:
+            return None
+
+        # Check if already cached and exists
+        if art.scraped_image_path and os.path.exists(art.scraped_image_path):
+            return art.scraped_image_path
+
+        img_url = art.scraped_image_url
+
+        # If no image URL, fetch page HTML
+        if not img_url and art.url:
+            try:
+                html = trafilatura.fetch_url(art.url)
+                if not html:
+                    resp = requests.get(art.url, headers=HEADERS, timeout=8)
+                    if resp.status_code == 200:
+                        html = resp.text
+                if html:
+                    img_url = extract_image_from_html(html, art.url)
+                    if img_url:
+                        art.scraped_image_url = img_url
+            except Exception as ex:
+                logger.debug(f"Failed to fetch HTML for article #{article_id}: {ex}")
+
+        if img_url:
+            local_path = download_and_cache_image(img_url, art.id)
+            if local_path:
+                art.scraped_image_path = local_path
+                session.commit()
+                return local_path
+
+        session.commit()
+        return None
+
+
 def backfill_scraped_images(limit: int = 50) -> int:
     """
     Backfills missing scraped images for existing articles in the database.

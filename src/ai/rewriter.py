@@ -58,16 +58,29 @@ def rewrite_article(article_id: int) -> bool:
             f"Title: {article.title}\n"
             f"Source Publication: {article.source}\n"
             f"Original URL: {article.url}\n"
-            f"Article Content: {article.body}\n\n"
-            f"Act as a premier AI technology journalist and analyst for the '{niche}' ecosystem.\n"
-            f"Synthesize our own original, highly insightful editorial context based on this scraped report from {article.source}.\n"
-            f"Reference the scraped source ({article.source}) clearly and professionally. Ensure all sentences are grammatically complete and end with proper punctuation.\n"
+            f"Article Content: {article.body[:3500]}\n\n"
+            f"Act as a premier systems analyst and tech notes author for the '{niche}' ecosystem.\n"
+            f"Synthesize this news story into our signature structured 'Tech Notes & Architecture Brief' style.\n"
+            f"Use structured headings with star bullets (* 1., * 2.), technical clarity, bulleted key specs, and zero fluff.\n"
             f"Return strictly a JSON object with these keys:\n"
-            "- 'twitter_text': sharp, high-impact tweet under 280 characters with hashtags and credit to the source\n"
-            "- 'linkedin_text': strategic 2-paragraph analysis exploring market disruption, key takeaways, and a call for professional commentary\n"
-            "- 'instagram_caption': compelling 2-paragraph summary with key takeaways and 5-8 relevant hashtags\n"
-            "- 'reddit_title': informative, objective headline under 300 characters framing the core breakthrough\n"
-            "- 'reddit_body': 2 comprehensive paragraphs providing context, analysis of industry impact, source reference, and an engaging discussion question for the community\n"
+            "- 'twitter_text': sharp tech brief under 280 chars with key metric/takeaway, source credit via @{article.source}, and hashtags\n"
+            "- 'linkedin_text': Executive Tech Briefing formatted as:\n"
+            "  * 1. What Happened: (Core breakthrough in 1-2 punchy sentences)\n"
+            "  * 2. Key Technical Specs & Takeaways: (3 distinct bullet points with data/specs)\n"
+            "  * 3. Industry Impact: (Strategic analysis for engineers & tech leaders)\n"
+            "  * 4. Discussion: (Engaging technical question)\n"
+            "- 'instagram_caption': Ready-to-post Instagram tech notes post formatted as:\n"
+            "  📓 TECH NOTES · {article.title}\n\n"
+            "  * 1. Overview & Context:\n"
+            "  • [Concise breakdown]\n\n"
+            "  * 2. Key Architectural Takeaways:\n"
+            "  • [Specs/Features]\n\n"
+            "  * 3. Why It Matters:\n"
+            "  • [Impact]\n\n"
+            "  • Source: @{article.source}\n"
+            "  5-8 relevant hashtags.\n"
+            "- 'reddit_title': informative, objective technical headline under 300 characters framing the core breakthrough\n"
+            "- 'reddit_body': Complete structured technical discussion breakdown with Overview, Key Specs, Reference, and Community Debate Question\n"
         )
 
         data = None
@@ -160,22 +173,67 @@ def rewrite_article(article_id: int) -> bool:
                 raw_sentences = [s.strip() for s in article.body.replace("\n", " ").split(".") if len(s.strip()) > 15]
                 for s in raw_sentences:
                     sentences.append(s)
-                    if len(" ".join(sentences)) >= 250:
+                    if len(sentences) >= 4:
                         break
             
-            if sentences:
-                extracted_context = ". ".join(sentences) + "."
-            else:
-                extracted_context = f"Leading industry coverage from {article.source} highlights key strategic shifts surrounding '{clean_title}', signaling notable ecosystem disruption."
+            overview = sentences[0] + "." if len(sentences) > 0 else f"{clean_title} marks a significant development from {article.source}."
+            takeaway1 = sentences[1] + "." if len(sentences) > 1 else f"Ecosystem alignment and technical infrastructure shifts reported across {article.source}."
+            takeaway2 = sentences[2] + "." if len(sentences) > 2 else f"Critical implications for developers and engineering leaders operating within {niche}."
+            impact = sentences[3] + "." if len(sentences) > 3 else f"Strategic validation indicates ongoing evolution across the {niche} market."
 
-            tags = f"#{niche.replace(' ', '').replace(',', '').replace('&', '')} #TechNews #Innovation #AI"
+            clean_tag = "".join(ch for ch in niche if ch.isalnum())
+            tags = f"#{clean_tag} #TechNotes #Architecture #Engineering #Innovation"
+
+            twitter_text = f"🚨 {clean_title[:175]}...\n\n• Key: {takeaway1[:70]}...\n\nvia @{article.source} #{clean_tag} #TechNotes"
+            
+            linkedin_text = (
+                f"📌 Executive Tech Brief: {clean_title}\n\n"
+                f"* 1. What Happened:\n"
+                f"• {overview}\n\n"
+                f"* 2. Key Technical Specs & Takeaways:\n"
+                f"• {takeaway1}\n"
+                f"• {takeaway2}\n\n"
+                f"* 3. Industry Impact:\n"
+                f"• {impact}\n\n"
+                f"* 4. Technical Perspective:\n"
+                f"• How does this align with your team's current architecture and tooling?\n\n"
+                f"Source: {article.source} | {tags}"
+            )
+            
+            instagram_caption = (
+                f"📓 TECH NOTES · {clean_title}\n\n"
+                f"* 1. Overview & Context:\n"
+                f"• {overview}\n\n"
+                f"* 2. Key Architectural Takeaways:\n"
+                f"• {takeaway1}\n"
+                f"• {takeaway2}\n\n"
+                f"* 3. Why It Matters:\n"
+                f"• {impact}\n\n"
+                f"• Source: @{article.source}\n"
+                f"• Reference: {article.url}\n\n"
+                f"{tags}"
+            )
+
+            reddit_title = f"[Analysis] {clean_title} — Architecture Breakdown & Discussion"
+            reddit_body = (
+                f"### 📓 Technical Briefing: {clean_title}\n\n"
+                f"**1. Overview**\n"
+                f"{overview}\n\n"
+                f"**2. Key Technical Points**\n"
+                f"- {takeaway1}\n"
+                f"- {takeaway2}\n\n"
+                f"**3. Industry Implications**\n"
+                f"{impact}\n\n"
+                f"**Source Coverage:** [{article.source}]({article.url})\n\n"
+                f"What are your thoughts on this move and how it compares to alternative approaches?"
+            )
 
             data = {
-                "twitter_text": f"🚨 {clean_title[:180]}... via @{article.source}\n\n{tags[:40]}",
-                "linkedin_text": f"📌 Strategic Analysis: {clean_title}\n\n{extracted_context}\n\nThis development from {article.source} marks a notable milestone for {niche}. What is your perspective on this direction?\n\n{tags}",
-                "instagram_caption": f"✨ In-Depth: {clean_title}\n\n{extracted_context}\n\nOriginally reported by {article.source}. Drop your thoughts below! 👇\n\n{tags} #NewsFlow",
-                "reddit_title": f"{clean_title} — Analysis & Discussion",
-                "reddit_body": f"{extracted_context}\n\nWhat are your thoughts on this move and its broader impact on the ecosystem?\n\nReference: {article.source} ({article.url})"
+                "twitter_text": twitter_text,
+                "linkedin_text": linkedin_text,
+                "instagram_caption": instagram_caption,
+                "reddit_title": reddit_title,
+                "reddit_body": reddit_body
             }
 
         # Save rewritten content to DB

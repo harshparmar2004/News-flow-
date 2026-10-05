@@ -309,8 +309,8 @@ def list_articles(
                 "refined_body": raw_body,
                 "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None,
                 "published_at": a.published_at.isoformat() if a.published_at else None,
-                "has_image": len(slide_urls) > 0,
-                "image_url": slide_urls[0] if slide_urls else None,
+                "has_image": len(slide_urls) > 0 or (scraped_web_path is not None),
+                "image_url": (slide_urls[0] if slide_urls else scraped_web_path),
                 "slide_urls": slide_urls,
                 "slide_count": len(slide_urls),
                 "scraped_image_url": a.scraped_image_url,
@@ -342,6 +342,10 @@ def get_article(article_id: int):
         if not a:
             raise HTTPException(status_code=404, detail="Article not found")
 
+        scraped_web_path = None
+        if a.scraped_image_path and os.path.exists(a.scraped_image_path):
+            scraped_web_path = f"/images/scraped/{os.path.basename(a.scraped_image_path)}"
+
         return {
             "id": a.id,
             "url_hash": a.url_hash,
@@ -353,6 +357,8 @@ def get_article(article_id: int):
             "category": a.category,
             "subreddit": a.subreddit,
             "status": a.status,
+            "rank_score": getattr(a, "rank_score", 75) or 75,
+            "rank_reason": getattr(a, "rank_reason", None),
             "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None,
             "published_at": a.published_at.isoformat() if a.published_at else None,
             "ai_content": {
@@ -362,8 +368,10 @@ def get_article(article_id: int):
                 "reddit_title": a.reddit_title,
                 "reddit_body": a.reddit_body,
             },
+            "scraped_image_url": a.scraped_image_url,
+            "scraped_image_path": scraped_web_path,
             "image_path": a.image_path,
-            "image_url": f"/api/images/{a.id}.png" if a.image_path and os.path.exists(a.image_path) else None,
+            "image_url": scraped_web_path or (f"/api/images/{a.id}.png" if a.image_path and os.path.exists(a.image_path) else None),
             "posting_status": {
                 "reddit": a.reddit_posted,
                 "twitter": a.twitter_posted,
