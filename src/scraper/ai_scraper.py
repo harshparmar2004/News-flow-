@@ -77,9 +77,18 @@ def scrape_with_ai(source: Dict[str, Any]) -> List[Dict[str, Any]]:
                     raw_articles = parsed.get("articles", [])
                     
                     articles = []
+                    ai_img_url = None
+                    try:
+                        from src.scraper.image_scraper import extract_image_from_html
+                        if html:
+                            ai_img_url = extract_image_from_html(html, url)
+                    except Exception:
+                        pass
+
                     for item in raw_articles[:max_articles]:
                         t = item.get("headline") or item.get("title")
                         b = item.get("body") or item.get("text")
+                        item_img = item.get("image") or item.get("image_url") or ai_img_url
                         if t and b:
                             articles.append({
                                 "title": str(t).strip(),
@@ -89,7 +98,8 @@ def scrape_with_ai(source: Dict[str, Any]) -> List[Dict[str, Any]]:
                                 "published_at": datetime.utcnow().isoformat(),
                                 "source": source_name,
                                 "category": category,
-                                "subreddit": subreddit
+                                "subreddit": subreddit,
+                                "scraped_image_url": item_img
                             })
                     if articles:
                         logger.info(f"Groq AI Scraper successfully extracted {len(articles)} articles from {source_name}!")

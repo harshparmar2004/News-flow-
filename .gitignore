@@ -4,6 +4,8 @@ __pycache__/
 *.pyc
 logs/*.log
 images/*.png
+images/scraped/*
+data/notes/*
 queue/instagram/*/
 queue/linkedin/*/
 .venv/

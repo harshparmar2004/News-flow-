@@ -57,6 +57,8 @@ class Article(Base):
     author: Mapped[str | None] = mapped_column(String(200), nullable=True)
     published_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     scraped_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    scraped_image_url: Mapped[str | None] = mapped_column(Text, nullable=True)   # Original image URL from scraped website
+    scraped_image_path: Mapped[str | None] = mapped_column(Text, nullable=True)  # Locally cached image file path
 
     # --- AI-generated content (4 platforms) ---
     twitter_text: Mapped[str | None] = mapped_column(Text, nullable=True)         # ≤280 chars, text-only
@@ -159,6 +161,12 @@ def init_db() -> None:
                 conn.commit()
             if "web_posted" not in columns:
                 conn.execute(text("ALTER TABLE articles ADD COLUMN web_posted BOOLEAN DEFAULT 0"))
+                conn.commit()
+            if "scraped_image_url" not in columns:
+                conn.execute(text("ALTER TABLE articles ADD COLUMN scraped_image_url TEXT"))
+                conn.commit()
+            if "scraped_image_path" not in columns:
+                conn.execute(text("ALTER TABLE articles ADD COLUMN scraped_image_path TEXT"))
                 conn.commit()
     except Exception as ex:
         pass

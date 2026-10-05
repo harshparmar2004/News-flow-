@@ -1,10 +1,11 @@
 /**
  * Dedicated Raw Scraped Data Vault Page Renderer (#scraped)
- * Displays all raw website data ingested from web scraper links in dedicated card boxes.
+ * Displays all raw website data ingested from web scraper links in dedicated card boxes,
+ * including authentic lead photos scraped directly from source websites.
  */
 const ScrapedPage = {
   articles: [],
-  currentRunScope: 'latest', // Default to latest run to avoid scroll clutter
+  currentRunScope: 'latest',
 
   async render(container) {
     container.innerHTML = `
@@ -21,6 +22,9 @@ const ScrapedPage = {
               </span>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
+              <button class="btn btn-secondary" onclick="ScrapedPage.triggerBackfill()" style="padding: 5px 12px; font-size: 0.78rem; display: flex; align-items: center; gap: 5px;" title="Scrapes authentic lead photos from websites for existing articles">
+                <span>📸</span> Fetch Website Photos
+              </button>
               <button class="btn btn-secondary" onclick="ScrapedPage.loadScrapedData()" style="padding: 5px 12px; font-size: 0.78rem;">
                 <i data-lucide="refresh-cw"></i> Refresh
               </button>
@@ -49,8 +53,8 @@ const ScrapedPage = {
           </div>
         </div>
 
-        <!-- Raw Scraped Data Boxes Grid (Compact 290px Min Width) -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px;" id="raw-scraped-boxes-grid">
+        <!-- Raw Scraped Data Boxes Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px;" id="raw-scraped-boxes-grid">
           <div class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 40px;"><p>Loading raw scraped web content...</p></div>
         </div>
 
@@ -58,7 +62,6 @@ const ScrapedPage = {
     `;
 
     if (window.lucide) window.lucide.createIcons();
-
     await this.loadScrapedData();
   },
 
@@ -73,6 +76,17 @@ const ScrapedPage = {
     await this.loadScrapedData();
   },
 
+  async triggerBackfill() {
+    App.showToast("Fetching authentic lead photos from source websites...", "info");
+    try {
+      const res = await App.fetchApi('/api/scraped/backfill-images?limit=30', { method: 'POST' });
+      App.showToast(res.message || "Images updated successfully!", "success");
+      await this.loadScrapedData();
+    } catch (e) {
+      App.showToast("Failed to fetch images: " + e.message, "error");
+    }
+  },
+
   async loadScrapedData() {
     const grid = document.getElementById('raw-scraped-boxes-grid');
     const countLabel = document.getElementById('raw-total-count');
@@ -83,7 +97,6 @@ const ScrapedPage = {
       this.articles = data.articles || [];
 
       if (countLabel) countLabel.textContent = this.articles.length;
-
       this.renderBoxes(this.articles);
 
     } catch (e) {
@@ -107,7 +120,7 @@ const ScrapedPage = {
 
   formatHeadline(title) {
     if (!title) return '';
-    return title.replace(/(\$\d[\d,.]*|\b\d+%\b)/g, '<span style="color: #D97B3F; font-weight: 700;">$1</span>');
+    return title.replace(/(\\$\d[\d,.]*|\b\d+%\b)/g, '<span style="color: #D97B3F; font-weight: 700;">$1</span>');
   },
 
   renderBoxes(items) {
@@ -120,20 +133,32 @@ const ScrapedPage = {
     }
 
     grid.innerHTML = items.map(a => {
-      const bodySnippet = a.body ? (a.body.length > 200 ? a.body.substring(0, 200) + '...' : a.body) : 'Raw web headline extracted.';
+      const bodySnippet = a.body ? (a.body.length > 180 ? a.body.substring(0, 180) + '...' : a.body) : 'Raw web headline extracted.';
       const formattedTitle = this.formatHeadline(a.title);
+
+      const imageBanner = a.scraped_image_path ? `
+        <div style="width: 100%; height: 145px; border-radius: 10px; overflow: hidden; margin-bottom: 12px; background: #26221F; position: relative;">
+          <img src="${a.scraped_image_path}" alt="Scraped Website Photo" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.style.display='none'">
+          <span style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px); color: #ffffff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            <span>📸</span> Website Lead Photo
+          </span>
+        </div>
+      ` : '';
 
       return `
         <div class="glass-card article-box-card" style="padding: 16px 18px; background: #ffffff; border-radius: 14px; border: 1px solid #E8E0D4; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
           
           <div>
+            <!-- Authentic Scraped Image -->
+            ${imageBanner}
+
             <!-- Header: Source Pill + Raw Badge -->
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
               <span style="background: rgba(217, 119, 87, 0.12); color: #cc6343; border: 1px solid rgba(217, 119, 87, 0.28); font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; padding: 4px 10px; border-radius: 6px;">
                 ${a.source || 'Web Source'}
               </span>
               <span style="font-size: 0.68rem; font-weight: 700; color: #8A8175; background: #F6F1EA; padding: 4px 8px; border-radius: 6px; text-transform: uppercase;">
-                RAW ITEM #${a.id}
+                RAW #${a.id}
               </span>
             </div>
 

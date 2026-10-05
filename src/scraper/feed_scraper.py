@@ -121,6 +121,18 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
                 logger.warning(f"Could not extract body text for {url}, skipping.")
                 continue
 
+            # Extract authentic lead image from RSS entry, HTML, or newspaper3k
+            scraped_img_url = None
+            try:
+                from src.scraper.image_scraper import extract_image_from_feed_entry, extract_image_from_html
+                scraped_img_url = extract_image_from_feed_entry(entry, url)
+                if not scraped_img_url and downloaded:
+                    scraped_img_url = extract_image_from_html(downloaded, url)
+                if not scraped_img_url and 'np_article' in locals() and hasattr(np_article, 'top_image') and np_article.top_image:
+                    scraped_img_url = np_article.top_image
+            except Exception as img_err:
+                logger.debug(f"Image extraction error for {url}: {img_err}")
+
             articles.append({
                 'title': title,
                 'url': url,
@@ -129,7 +141,8 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
                 'published_at': published_at,
                 'source': name,
                 'category': category,
-                'subreddit': subreddit
+                'subreddit': subreddit,
+                'scraped_image_url': scraped_img_url
             })
 
         except Exception as e:

@@ -29,7 +29,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:41:39.008755",
+      "dispatched_at": "2026-10-01T06:55:57.304531",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -42,7 +42,7 @@
       "payload_summary": {
         "title": "Travis Kalanick kicks off another round of VC bashing: \u20181% are helpful\u2019",
         "domain": "techcrunch.com",
-        "score": 98,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 4
@@ -55,7 +55,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:05:54.240055",
+      "dispatched_at": "2026-10-01T06:51:30.506514",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -81,7 +81,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:41:47.269242",
+      "dispatched_at": "2026-10-01T06:55:24.475813",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -94,7 +94,7 @@
       "payload_summary": {
         "title": "OpenAI slows down training after its AI carried out hack",
         "domain": "bbc.co.uk",
-        "score": 89,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 4
@@ -107,7 +107,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:41:51.402152",
+      "dispatched_at": "2026-10-01T06:53:50.152051",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -120,7 +120,7 @@
       "payload_summary": {
         "title": "VentureBeat names Rob Strechay as its first Lead Analyst, expanding its enterprise AI research push",
         "domain": "venturebeat.com",
-        "score": 87,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 4
@@ -133,7 +133,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:16.074084",
+      "dispatched_at": "2026-10-01T06:56:46.568265",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -146,7 +146,7 @@
       "payload_summary": {
         "title": "Nielsen is leaning more on wearables to hear what people are watching",
         "domain": "theverge.com",
-        "score": 86,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 4
@@ -159,7 +159,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:11.949093",
+      "dispatched_at": "2026-10-01T06:55:44.996470",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -172,7 +172,7 @@
       "payload_summary": {
         "title": "The wearable future is stuck in weird, experimental, existential limbo",
         "domain": "theverge.com",
-        "score": 86,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 4
@@ -185,7 +185,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:07.819116",
+      "dispatched_at": "2026-10-01T06:54:43.549446",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -198,7 +198,7 @@
       "payload_summary": {
         "title": "The role of the astronaut is in flux",
         "domain": "technologyreview.com",
-        "score": 86,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 4
@@ -211,7 +211,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:03.719514",
+      "dispatched_at": "2026-10-01T06:53:41.813055",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -224,7 +224,7 @@
       "payload_summary": {
         "title": "Block\u2019s new Apache 2.0 agent workspace Berd works across models and harnesses, stores conversation history locally",
         "domain": "venturebeat.com",
-        "score": 86,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 4
@@ -237,7 +237,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:07:04.185196",
+      "dispatched_at": "2026-10-01T06:52:40.271541",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -263,7 +263,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:02.459207",
+      "dispatched_at": "2026-10-01T06:51:38.714564",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -310,7 +310,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:47.714686",
+      "dispatched_at": "2026-10-01T06:52:23.875282",
       "content_synced": true,
       "slides_synced": [
         1
@@ -333,7 +333,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:24.286501",
+      "dispatched_at": "2026-10-01T06:53:25.357157",
       "content_synced": true,
       "slides_synced": [
         1
@@ -343,7 +343,7 @@
       "payload_summary": {
         "title": "Why AI-powered marketing is the new secret weapon for customer trust",
         "domain": "techradar.com",
-        "score": 85,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -356,7 +356,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:28.419610",
+      "dispatched_at": "2026-10-01T06:54:27.104186",
       "content_synced": true,
       "slides_synced": [
         1
@@ -366,7 +366,7 @@
       "payload_summary": {
         "title": "OpenAI announces slowing pace of development after hack by rogue agent",
         "domain": "theguardian.com",
-        "score": 85,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -379,7 +379,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:32.539728",
+      "dispatched_at": "2026-10-01T06:55:28.605750",
       "content_synced": true,
       "slides_synced": [
         1
@@ -389,7 +389,7 @@
       "payload_summary": {
         "title": "FCC abolishes gigabit speed goal, suggesting it is unfair to slower technologies",
         "domain": "arstechnica.com",
-        "score": 85,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -402,7 +402,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:36.662279",
+      "dispatched_at": "2026-10-01T06:56:30.180952",
       "content_synced": true,
       "slides_synced": [
         1
@@ -412,7 +412,7 @@
       "payload_summary": {
         "title": "Zuckerberg lied about concern for child safety, Meta whistleblower testifies at landmark trial",
         "domain": "theguardian.com",
-        "score": 85,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -425,7 +425,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:31.263449",
+      "dispatched_at": "2026-10-01T06:52:07.441184",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -451,7 +451,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:44.900345",
+      "dispatched_at": "2026-10-01T06:53:09.006233",
       "content_synced": true,
       "slides_synced": [
         1
@@ -461,7 +461,7 @@
       "payload_summary": {
         "title": "Google Messages RCS breaks with \u20183100\u2019 error for some, especially Galaxy switchers",
         "domain": "9to5google.com",
-        "score": 84,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -474,7 +474,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:49.016107",
+      "dispatched_at": "2026-10-01T06:55:12.225598",
       "content_synced": true,
       "slides_synced": [
         1
@@ -484,7 +484,7 @@
       "payload_summary": {
         "title": "Windows brings out the Rorschach test in everyone",
         "domain": "devblogs.microsoft.com",
-        "score": 84,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -497,7 +497,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:53.125584",
+      "dispatched_at": "2026-10-01T06:56:05.511402",
       "content_synced": true,
       "slides_synced": [
         1
@@ -507,7 +507,7 @@
       "payload_summary": {
         "title": "OpenAI seeks to one-up Anthropic with new customer privacy protections",
         "domain": "techcrunch.com",
-        "score": 84,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -520,7 +520,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:42:57.243766",
+      "dispatched_at": "2026-10-01T06:56:13.729065",
       "content_synced": true,
       "slides_synced": [
         1
@@ -530,7 +530,7 @@
       "payload_summary": {
         "title": "How to watch Ludwig season 2 for *FREE* \u2013 stream the David Mitchell dramedy from anywhere",
         "domain": "techradar.com",
-        "score": 84,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -543,7 +543,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:14.796726",
+      "dispatched_at": "2026-10-01T06:51:51.018757",
       "content_synced": true,
       "slides_synced": [
         1
@@ -566,7 +566,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:07:16.545954",
+      "dispatched_at": "2026-10-01T06:52:52.580130",
       "content_synced": true,
       "slides_synced": [
         1
@@ -589,7 +589,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:43:09.624487",
+      "dispatched_at": "2026-10-01T06:53:54.281706",
       "content_synced": true,
       "slides_synced": [
         1
@@ -599,7 +599,7 @@
       "payload_summary": {
         "title": "I've tested dozens of rugged smartwatches - this one's battery is on a different level",
         "domain": "zdnet.com",
-        "score": 83,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -612,7 +612,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:43:13.772378",
+      "dispatched_at": "2026-10-01T06:54:55.865496",
       "content_synced": true,
       "slides_synced": [
         1
@@ -622,7 +622,7 @@
       "payload_summary": {
         "title": "Child-monitoring apps might need a reboot",
         "domain": "technologyreview.com",
-        "score": 83,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -635,7 +635,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:05:58.362943",
+      "dispatched_at": "2026-10-01T06:51:34.646429",
       "content_synced": true,
       "slides_synced": [
         1
@@ -658,7 +658,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:07:00.072601",
+      "dispatched_at": "2026-10-01T06:52:36.151516",
       "content_synced": true,
       "slides_synced": [
         1
@@ -681,7 +681,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:43:26.085000",
+      "dispatched_at": "2026-10-01T06:53:37.712715",
       "content_synced": true,
       "slides_synced": [
         1
@@ -691,7 +691,7 @@
       "payload_summary": {
         "title": "85% of companies burned by an AI mistake are racing to cut the humans who might catch the next one",
         "domain": "venturebeat.com",
-        "score": 82,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -704,7 +704,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:43:30.202348",
+      "dispatched_at": "2026-10-01T06:54:39.441787",
       "content_synced": true,
       "slides_synced": [
         1
@@ -714,7 +714,7 @@
       "payload_summary": {
         "title": "Roblox commits to privacy overhaul after eSafety discovers adults can contact children via gaming platform",
         "domain": "theguardian.com",
-        "score": 82,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -727,7 +727,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:43:34.337389",
+      "dispatched_at": "2026-10-01T06:55:40.915059",
       "content_synced": true,
       "slides_synced": [
         1
@@ -737,7 +737,7 @@
       "payload_summary": {
         "title": "Amazon aims for delivery drones to reach 500 US neighborhoods by end of 2026",
         "domain": "arstechnica.com",
-        "score": 82,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -750,7 +750,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:43:38.450237",
+      "dispatched_at": "2026-10-01T06:56:42.476434",
       "content_synced": true,
       "slides_synced": [
         1
@@ -760,7 +760,7 @@
       "payload_summary": {
         "title": "81,000 warning letters sent to crypto holders in HMRC tax crackdown",
         "domain": "bbc.co.uk",
-        "score": 82,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -773,7 +773,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:43.582594",
+      "dispatched_at": "2026-10-01T06:52:19.778511",
       "content_synced": true,
       "slides_synced": [
         1
@@ -796,7 +796,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:43:46.670344",
+      "dispatched_at": "2026-10-01T06:53:21.264036",
       "content_synced": true,
       "slides_synced": [
         1
@@ -806,7 +806,7 @@
       "payload_summary": {
         "title": "Why your best-interviewing AI candidate may not be your best AI hire",
         "domain": "techradar.com",
-        "score": 81,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -819,7 +819,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:43:50.774030",
+      "dispatched_at": "2026-10-01T06:54:23.016784",
       "content_synced": true,
       "slides_synced": [
         1
@@ -829,7 +829,7 @@
       "payload_summary": {
         "title": "The Binding of Isaac: Repentance+ Online release goes head-to-head with GTA 6 on November 19",
         "domain": "engadget.com",
-        "score": 81,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -842,7 +842,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:43:54.902010",
+      "dispatched_at": "2026-10-01T06:56:26.064805",
       "content_synced": true,
       "slides_synced": [
         1
@@ -852,7 +852,7 @@
       "payload_summary": {
         "title": "Samsung is holding another Galaxy Event on August 27",
         "domain": "engadget.com",
-        "score": 81,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -865,7 +865,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:27.153040",
+      "dispatched_at": "2026-10-01T06:52:03.343236",
       "content_synced": true,
       "slides_synced": [
         1
@@ -888,7 +888,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:07:28.878074",
+      "dispatched_at": "2026-10-01T06:53:04.871457",
       "content_synced": true,
       "slides_synced": [
         1
@@ -911,7 +911,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:44:07.243393",
+      "dispatched_at": "2026-10-01T06:54:06.594029",
       "content_synced": true,
       "slides_synced": [
         1
@@ -921,7 +921,7 @@
       "payload_summary": {
         "title": "Can MainstreamOS finally make Linux a household name? I tried it to find out",
         "domain": "zdnet.com",
-        "score": 80,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -934,7 +934,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:44:11.381495",
+      "dispatched_at": "2026-10-01T06:55:08.115279",
       "content_synced": true,
       "slides_synced": [
         1
@@ -944,7 +944,7 @@
       "payload_summary": {
         "title": "Why Microsoft Entertainment Pack had a sticker announcing that it had Tetris?",
         "domain": "devblogs.microsoft.com",
-        "score": 80,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -957,7 +957,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:44:15.501492",
+      "dispatched_at": "2026-10-01T06:56:09.612100",
       "content_synced": true,
       "slides_synced": [
         1
@@ -967,7 +967,7 @@
       "payload_summary": {
         "title": "Gboard starts rolling out new \u2018Emoji size\u2019 setting",
         "domain": "9to5google.com",
-        "score": 80,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -980,7 +980,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:10.678356",
+      "dispatched_at": "2026-10-01T06:51:46.925642",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1003,7 +1003,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:07:12.431200",
+      "dispatched_at": "2026-10-01T06:52:48.469456",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1026,7 +1026,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:44:27.857007",
+      "dispatched_at": "2026-10-01T06:54:51.770549",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1036,7 +1036,7 @@
       "payload_summary": {
         "title": "The Download: how people really use AI, and Flock\u2019s design choices",
         "domain": "technologyreview.com",
-        "score": 79,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1049,7 +1049,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:44:31.967588",
+      "dispatched_at": "2026-10-01T06:55:53.188870",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1059,7 +1059,7 @@
       "payload_summary": {
         "title": "Google Gemini is getting a dedicated student hub",
         "domain": "theverge.com",
-        "score": 79,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1072,7 +1072,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:55.971570",
+      "dispatched_at": "2026-10-01T06:52:32.049051",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1095,7 +1095,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:44:40.204061",
+      "dispatched_at": "2026-10-01T06:53:33.602417",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1105,7 +1105,7 @@
       "payload_summary": {
         "title": "How to stream Premier League 2026/27 free with trial offers",
         "domain": "techradar.com",
-        "score": 78,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1118,7 +1118,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:44:44.324519",
+      "dispatched_at": "2026-10-01T06:54:35.341942",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1128,7 +1128,7 @@
       "payload_summary": {
         "title": "It used to be our imperfect bodies that made us insecure. With AI, it\u2019s our minds as well",
         "domain": "theguardian.com",
-        "score": 78,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1141,7 +1141,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:44:48.457219",
+      "dispatched_at": "2026-10-01T06:55:36.833818",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1151,7 +1151,7 @@
       "payload_summary": {
         "title": "Framework responds to complaints that BIOS update bricks Ryzen 7040 laptops",
         "domain": "arstechnica.com",
-        "score": 78,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1164,7 +1164,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:44:52.566619",
+      "dispatched_at": "2026-10-01T06:56:38.394376",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1174,7 +1174,7 @@
       "payload_summary": {
         "title": "Monzo says issue with card payments and transfers now resolved",
         "domain": "bbc.co.uk",
-        "score": 78,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1187,7 +1187,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:39.485967",
+      "dispatched_at": "2026-10-01T06:52:15.660990",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1210,7 +1210,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:00.789272",
+      "dispatched_at": "2026-10-01T06:53:17.147527",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1220,7 +1220,7 @@
       "payload_summary": {
         "title": "Samsung confirms August 27 event for the \u2018newest addition to the Galaxy S26 family\u2019",
         "domain": "9to5google.com",
-        "score": 77,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1233,7 +1233,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:04.900552",
+      "dispatched_at": "2026-10-01T06:54:18.914319",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1243,7 +1243,7 @@
       "payload_summary": {
         "title": "Valve Steam Frame videos show how to wear the headset, perfect the fit and sign in",
         "domain": "engadget.com",
-        "score": 77,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1256,7 +1256,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:09.016831",
+      "dispatched_at": "2026-10-01T06:55:20.418401",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1266,7 +1266,7 @@
       "payload_summary": {
         "title": "The critical tech staying safe by going underground",
         "domain": "bbc.co.uk",
-        "score": 77,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1279,7 +1279,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:13.125213",
+      "dispatched_at": "2026-10-01T06:56:21.951632",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1289,7 +1289,7 @@
       "payload_summary": {
         "title": "Is leasing an iPhone right for you? How Apple's Upgrade Program works and who it's for",
         "domain": "zdnet.com",
-        "score": 77,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1302,7 +1302,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:23.016334",
+      "dispatched_at": "2026-10-01T06:51:59.222745",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1325,7 +1325,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:07:24.758198",
+      "dispatched_at": "2026-10-01T06:53:00.783602",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1348,7 +1348,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:25.438532",
+      "dispatched_at": "2026-10-01T06:54:02.484432",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1358,7 +1358,7 @@
       "payload_summary": {
         "title": "Your Comcast router doubles as a motion detector now - and a potential police informant",
         "domain": "zdnet.com",
-        "score": 76,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1371,7 +1371,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:29.532378",
+      "dispatched_at": "2026-10-01T06:55:04.029940",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1381,7 +1381,7 @@
       "payload_summary": {
         "title": "Feature Request: Support AGENTS.md",
         "domain": "github.com",
-        "score": 76,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1394,7 +1394,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:05:50.106243",
+      "dispatched_at": "2026-10-01T06:51:26.400682",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1417,7 +1417,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:06.562234",
+      "dispatched_at": "2026-10-01T06:51:42.799358",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1440,7 +1440,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:07:08.319623",
+      "dispatched_at": "2026-10-01T06:52:44.382671",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1463,7 +1463,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:45.975112",
+      "dispatched_at": "2026-10-01T06:53:46.009034",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1486,7 +1486,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:50.075227",
+      "dispatched_at": "2026-10-01T06:54:47.658276",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1509,7 +1509,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:54.180167",
+      "dispatched_at": "2026-10-01T06:56:50.673003",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1532,7 +1532,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:45:58.286327",
+      "dispatched_at": "2026-10-01T06:51:18.220057",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1542,7 +1542,7 @@
       "payload_summary": {
         "title": "Does giving a camera wings dodge the FCC\u2019s drone ban?",
         "domain": "theverge.com",
-        "score": 75,
+        "score": 88,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1555,7 +1555,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:02.406033",
+      "dispatched_at": "2026-10-01T06:51:22.292313",
       "content_synced": true,
       "slides_synced": [
         1,
@@ -1568,7 +1568,7 @@
       "payload_summary": {
         "title": "Stripe didn\u2019t really buy OpenRouter because of the \u2018singularity\u2019",
         "domain": "techcrunch.com",
-        "score": 75,
+        "score": 88,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 4
@@ -1581,7 +1581,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:51.832429",
+      "dispatched_at": "2026-10-01T06:52:27.959370",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1604,7 +1604,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:10.633128",
+      "dispatched_at": "2026-10-01T06:53:29.485539",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1614,7 +1614,7 @@
       "payload_summary": {
         "title": "How to watch BMW Championship 2026: Free Live Streams, TV Channels & Preview",
         "domain": "techradar.com",
-        "score": 74,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1627,7 +1627,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:14.749522",
+      "dispatched_at": "2026-10-01T06:54:31.234650",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1637,7 +1637,7 @@
       "payload_summary": {
         "title": "Did someone wearing Meta Glasses film you today? Are you sure?",
         "domain": "theguardian.com",
-        "score": 74,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1650,7 +1650,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:18.863503",
+      "dispatched_at": "2026-10-01T06:55:32.733723",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1660,7 +1660,7 @@
       "payload_summary": {
         "title": "Flight attendants freaked out that Google is buying tons of Spirit employee data",
         "domain": "arstechnica.com",
-        "score": 74,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1673,7 +1673,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:22.963389",
+      "dispatched_at": "2026-10-01T06:56:34.274494",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1683,7 +1683,7 @@
       "payload_summary": {
         "title": "NASA calls off mission to rescue Swift gamma-ray observatory",
         "domain": "arstechnica.com",
-        "score": 74,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1696,7 +1696,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:35.379373",
+      "dispatched_at": "2026-10-01T06:52:11.557337",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1719,7 +1719,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:31.199918",
+      "dispatched_at": "2026-10-01T06:53:13.078976",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1729,7 +1729,7 @@
       "payload_summary": {
         "title": "Google Pixel 11 gets dbrand\u2019s full case lineup, including Tank for the first time [Gallery]",
         "domain": "9to5google.com",
-        "score": 73,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1742,7 +1742,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:35.323171",
+      "dispatched_at": "2026-10-01T06:54:14.831521",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1752,7 +1752,7 @@
       "payload_summary": {
         "title": "Waymo Ojai vans are now available for all riders in three cities",
         "domain": "engadget.com",
-        "score": 73,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1765,7 +1765,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:39.437843",
+      "dispatched_at": "2026-10-01T06:55:16.316760",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1775,7 +1775,7 @@
       "payload_summary": {
         "title": "Meta hooked children on Facebook and Instagram, US court hears",
         "domain": "bbc.co.uk",
-        "score": 73,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1788,7 +1788,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:43.542908",
+      "dispatched_at": "2026-10-01T06:56:17.820744",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1798,7 +1798,7 @@
       "payload_summary": {
         "title": "TrueFoundry's open source AI agent harness TrueForge boasts 30%-75% cheaper task completion than Claude Managed Agents",
         "domain": "venturebeat.com",
-        "score": 73,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1811,7 +1811,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:06:18.910835",
+      "dispatched_at": "2026-10-01T06:51:55.105283",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1834,7 +1834,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-16T07:07:20.658107",
+      "dispatched_at": "2026-10-01T06:52:56.699142",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1857,7 +1857,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:46:55.924390",
+      "dispatched_at": "2026-10-01T06:53:58.392950",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1867,7 +1867,7 @@
       "payload_summary": {
         "title": "After testing the Pixel 11, I feel fine about skipping the Pro models - here's why",
         "domain": "zdnet.com",
-        "score": 72,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1880,7 +1880,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:47:00.031555",
+      "dispatched_at": "2026-10-01T06:54:59.941164",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1890,7 +1890,7 @@
       "payload_summary": {
         "title": "The Download: AI\u2019s self-improvement problem, and what\u2019s driving the heat",
         "domain": "technologyreview.com",
-        "score": 72,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1903,7 +1903,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:47:04.163624",
+      "dispatched_at": "2026-10-01T06:56:01.401585",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1913,7 +1913,7 @@
       "payload_summary": {
         "title": "Cognition CEO denies report that SpaceX tried to acquire the startup",
         "domain": "techcrunch.com",
-        "score": 72,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1926,7 +1926,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:47:08.306548",
+      "dispatched_at": "2026-10-01T06:54:10.723286",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1936,7 +1936,7 @@
       "payload_summary": {
         "title": "Pok\u00e9mon and Polaroid are collaborating on three new adorable cameras",
         "domain": "engadget.com",
-        "score": 69,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1
@@ -1949,7 +1949,7 @@
       "status": "delivered",
       "status_code": 200,
       "latency_ms": 24,
-      "dispatched_at": "2026-09-15T16:47:12.440447",
+      "dispatched_at": "2026-10-01T06:55:49.130304",
       "content_synced": true,
       "slides_synced": [
         1
@@ -1959,7 +1959,7 @@
       "payload_summary": {
         "title": "Watch Valve set up the Steam Frame in its own leaked videos",
         "domain": "theverge.com",
-        "score": 60,
+        "score": 75,
         "has_twitter": true,
         "has_linkedin": true,
         "slide_count": 1

@@ -290,6 +290,10 @@ def list_articles(
             if not slide_urls and a.image_path and os.path.exists(a.image_path):
                 slide_urls.append(f"/api/images/{a.id}.png")
 
+            scraped_web_path = None
+            if a.scraped_image_path and os.path.exists(a.scraped_image_path):
+                scraped_web_path = f"/images/scraped/{os.path.basename(a.scraped_image_path)}"
+
             articles_data.append({
                 "id": a.id,
                 "title": a.title,
@@ -309,6 +313,8 @@ def list_articles(
                 "image_url": slide_urls[0] if slide_urls else None,
                 "slide_urls": slide_urls,
                 "slide_count": len(slide_urls),
+                "scraped_image_url": a.scraped_image_url,
+                "scraped_image_path": scraped_web_path,
                 "platforms": {
                     "reddit": a.reddit_posted,
                     "twitter": a.twitter_posted,
@@ -1500,6 +1506,14 @@ def get_dispatch_articles(page: int = 1, limit: int = 15):
             "total_pages": (total_count + limit - 1) // limit if total_count > 0 else 1
         }
     }
+
+
+@router.post("/scraped/backfill-images")
+def backfill_images_endpoint(limit: int = 30):
+    """Backfills authentic lead images from source websites for articles lacking images."""
+    from src.scraper.image_scraper import backfill_scraped_images
+    updated = backfill_scraped_images(limit=limit)
+    return {"success": True, "backfilled_count": updated, "message": f"Successfully backfilled images for {updated} articles!"}
 
 
 @router.post("/dispatch/send/{article_id}")

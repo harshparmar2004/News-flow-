@@ -176,7 +176,11 @@ def get_article_dispatch_payload(article: Article) -> dict:
             "deck_type": "4-slide-nano-banana" if len(slide_urls) >= 4 else "standard-image",
             "total_slides": len(slide_urls),
             "cover_url": slide_urls[0] if slide_urls else None,
-            "slides": slide_details
+            "slides": slide_details,
+            "scraped_image": {
+                "url": getattr(article, "scraped_image_url", None),
+                "local_path": f"/images/scraped/{os.path.basename(article.scraped_image_path)}" if getattr(article, "scraped_image_path", None) and os.path.exists(article.scraped_image_path) else None
+            }
         }
     }
 

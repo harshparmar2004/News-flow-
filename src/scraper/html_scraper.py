@@ -144,6 +144,17 @@ def scrape_html(source: Dict[str, Any]) -> List[Dict[str, Any]]:
             if not title:
                 title = "Untitled News Article"
 
+            # Extract authentic lead image from HTML or newspaper3k
+            scraped_img_url = None
+            try:
+                from src.scraper.image_scraper import extract_image_from_html
+                if downloaded:
+                    scraped_img_url = extract_image_from_html(downloaded, url)
+                if not scraped_img_url and 'np_article' in locals() and hasattr(np_article, 'top_image') and np_article.top_image:
+                    scraped_img_url = np_article.top_image
+            except Exception as img_err:
+                logger.debug(f"Image extraction error for {url}: {img_err}")
+
             articles.append({
                 'title': title,
                 'url': url,
@@ -152,7 +163,8 @@ def scrape_html(source: Dict[str, Any]) -> List[Dict[str, Any]]:
                 'published_at': datetime.datetime.utcnow(),
                 'source': name,
                 'category': category,
-                'subreddit': subreddit
+                'subreddit': subreddit,
+                'scraped_image_url': scraped_img_url
             })
         except Exception as e:
             logger.error(f"Error scraping HTML entry from {name}: {e}", exc_info=True)
