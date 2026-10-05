@@ -160,15 +160,15 @@ const App = {
     });
 
     const pageTitles = {
-      scraped: { title: '1. Research Scraped Data Vault', subtitle: 'View raw content, extracted headlines, and text scraped from monitored web sources' },
+      scraped: { title: 'Scraped News Data Vault', subtitle: 'View raw content, extracted headlines, and text scraped from monitored web sources' },
       space: { title: '🌌 3D Interactive Agentic Space', subtitle: 'Observe news scraping, AI ranking, authentic photo extraction, and App 2 transfer in 3D' },
       dashboard: { title: 'Dashboard Overview', subtitle: 'Real-time automation analytics, authentic photo extraction, and news ranking status' },
       sources: { title: 'News Sources & Web Links', subtitle: 'Manage news source links, RSS feeds, and trigger automated crawlers' },
-      ranking: { title: '2. AI News Rank & Refine Engine', subtitle: 'Scores news 1 to 100, extracts authentic lead photos, and synthesizes structured Tech Notes' },
+      ranking: { title: 'AI News Ranking & Editorial Intelligence', subtitle: 'Evaluate raw news with Custom AI Agent Rules, curate Top 10 stories, and polish headlines' },
       media: { title: 'Visual Studio', subtitle: 'Editorial photo and graphic management' },
       notes: { title: 'Tech Notes Vault', subtitle: 'Structured technical documentation and post archives' },
       articles: { title: 'Refined Content Vault & Calendar Archive', subtitle: 'Database of refined news, ranking scores, and authentic source editorial photos' },
-      pipeline: { title: '3. Pipeline Workflow & API Dispatch Engine', subtitle: 'Scrape ➔ Rank & Score ➔ Tech-Notes Synthesis ➔ App 2 REST Gateway transfer' },
+      pipeline: { title: 'Pipeline Workflow & API Dispatch Engine', subtitle: 'Scrape ➔ Rank & Score ➔ Tech-Notes Synthesis ➔ App 2 REST Gateway transfer' },
       logs: { title: 'System Logs Stream', subtitle: 'Live terminal stream from pipeline.log' },
       settings: { title: 'API Keys & Configuration', subtitle: 'Manage Groq, OpenAI, Gemini, and research pipeline credentials' }
     };
@@ -367,46 +367,50 @@ const App = {
 
     try {
       const data = await this.fetchApi(`/api/articles/${articleId}`);
+      this.currentModalArticle = data;
       
-      title.textContent = data.title;
+      title.textContent = data.ai_headline || data.title;
       meta.textContent = `${data.source} • Scraped: ${this.formatTimestamp(data.scraped_at)} • Category: ${data.category || 'General'}`;
-      badge.textContent = data.status ? data.status.toUpperCase() : 'SCRAPED';
-      badge.className = `badge badge-${(data.status || 'scraped').toLowerCase()}`;
+      
+      const currentStatus = data.editorial_status || data.status || 'scraped';
+      badge.textContent = currentStatus.toUpperCase();
+      badge.className = `badge badge-${currentStatus.toLowerCase() === 'approved' ? 'ready' : currentStatus.toLowerCase()}`;
 
       const score = data.rank_score || 75;
       const scoreColor = score >= 80 ? '#2e7d32' : score >= 60 ? '#2b7bb9' : '#d97757';
+      const bodyContent = data.final_body || data.body || '';
+      const wordCount = bodyContent.trim() ? bodyContent.trim().split(/\s+/).length : 0;
+      const charCount = bodyContent.length;
 
       let html = `
-        <!-- AI Rank Score & Research Evaluation -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface); padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-          <div>
-            <div style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">AI Relevance & Virality Score</div>
-            <div style="font-size: 1.2rem; font-weight: 800; color: ${scoreColor}; margin-top: 2px;">
-              ★ ${score} / 100
-            </div>
-          </div>
-          <div style="text-align: right;">
-            <div style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">App 2 Integration Status</div>
-            <span style="font-size: 0.78rem; font-weight: 700; color: #2e7d32; background: rgba(46, 125, 50, 0.12); padding: 4px 10px; border-radius: 6px; display: inline-block; margin-top: 3px;">
-              📡 Ready for App 2 REST Transfer
+        <!-- Top Status Bar -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface); padding: 12px 18px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span class="source-pill">${data.source}</span>
+            <span style="font-size: 0.85rem; font-weight: 800; color: ${scoreColor}; background: #ffffff; padding: 4px 10px; border-radius: 6px; border: 1px solid ${scoreColor};">
+              ★ Rank Score: ${score}/100
             </span>
+            <span class="badge" style="background: rgba(46, 125, 50, 0.12); color: #2e7d32; font-weight: 700;">
+              ● Editorial Desk Active
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
+              <i data-lucide="external-link" style="width: 13px; height: 13px;"></i> Source Link ↗
+            </a>
           </div>
         </div>
 
-        ${data.rank_reason ? `
-          <div style="background: rgba(43, 123, 185, 0.08); border: 1px solid rgba(43, 123, 185, 0.25); padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;">
-            <strong style="font-size: 0.78rem; color: #2b7bb9; text-transform: uppercase;">🧠 AI Ranking Evaluation:</strong>
-            <p style="font-size: 0.84rem; color: var(--text-main); margin-top: 4px; line-height: 1.4;">${data.rank_reason}</p>
-          </div>
-        ` : ''}
-
-        <!-- Visual Asset: Authentic Editorial Photo -->
+        <!-- Authentic Editorial Photo (Scraped from source) -->
         ${data.scraped_image_path ? `
-          <div class="modal-section" style="margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-              <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700;">📷 Authentic Editorial Photo (Scraped)</h4>
+          <div class="modal-section" style="margin-bottom: 18px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+              <span style="font-size: 0.78rem; font-weight: 700; color: #2e7d32; display: flex; align-items: center; gap: 6px; text-transform: uppercase;">
+                <i data-lucide="camera" style="width: 15px; height: 15px;"></i> Authentic Scraped Editorial Lead Image (${data.source})
+              </span>
               <a href="${data.scraped_image_path}" target="_blank" class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.72rem; text-decoration: none;">
-                Open Full Size ↗
+                Full Resolution ↗
               </a>
             </div>
             <div style="border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-surface); max-height: 280px; text-align: center;">
@@ -415,33 +419,228 @@ const App = {
           </div>
         ` : ''}
 
-        <!-- Synthesized Structured Tech Notes -->
-        ${(data.ai_content && (data.ai_content.instagram_caption || data.ai_content.linkedin_text)) ? `
-          <div class="modal-section" style="margin-bottom: 16px;">
-            <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; margin-bottom: 8px;">📓 Synthesized Tech Notes & Executive Brief</h4>
-            <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color); font-size: 0.84rem; color: var(--text-main); line-height: 1.55; white-space: pre-wrap; font-family: var(--font-mono); max-height: 220px; overflow-y: auto;">
-${data.ai_content.instagram_caption || data.ai_content.linkedin_text}
+        <!-- AI LLM Packaging Studio (Headline + Summary + Key Points) -->
+        <div class="glass-card" style="margin-bottom: 20px; border: 1.5px solid var(--primary-purple); background: #ffffff; padding: 18px; border-radius: 12px; box-shadow: 0 2px 10px rgba(217,119,87,0.08);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.1rem;">✨</span>
+                <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin: 0;">
+                  AI LLM Packaging Desk (Headline & Key Points)
+                </h4>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin: 3px 0 0 0;">
+                The raw web text below serves as the authentic article body. The AI LLM writes ONLY the headline, summary, and takeaways.
+              </p>
+            </div>
+            <button class="btn btn-primary btn-glow" id="modal-gen-headline-btn" onclick="App.generateArticleAiHeadline(${data.id})" style="padding: 6px 14px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Generate AI Headline & Takeaways
+            </button>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- AI Headline Input -->
+            <div>
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px;">
+                📰 AI-Crafted Headline (Published Title)
+              </label>
+              <input type="text" id="modal-edit-headline" value="${(data.ai_headline || data.title || '').replace(/"/g, '&quot;')}" class="filter-select" style="width: 100%; font-size: 1rem; font-weight: 700; font-family: var(--font-serif); padding: 9px 12px; background: #FAF7F2; border-color: rgba(217,119,87,0.4);" />
+            </div>
+
+            <!-- AI Summary & Key Points Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+              <div>
+                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px;">
+                  ⚡ Executive Summary / Dek (1-2 Sentences)
+                </label>
+                <textarea id="modal-edit-summary" rows="3" class="filter-select" style="width: 100%; font-size: 0.84rem; padding: 8px 12px; line-height: 1.5; resize: vertical;" placeholder="AI-generated executive summary...">${data.ai_summary || ''}</textarea>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px;">
+                  🎯 Key Architectural Takeaways (3 Bullet Points)
+                </label>
+                <textarea id="modal-edit-keypoints" rows="3" class="filter-select" style="width: 100%; font-size: 0.82rem; padding: 8px 12px; font-family: var(--font-mono); line-height: 1.45; resize: vertical;" placeholder="• Bullet 1&#10;• Bullet 2&#10;• Bullet 3">${data.ai_key_points || ''}</textarea>
+              </div>
             </div>
           </div>
-        ` : ''}
+        </div>
 
-        <!-- Original Extracted Body Content -->
-        <div class="modal-section">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-            <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700;">📄 Raw Extracted Web Text</h4>
-            <a href="${data.url}" target="_blank" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.76rem; text-decoration: none;">
-              🌐 Source Website Link ↗
-            </a>
+        <!-- Raw Extracted Web Text: The Authentic Article Body -->
+        <div class="modal-section" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; margin-bottom: 18px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            <div>
+              <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="file-text" style="width: 16px; height: 16px; color: var(--primary-purple);"></i>
+                Authentic Article Body (Raw Extracted Web Text)
+              </h4>
+              <span style="font-size: 0.74rem; color: var(--text-muted);">
+                Verbatim journalism extracted from ${data.source}. You can edit, trim, or use this entire text in the article.
+              </span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span id="modal-text-stats" style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: var(--bg-surface); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                ${wordCount} words · ${charCount} chars
+              </span>
+              <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.74rem;" onclick="App.copyModalArticleText()">
+                <i data-lucide="copy"></i> Copy Text
+              </button>
+              <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.74rem;" onclick="App.resetModalArticleBody()">
+                <i data-lucide="rotate-ccw"></i> Reset to Raw
+              </button>
+            </div>
           </div>
-          <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-main); line-height: 1.5; max-height: 200px; overflow-y: auto;">
-            ${data.body}
+
+          <textarea id="modal-edit-body" rows="12" class="filter-select" style="width: 100%; font-size: 0.88rem; line-height: 1.65; padding: 14px; resize: vertical; background: #FAF7F2; border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main);" oninput="App.updateModalStats(this.value)">${bodyContent}</textarea>
+        </div>
+
+        <!-- Sticky Modal Footer Actions -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px;">
+          <div style="font-size: 0.78rem; color: var(--text-muted);">
+            💡 Changes saved here persist permanently to your SQLite database.
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary" onclick="App.closeModal()">Close</button>
+            <button class="btn btn-primary btn-glow" id="modal-save-btn" onclick="App.saveArticleEditorial(${data.id})" style="padding: 8px 18px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="save"></i> 💾 Save Article Changes
+            </button>
+            <button class="btn btn-primary" onclick="RankingPage.dispatchStory ? RankingPage.dispatchStory(${data.id}) : App.dispatchArticleFromModal(${data.id})" style="padding: 8px 18px; font-size: 0.84rem; background: #2e7d32; border-color: #2e7d32; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="send"></i> App 2 Gateway →
+            </button>
           </div>
         </div>
       `;
 
       body.innerHTML = html;
+      if (window.lucide) window.lucide.createIcons();
     } catch (err) {
-      body.innerHTML = '<p class="error" style="padding: 20px; text-align: center; color: var(--status-failed);">Failed to load article details.</p>';
+      body.innerHTML = `<p class="error" style="padding: 20px; text-align: center; color: var(--status-failed);">Failed to load article details: ${err.message}</p>`;
+    }
+  },
+
+  async generateArticleAiHeadline(articleId) {
+    const btn = document.getElementById('modal-gen-headline-btn');
+    if (btn) {
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Generating...';
+      btn.disabled = true;
+    }
+    try {
+      this.showToast('Generating AI Headline and takeaways from raw article text...', 'info');
+      const res = await this.fetchApi(`/api/articles/${articleId}/generate-headline`, { method: 'POST' });
+      if (res.success) {
+        const headlineInput = document.getElementById('modal-edit-headline');
+        const summaryInput = document.getElementById('modal-edit-summary');
+        const keypointsInput = document.getElementById('modal-edit-keypoints');
+        if (headlineInput && res.headline) headlineInput.value = res.headline;
+        if (summaryInput && res.summary) summaryInput.value = res.summary;
+        if (keypointsInput && res.key_points) {
+          keypointsInput.value = Array.isArray(res.key_points) ? res.key_points.map(p => `• ${p}`).join('\n') : res.key_points;
+        }
+        this.showToast('AI headline & packaging generated! Click "Save Article Changes" to keep.', 'success');
+      }
+    } catch (e) {
+      this.showToast(`Generation failed: ${e.message}`, 'error');
+    } finally {
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Generate AI Headline & Takeaways';
+        btn.disabled = false;
+        if (window.lucide) window.lucide.createIcons();
+      }
+    }
+  },
+
+  async saveArticleEditorial(articleId) {
+    const btn = document.getElementById('modal-save-btn');
+    if (btn) {
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Saving...';
+      btn.disabled = true;
+    }
+    try {
+      const headlineInput = document.getElementById('modal-edit-headline');
+      const summaryInput = document.getElementById('modal-edit-summary');
+      const keypointsInput = document.getElementById('modal-edit-keypoints');
+      const bodyInput = document.getElementById('modal-edit-body');
+
+      const payload = {
+        ai_headline: headlineInput ? headlineInput.value.trim() : null,
+        title: headlineInput ? headlineInput.value.trim() : null,
+        ai_summary: summaryInput ? summaryInput.value.trim() : null,
+        ai_key_points: keypointsInput ? keypointsInput.value.trim() : null,
+        final_body: bodyInput ? bodyInput.value.trim() : null,
+        editorial_status: 'approved',
+        status: 'ready'
+      };
+
+      const res = await this.fetchApi(`/api/articles/${articleId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      this.showToast(`Article #${articleId} saved successfully to database!`, 'success');
+      
+      const badge = document.getElementById('modal-status-badge');
+      if (badge) {
+        badge.textContent = 'APPROVED / READY';
+        badge.className = 'badge badge-ready';
+      }
+
+      if (window.location.hash === '#ranking' && typeof RankingPage !== 'undefined') {
+        RankingPage.loadData();
+      } else if (window.location.hash === '#scraped' && typeof ScrapedPage !== 'undefined') {
+        ScrapedPage.loadData();
+      }
+    } catch (e) {
+      this.showToast(`Failed to save article: ${e.message}`, 'error');
+    } finally {
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="save"></i> 💾 Save Article Changes';
+        btn.disabled = false;
+        if (window.lucide) window.lucide.createIcons();
+      }
+    }
+  },
+
+  async dispatchArticleFromModal(articleId) {
+    this.showToast(`Dispatching article #${articleId} to connected App 2 Gateway...`, 'info');
+    try {
+      const res = await this.fetchApi(`/api/dispatch/send/${articleId}`, { method: 'POST' });
+      if (res.success) {
+        this.showToast(`Article #${articleId} successfully transmitted to App 2!`, 'success');
+      } else {
+        this.showToast(`Dispatch note: ${res.error || 'Check partner app connection'}`, 'warning');
+      }
+    } catch (e) {
+      this.showToast(`Dispatch error: ${e.message}`, 'error');
+    }
+  },
+
+  updateModalStats(text) {
+    const statsEl = document.getElementById('modal-text-stats');
+    if (statsEl) {
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      statsEl.textContent = `${words} words · ${text.length} chars`;
+    }
+  },
+
+  copyModalArticleText() {
+    const bodyInput = document.getElementById('modal-edit-body');
+    if (bodyInput) {
+      navigator.clipboard.writeText(bodyInput.value);
+      this.showToast('Article text copied to clipboard!', 'info');
+    }
+  },
+
+  resetModalArticleBody() {
+    if (this.currentModalArticle && this.currentModalArticle.body) {
+      const bodyInput = document.getElementById('modal-edit-body');
+      if (bodyInput) {
+        bodyInput.value = this.currentModalArticle.body;
+        this.updateModalStats(bodyInput.value);
+        this.showToast('Reset article text to original raw extracted text.', 'info');
+      }
     }
   },
 

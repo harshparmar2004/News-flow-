@@ -90,6 +90,16 @@ class Article(Base):
     linkedin_queued: Mapped[bool] = mapped_column(Boolean, default=False)
     web_posted: Mapped[bool] = mapped_column(Boolean, default=False)
 
+    # --- Editorial Desk (AI writes ONLY headline + summary + key points; body = raw scraped text) ---
+    ai_headline: Mapped[str | None] = mapped_column(Text, nullable=True)       # LLM-written headline
+    ai_summary: Mapped[str | None] = mapped_column(Text, nullable=True)        # LLM-written 1-2 sentence dek
+    ai_key_points: Mapped[str | None] = mapped_column(Text, nullable=True)     # LLM-written bullets (newline separated)
+    ai_hashtags: Mapped[str | None] = mapped_column(Text, nullable=True)       # LLM-suggested hashtags
+    final_body: Mapped[str | None] = mapped_column(Text, nullable=True)        # Editor-saved body (defaults to raw scraped text)
+    editor_notes: Mapped[str | None] = mapped_column(Text, nullable=True)      # Private notes
+    editorial_status: Mapped[str | None] = mapped_column(String(20), default="draft")  # draft | approved | rejected
+    edited_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
     def __repr__(self) -> str:
         return (
             f"<Article(id={self.id}, source='{self.source}', "
@@ -168,6 +178,21 @@ def init_db() -> None:
             if "scraped_image_path" not in columns:
                 conn.execute(text("ALTER TABLE articles ADD COLUMN scraped_image_path TEXT"))
                 conn.commit()
+
+            editorial_cols = {
+                "ai_headline": "TEXT",
+                "ai_summary": "TEXT",
+                "ai_key_points": "TEXT",
+                "ai_hashtags": "TEXT",
+                "final_body": "TEXT",
+                "editor_notes": "TEXT",
+                "editorial_status": "VARCHAR(20) DEFAULT 'draft'",
+                "edited_at": "DATETIME",
+            }
+            for col, ddl in editorial_cols.items():
+                if col not in columns:
+                    conn.execute(text(f"ALTER TABLE articles ADD COLUMN {col} {ddl}"))
+                    conn.commit()
     except Exception as ex:
         pass
 

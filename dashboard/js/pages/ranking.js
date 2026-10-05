@@ -66,29 +66,26 @@ const RankingPage = {
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 1.35rem;">🏆</span>
               <h2 style="font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; color: var(--text-main);">
-                Top 10 AI Ranked & Refined News
+                Top 10 AI Ranked & Curated News
               </h2>
-              <span style="font-size: 0.72rem; font-weight: 700; background: rgba(217,119,87,0.12); color: var(--primary-purple); padding: 3px 9px; border-radius: 12px; border: 1px solid rgba(217,119,87,0.25);">
-                Active Pipeline Run
+              <span style="font-size: 0.72rem; font-weight: 700; background: rgba(46,125,50,0.12); color: #2e7d32; padding: 3px 9px; border-radius: 12px; border: 1px solid rgba(46,125,50,0.25);">
+                ● AI Agent Live
               </span>
             </div>
             <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 4px;">
-              Evaluates raw news with Custom AI Agent Rules, curates strictly the <strong>Top 10 breakthrough stories</strong>, extracts authentic lead editorial photos, and synthesizes structured Tech Notes context.
+              Evaluates raw news with Custom AI Agent Rules, preserves authentic raw web text, and crafts high-impact AI headlines & packaging for Top 10 breakthrough stories.
             </p>
           </div>
 
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <button class="btn btn-secondary" onclick="RankingPage.toggleRulesDrawer()">
-              <i data-lucide="sliders"></i> Custom AI Agent Rules
+            <button class="btn btn-primary btn-glow" id="rerank-btn" onclick="RankingPage.runRerank()" style="display: flex; align-items: center; gap: 8px; padding: 8px 20px; font-weight: 700; font-size: 0.88rem;">
+              <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i> 🔄 Re-Rank Stories Now
             </button>
-            <button class="btn btn-secondary" id="sync-photos-btn" onclick="RankingPage.syncAllPhotos()">
-              <i data-lucide="camera"></i> Verify Editorial Photos
+            <button class="btn btn-secondary" onclick="RankingPage.toggleRulesDrawer()" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 0.82rem;">
+              <i data-lucide="sliders" style="width: 15px; height: 15px;"></i> Customized AI Agent Tool
             </button>
-            <button class="btn btn-secondary" id="rerank-btn" onclick="RankingPage.runRerank()">
-              <i data-lucide="refresh-cw"></i> Re-Rank Run
-            </button>
-            <button class="btn btn-primary btn-glow" onclick="App.navigateTo('pipeline')">
-              <i data-lucide="send"></i> App 2 Gateway →
+            <button class="btn btn-secondary" onclick="App.navigateTo('pipeline')" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 0.82rem;">
+              <i data-lucide="send" style="width: 15px; height: 15px;"></i> App 2 Gateway →
             </button>
           </div>
         </div>
@@ -327,13 +324,16 @@ const RankingPage = {
 
       // 1 Authentic Extracted News Photo
       const extractedPhotoUrl = story.scraped_image_path || story.image_url || null;
+      const activeHeadline = story.ai_headline || story.refined_headline || story.title;
+      const rawText = story.final_body || story.raw_body || story.refined_body || '';
+      const wordCount = rawText.trim() ? rawText.trim().split(/\s+/).length : 0;
 
       return `
-        <div class="glass-card" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 14px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 16px;">
+        <div class="glass-card" id="story-card-${story.id}" style="background: #ffffff; border: 1.5px solid var(--border-color); border-radius: 14px; padding: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 16px;">
           
           <!-- Card Header Row -->
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
               <span style="font-size: 0.82rem; font-weight: 800; background: ${rankBadgeBg}; color: #ffffff; padding: 4px 12px; border-radius: 6px; letter-spacing: 0.04em;">
                 #${rankNum} RANK
               </span>
@@ -341,7 +341,9 @@ const RankingPage = {
               <span style="font-size: 0.74rem; color: var(--text-muted); background: var(--bg-surface); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
                 ${story.category || 'Tech'}
               </span>
-              <span style="font-size: 0.72rem; color: var(--text-dim);">r/${story.subreddit || 'technology'}</span>
+              <span class="badge" style="background: rgba(46,125,50,0.1); color: #2e7d32; font-size: 0.72rem; font-weight: 700;">
+                ● ${story.editorial_status ? story.editorial_status.toUpperCase() : 'EDITORIAL READY'}
+              </span>
             </div>
 
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -354,20 +356,41 @@ const RankingPage = {
             </div>
           </div>
 
-          <!-- Main Story Headline -->
-          <div>
-            <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 700; line-height: 1.35; color: var(--text-main); margin-bottom: 4px;">
-              <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; display: inline-block; transition: color 0.15s ease;" onmouseover="this.style.color='var(--primary-purple)'" onmouseout="this.style.color='var(--text-main)'">
-                ${story.title}
-              </a>
-            </h3>
+          <!-- Section 1: AI LLM Packaging Studio (Headline & Takeaways) -->
+          <div style="background: #FFFDF9; border: 1.5px solid rgba(217,119,87,0.35); padding: 16px 18px; border-radius: 12px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+              <span style="font-size: 0.76rem; font-weight: 700; color: var(--primary-purple); text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="sparkles" style="width: 15px; height: 15px;"></i> AI LLM Packaging (Headline & Key Notes)
+              </span>
+              <button class="btn btn-secondary" id="card-gen-btn-${story.id}" onclick="RankingPage.generateHeadlineForStory(${story.id})" style="padding: 4px 10px; font-size: 0.75rem; display: flex; align-items: center; gap: 5px;">
+                <i data-lucide="sparkles" style="width: 13px; height: 13px; color: var(--primary-purple);"></i> ✨ Generate AI Headline
+              </button>
+            </div>
+
+            <!-- Editable AI Headline Input -->
+            <div style="margin-bottom: 10px;">
+              <input type="text" id="card-headline-input-${story.id}" value="${activeHeadline.replace(/"/g, '&quot;')}" class="filter-select" style="width: 100%; font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; color: var(--text-main); line-height: 1.35; padding: 8px 12px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px;" placeholder="AI-crafted published headline..." />
+            </div>
+
+            ${story.ai_summary ? `
+              <div style="font-size: 0.84rem; color: var(--text-main); line-height: 1.5; background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 8px;">
+                <strong>⚡ AI Summary:</strong> ${story.ai_summary}
+              </div>
+            ` : ''}
+
+            ${story.ai_key_points ? `
+              <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); font-family: var(--font-mono); white-space: pre-line;">
+<strong>🎯 Key Points:</strong>
+${story.ai_key_points}
+              </div>
+            ` : ''}
           </div>
 
-          <!-- Section 1: Authentic Extracted Editorial Photo (From Source Website) -->
+          <!-- Section 2: Authentic Extracted Editorial Photo (From Source Website) -->
           <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color);">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-              <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 6px;">
-                <i data-lucide="camera" style="width: 15px; height: 15px; color: var(--primary-purple);"></i>
+              <span style="font-size: 0.76rem; font-weight: 700; color: #2e7d32; text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="camera" style="width: 15px; height: 15px;"></i>
                 Authentic Scraped Lead Image (${story.source})
               </span>
               ${extractedPhotoUrl ? `
@@ -392,48 +415,22 @@ const RankingPage = {
             `}
           </div>
 
-          <!-- Section 2: AI Synthesized News Content & Tech Notes Context -->
-          <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <!-- Section 3: Authentic Article Body (Raw Extracted Web Text) -->
+          <div style="background: #ffffff; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
               <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 5px;">
                 <i data-lucide="file-text" style="width: 14px; height: 14px; color: var(--primary-purple);"></i>
-                AI Synthesized Tech Notes & Context Narrative
+                Authentic Article Body (Raw Extracted Web Text)
               </span>
-              <span style="font-size: 0.72rem; color: #2e7d32; font-weight: 700; display: flex; align-items: center; gap: 4px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: #2e7d32;"></span> Gemini Refined
+              <span style="font-size: 0.74rem; color: var(--text-muted); background: var(--bg-surface); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                ${wordCount} words
               </span>
             </div>
 
-            <!-- Scraped Source Reference & Direct Website Link Bar -->
-            <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid var(--border-color); padding: 9px 13px; border-radius: 8px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-              <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted);">
-                <i data-lucide="globe" style="width: 15px; height: 15px; color: var(--primary-purple);"></i>
-                <span>Scraped Source Reference: <strong style="color: var(--text-main);">${story.source}</strong> <span style="color: var(--text-dim);">(${story.source_domain || story.source})</span></span>
-              </div>
-              <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.74rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                <i data-lucide="external-link" style="width: 12px; height: 12px;"></i> View Original Source ↗
-              </a>
-            </div>
-
-            <div style="background: #ffffff; border: 1px solid var(--border-color); padding: 12px 14px; border-radius: 8px; font-size: 0.84rem; color: var(--text-main); line-height: 1.55; white-space: pre-wrap; font-family: var(--font-mono); max-height: 240px; overflow-y: auto;">
-${story.refined_body}
-            </div>
-
-            <!-- Multi-Platform Social Badges -->
-            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
-              <span style="font-size: 0.72rem; background: #ffffff; border: 1px solid var(--border-color); padding: 3px 8px; border-radius: 4px; color: var(--text-muted);">
-                🐦 Twitter/X Hook: Ready
-              </span>
-              <span style="font-size: 0.72rem; background: #ffffff; border: 1px solid var(--border-color); padding: 3px 8px; border-radius: 4px; color: var(--text-muted);">
-                💼 LinkedIn Post: Formatted
-              </span>
-              <span style="font-size: 0.72rem; background: #ffffff; border: 1px solid var(--border-color); padding: 3px 8px; border-radius: 4px; color: var(--text-muted);">
-                💬 Reddit Discussion: Prompted
-              </span>
-            </div>
+            <textarea id="card-body-input-${story.id}" rows="7" class="filter-select" style="width: 100%; font-size: 0.85rem; line-height: 1.6; padding: 12px; background: #FAF7F2; border: 1px solid var(--border-color); border-radius: 8px; resize: vertical;">${rawText}</textarea>
           </div>
 
-          <!-- Section 3: Custom AI Agent Justification -->
+          <!-- Section 4: Custom AI Agent Justification -->
           <div style="background: rgba(217, 119, 87, 0.06); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(217, 119, 87, 0.2); font-size: 0.82rem; color: var(--text-main);">
             <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary-purple); margin-bottom: 2px;">
               <i data-lucide="bot" style="width: 14px; height: 14px;"></i> Custom AI Agent Ranking Justification:
@@ -448,11 +445,11 @@ ${story.refined_body}
             </span>
 
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.78rem; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-weight: 600;">
-                <i data-lucide="globe" style="width: 14px; height: 14px;"></i> Source Website (${story.source_domain || story.source}) ↗
-              </a>
+              <button class="btn btn-secondary" onclick="RankingPage.saveCardArticle(${story.id})" id="card-save-btn-${story.id}" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">
+                <i data-lucide="save"></i> 💾 Save Article
+              </button>
               <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;" onclick="App.openArticleModal(${story.id})">
-                <i data-lucide="eye"></i> Inspect Full Article
+                <i data-lucide="eye"></i> Inspect in Studio ↗
               </button>
               <button class="btn btn-primary btn-glow" style="padding: 6px 14px; font-size: 0.78rem;" onclick="RankingPage.dispatchStory(${story.id})">
                 <i data-lucide="send"></i> Send to App 2 Gateway →
@@ -624,6 +621,69 @@ ${story.refined_body}
       }
     } catch (e) {
       App.showToast(`Dispatch failed: ${e.message}`, 'error');
+    }
+  },
+
+  async generateHeadlineForStory(storyId) {
+    const btn = document.getElementById(`card-gen-btn-${storyId}`);
+    if (btn) {
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Generating...';
+      btn.disabled = true;
+    }
+    try {
+      App.showToast(`Crafting AI Headline and key points for Story #${storyId}...`, 'info');
+      const res = await App.fetchApi(`/api/articles/${storyId}/generate-headline`, { method: 'POST' });
+      if (res.success) {
+        const headlineInput = document.getElementById(`card-headline-input-${storyId}`);
+        if (headlineInput && res.headline) headlineInput.value = res.headline;
+        App.showToast(`AI Headline generated! Click "Save Article" to keep changes.`, 'success');
+        await this.loadData();
+      }
+    } catch (e) {
+      App.showToast(`Headline generation failed: ${e.message}`, 'error');
+    } finally {
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="sparkles"></i> ✨ Generate AI Headline';
+        btn.disabled = false;
+        if (window.lucide) window.lucide.createIcons();
+      }
+    }
+  },
+
+  async saveCardArticle(storyId) {
+    const btn = document.getElementById(`card-save-btn-${storyId}`);
+    if (btn) {
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Saving...';
+      btn.disabled = true;
+    }
+    try {
+      const headlineInput = document.getElementById(`card-headline-input-${storyId}`);
+      const bodyInput = document.getElementById(`card-body-input-${storyId}`);
+
+      const payload = {
+        ai_headline: headlineInput ? headlineInput.value.trim() : null,
+        title: headlineInput ? headlineInput.value.trim() : null,
+        final_body: bodyInput ? bodyInput.value.trim() : null,
+        editorial_status: 'approved',
+        status: 'ready'
+      };
+
+      const res = await App.fetchApi(`/api/articles/${storyId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      App.showToast(`Story #${storyId} saved to database!`, 'success');
+      await this.loadData();
+    } catch (e) {
+      App.showToast(`Failed to save story: ${e.message}`, 'error');
+    } finally {
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="save"></i> 💾 Save Article';
+        btn.disabled = false;
+        if (window.lucide) window.lucide.createIcons();
+      }
     }
   }
 };

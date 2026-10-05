@@ -377,12 +377,79 @@ def get_article(article_id: int):
                 "twitter": a.twitter_posted,
                 "instagram": a.instagram_queued,
                 "linkedin": a.linkedin_queued,
-            }
+            },
+            "ai_headline": getattr(a, "ai_headline", None) or a.title,
+            "ai_summary": getattr(a, "ai_summary", None),
+            "ai_key_points": getattr(a, "ai_key_points", None),
+            "ai_hashtags": getattr(a, "ai_hashtags", None),
+            "final_body": getattr(a, "final_body", None) or a.body,
+            "editorial_status": getattr(a, "editorial_status", "draft") or "draft",
+            "editor_notes": getattr(a, "editor_notes", None),
+            "edited_at": a.edited_at.isoformat() if getattr(a, "edited_at", None) else None,
         }
 
 
-@router.post("/articles/{article_id}/publish")
-def publish_single_article(article_id: int):
+@router.put("/articles/{article_id}")
+@router.post("/articles/{article_id}/editorial")
+def update_article_editorial(article_id: int, payload: Dict[str, Any]):
+    """Saves editorial changes (AI headline, summary, key points, raw body, final body, status)."""
+    from datetime import datetime
+    with get_session() as session:
+        a = session.query(Article).filter(Article.id == article_id).first()
+        if not a:
+            raise HTTPException(status_code=404, detail="Article not found")
+
+        if "title" in payload and payload["title"] is not None:
+            a.title = str(payload["title"]).strip()
+        if "ai_headline" in payload:
+            a.ai_headline = str(payload["ai_headline"]).strip() if payload["ai_headline"] else None
+        if "ai_summary" in payload:
+            a.ai_summary = str(payload["ai_summary"]).strip() if payload["ai_summary"] else None
+        if "ai_key_points" in payload:
+            a.ai_key_points = str(payload["ai_key_points"]).strip() if payload["ai_key_points"] else None
+        if "ai_hashtags" in payload:
+            a.ai_hashtags = str(payload["ai_hashtags"]).strip() if payload["ai_hashtags"] else None
+        if "final_body" in payload:
+            a.final_body = str(payload["final_body"]).strip() if payload["final_body"] else a.body
+        if "body" in payload and payload["body"]:
+            a.body = str(payload["body"]).strip()
+        if "editor_notes" in payload:
+            a.editor_notes = str(payload["editor_notes"]).strip() if payload["editor_notes"] else None
+        if "editorial_status" in payload and payload["editorial_status"]:
+            a.editorial_status = str(payload["editorial_status"]).strip()
+        if "rank_score" in payload and payload["rank_score"] is not None:
+            try:
+                a.rank_score = int(payload["rank_score"])
+            except Exception:
+                pass
+        if "status" in payload and payload["status"]:
+            a.status = str(payload["status"]).strip()
+
+        a.edited_at = datetime.utcnow()
+        session.commit()
+
+        return {
+            "success": True,
+            "message": f"Article #{article_id} saved successfully!",
+            "article_id": article_id,
+            "ai_headline": a.ai_headline or a.title,
+            "final_body": a.final_body or a.body
+        }
+
+
+@router.post("/articles/{article_id}/generate-headline")
+def generate_article_ai_headline(article_id: int):
+    """Triggers the AI Headline Writer for an article (LLM writes headline + summary + key points; raw body untouched)."""
+    from src.ai.headline_writer import write_headline
+    res = write_headline(article_id, persist=True)
+    if not res:
+        raise HTTPException(status_code=404, detail="Article not found or failed to generate packaging")
+    return {
+        "success": True,
+        "message": "AI Headline and packaging generated successfully!",
+        "article_id": article_id,
+        **res
+    }
     """Publish a single article live across Reddit, Twitter, Instagram, and LinkedIn."""
     from src.publishers.reddit_publisher import publish_to_reddit
     from src.publishers.twitter_publisher import tweet_article
@@ -1003,7 +1070,13 @@ def get_top_10_ranked_news():
                 "rank_reason": a.rank_reason or f"Selected as Top 10 based on custom AI ranking rules for {niche}.",
                 "status": a.status,
                 "is_sync_ready": (a.rank_score or 75) >= threshold,
-                "refined_headline": a.reddit_title or clean_title,
+                "refined_headline": getattr(a, "ai_headline", None) or a.reddit_title or clean_title,
+                "ai_headline": getattr(a, "ai_headline", None) or clean_title,
+                "ai_summary": getattr(a, "ai_summary", None),
+                "ai_key_points": getattr(a, "ai_key_points", None),
+                "raw_body": a.body,
+                "final_body": getattr(a, "final_body", None) or a.body,
+                "editorial_status": getattr(a, "editorial_status", "draft") or "draft",
                 "refined_body": refined_text,
                 "key_takeaways": takeaways,
                 "twitter_text": a.twitter_text or f"🔥 {clean_title[:200]}... via @{a.source or 'NewsFlow'}",
