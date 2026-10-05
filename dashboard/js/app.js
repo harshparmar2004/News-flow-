@@ -164,7 +164,7 @@ const App = {
       space: { title: '🌌 3D Interactive Agentic Space', subtitle: 'Observe news scraping, AI ranking, authentic photo extraction, and App 2 transfer in 3D' },
       dashboard: { title: 'Dashboard Overview', subtitle: 'Real-time automation analytics, authentic photo extraction, and news ranking status' },
       sources: { title: 'News Sources & Web Links', subtitle: 'Manage news source links, RSS feeds, and trigger automated crawlers' },
-      ranking: { title: 'AI News Ranking & Editorial Intelligence', subtitle: 'Evaluate raw news with Custom AI Agent Rules, curate Top 10 stories, and polish headlines' },
+      ranking: { title: 'NewsFlow Web Publishing Desk', subtitle: 'Publish all scraped news articles line-by-line to NewsFlow Web (localhost:3000) with authentic photos. No ranking gates.' },
       media: { title: 'Visual Studio', subtitle: 'Editorial photo and graphic management' },
       notes: { title: 'Tech Notes Vault', subtitle: 'Structured technical documentation and post archives' },
       articles: { title: 'Refined Content Vault & Calendar Archive', subtitle: 'Database of refined news, ranking scores, and authentic source editorial photos' },
@@ -501,13 +501,18 @@ const App = {
             💡 Changes saved here persist permanently to your SQLite database.
           </div>
 
-          <div style="display: flex; gap: 10px;">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
             <button class="btn btn-secondary" onclick="App.closeModal()">Close</button>
-            <button class="btn btn-primary btn-glow" id="modal-save-btn" onclick="App.saveArticleEditorial(${data.id})" style="padding: 8px 18px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;">
-              <i data-lucide="save"></i> 💾 Save Article Changes
+            <button class="btn btn-secondary" id="modal-save-btn" onclick="App.saveArticleEditorial(${data.id})" style="padding: 8px 16px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="save"></i> 💾 Save Article
             </button>
-            <button class="btn btn-primary" onclick="RankingPage.dispatchStory ? RankingPage.dispatchStory(${data.id}) : App.dispatchArticleFromModal(${data.id})" style="padding: 8px 18px; font-size: 0.84rem; background: #2e7d32; border-color: #2e7d32; display: flex; align-items: center; gap: 6px;">
-              <i data-lucide="send"></i> App 2 Gateway →
+            ${data.web_posted && data.web_slug ? `
+              <a href="http://localhost:3000/article/${data.web_slug}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.84rem; font-weight: 700; color: #2e7d32; border-color: rgba(46,125,50,0.4); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <span>🌐</span> View Live on Web ↗
+              </a>
+            ` : ''}
+            <button class="btn btn-primary btn-glow" id="modal-web-upload-btn" onclick="App.uploadArticleToWeb(${data.id})" style="padding: 8px 18px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="upload-cloud"></i> 🚀 Upload to NewsFlow Web
             </button>
           </div>
         </div>
@@ -597,6 +602,35 @@ const App = {
     } finally {
       if (btn) {
         btn.innerHTML = '<i data-lucide="save"></i> 💾 Save Article Changes';
+        btn.disabled = false;
+        if (window.lucide) window.lucide.createIcons();
+      }
+    }
+  },
+
+  async uploadArticleToWeb(articleId) {
+    const btn = document.getElementById('modal-web-upload-btn');
+    if (btn) {
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Uploading to Web...';
+      btn.disabled = true;
+    }
+    try {
+      // Save changes first
+      await this.saveArticleEditorial(articleId);
+      this.showToast(`Publishing story #${articleId} to NewsFlow Web...`, 'info');
+      const res = await this.fetchApi(`/api/web/upload/${articleId}`, { method: 'POST' });
+      if (res.success) {
+        this.showToast(`Story #${articleId} published to NewsFlow Web!`, 'success');
+        await this.openArticleModal(articleId); // Re-open to refresh badge and link
+        if (typeof RankingPage !== 'undefined' && RankingPage.loadData) {
+          RankingPage.loadData();
+        }
+      }
+    } catch (e) {
+      this.showToast(`Web upload failed: ${e.message}`, 'error');
+    } finally {
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="upload-cloud"></i> 🚀 Upload to NewsFlow Web';
         btn.disabled = false;
         if (window.lucide) window.lucide.createIcons();
       }

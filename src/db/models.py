@@ -89,6 +89,8 @@ class Article(Base):
     instagram_queued: Mapped[bool] = mapped_column(Boolean, default=False)
     linkedin_queued: Mapped[bool] = mapped_column(Boolean, default=False)
     web_posted: Mapped[bool] = mapped_column(Boolean, default=False)
+    web_slug: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    web_published_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     # --- Editorial Desk (AI writes ONLY headline + summary + key points; body = raw scraped text) ---
     ai_headline: Mapped[str | None] = mapped_column(Text, nullable=True)       # LLM-written headline
@@ -188,6 +190,8 @@ def init_db() -> None:
                 "editor_notes": "TEXT",
                 "editorial_status": "VARCHAR(20) DEFAULT 'draft'",
                 "edited_at": "DATETIME",
+                "web_slug": "VARCHAR(255)",
+                "web_published_at": "DATETIME",
             }
             for col, ddl in editorial_cols.items():
                 if col not in columns:

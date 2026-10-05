@@ -272,33 +272,37 @@ def stage_sync_to_app2() -> dict[str, int]:
 
 
 def run_pipeline(max_articles: int | None = None):
-    """Runs full automation pipeline (Scrape ➔ AI Rank/Tech Notes ➔ Authentic Photo Sync ➔ App 2 REST Gateway)."""
+    """Runs full automation pipeline (Scrape ➔ Authentic Photo Sync ➔ Publish ALL to NewsFlow Web line-by-line)."""
     global _ABORT_REQUESTED
     _ABORT_REQUESTED = False  # Reset flag at start
     start_time = time.time()
 
     logger.info("==========================================================")
-    logger.info("  NEWSFLOW RESEARCH & PHOTO ENGINE — Starting Pipeline Run")
+    logger.info("  NEWSFLOW PIPELINE — Scrape → Photos → Publish to Web")
     logger.info("==========================================================")
 
     init_db()
     sources = load_sources()
 
+    # Stage 1: Scrape all sources
     new_articles = stage_scrape(sources, max_articles)
-    ranked_count = stage_rank(max_articles)
-    top_limit = max_articles if max_articles is not None else 10
-    rewritten = stage_rewrite(top_limit)
-    images = stage_sync_scraped_images(top_limit)
-    sync_results = stage_sync_to_app2()
 
-    # Stage 6: Publish top-ranked stories directly to NewsFlow Web
+    # Stage 2: Sync authentic scraped images for ALL articles (not just top 10)
+    img_limit = max_articles  # None means all
+    images = stage_sync_scraped_images(img_limit)
+
+    # Stage 3: Publish ALL scraped articles line-by-line to NewsFlow Web (no ranking gate)
     web_published_count = 0
     try:
-        from src.publishers.web_publisher import publish_all_ready
-        web_published_count = publish_all_ready(limit=top_limit)
-        logger.info(f"🌐 [NewsFlow Web] Published {web_published_count} high-impact stories directly to public website!")
+        from src.publishers.web_publisher import publish_all_scraped
+        pub_results = publish_all_scraped(limit=max_articles, skip_posted=True)
+        web_published_count = pub_results.get("published", 0)
+        logger.info(f"🌐 [NewsFlow Web] Published {web_published_count} articles to public website!")
     except Exception as web_ex:
         logger.warning(f"⚠️ [NewsFlow Web] Publishing warning: {web_ex}")
+
+    # Stage 4 (optional): App 2 dispatch still available for social channels
+    sync_results = stage_sync_to_app2()
 
     elapsed = time.time() - start_time
     synced_count = sync_results.get("synced_to_app2", 0) + web_published_count
@@ -312,7 +316,7 @@ def run_pipeline(max_articles: int | None = None):
                 completed_at=datetime.utcnow(),
                 status=status_label,
                 articles_scraped=new_articles,
-                articles_rewritten=rewritten,
+                articles_rewritten=web_published_count,
                 images_generated=images,
                 published_count=synced_count,
                 duration_seconds=round(elapsed, 2)
@@ -327,9 +331,9 @@ def run_pipeline(max_articles: int | None = None):
     logger.info(f"|   PIPELINE RUN {status_label.upper():<36}|")
     logger.info("+----------------------------------------------------------+")
     logger.info(f"|  New articles scraped:    {new_articles:<30}|")
-    logger.info(f"|  Articles ranked/refined: {rewritten:<30}|")
     logger.info(f"|  Authentic photos synced: {images:<30}|")
-    logger.info(f"|  Synced to App 2:         {app2_count:<30}|")
     logger.info(f"|  🌐 NewsFlow Web published:{web_published_count:<30}|")
+    logger.info(f"|  Synced to App 2:         {app2_count:<30}|")
     logger.info(f"|  Total execution time:    {elapsed:.1f}s{' ' * (29 - len(f'{elapsed:.1f}s'))}|")
     logger.info("+----------------------------------------------------------+")
+

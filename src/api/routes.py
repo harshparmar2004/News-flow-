@@ -1758,3 +1758,123 @@ def dispatch_notes_carousel(slug: str):
         "dispatch_response": resp,
         "payload": payload
     }
+
+
+# ============================================================
+#  NewsFlow Web Publishing Desk — Line-by-Line Article Upload
+# ============================================================
+
+@router.get("/web/status")
+def get_web_status():
+    """Check NewsFlow Web (Next.js) server health + published article count."""
+    import requests as req
+    import os
+    web_url = os.getenv("NEWSFLOW_WEB_URL", "http://localhost:3000").rstrip("/")
+    try:
+        r = req.get(f"{web_url}/api/health", timeout=5)
+        if r.status_code == 200:
+            data = r.json()
+            return {
+                "success": True,
+                "online": True,
+                "web_url": web_url,
+                "stats": data.get("stats", {}),
+                "message": f"NewsFlow Web is online at {web_url}",
+            }
+        return {"success": False, "online": False, "web_url": web_url, "message": f"HTTP {r.status_code}"}
+    except Exception as e:
+        return {"success": False, "online": False, "web_url": web_url, "message": str(e)}
+
+
+@router.post("/web/upload/{article_id}")
+def upload_article_to_web(article_id: int):
+    """Upload a single scraped article (with its authentic image) to NewsFlow Web."""
+    from src.publishers.web_publisher import publish_to_web
+    result = publish_to_web(article_id)
+    if result.get("success"):
+        return {
+            "success": True,
+            "message": f"Article #{article_id} published to NewsFlow Web!",
+            "slug": result.get("slug"),
+            "url": result.get("url"),
+            "cover_image": result.get("cover_image"),
+            "method": result.get("method"),
+        }
+    raise HTTPException(status_code=500, detail=result.get("error", "Publish failed"))
+
+
+@router.post("/web/upload-all")
+def upload_all_to_web(limit: int = None, repub: bool = False):
+    """Upload ALL pending scraped articles line-by-line to NewsFlow Web (no ranking gate)."""
+    from src.publishers.web_publisher import publish_all_scraped
+    results = publish_all_scraped(limit=limit, skip_posted=not repub)
+    return {
+        "success": True,
+        "message": f"Published {results['published']} articles to NewsFlow Web.",
+        "published": results["published"],
+        "failed": results["failed"],
+        "items": results["items"][:50],  # cap to avoid huge responses
+    }
+
+
+@router.get("/web/articles")
+def get_web_articles(page: int = 1, limit: int = 50, filter: str = "all"):
+    """
+    Return all scraped articles in a line-by-line stream format with their
+    web publication status and authentic image paths.
+    filter: 'all' | 'published' | 'pending'
+    """
+    offset = (page - 1) * limit
+    with get_session() as session:
+        q = session.query(Article).order_by(Article.scraped_at.desc())
+        total_q = session.query(Article)
+        if filter == "published":
+            q = q.filter(Article.web_posted == True)
+            total_q = total_q.filter(Article.web_posted == True)
+        elif filter == "pending":
+            q = q.filter(Article.web_posted == False)
+            total_q = total_q.filter(Article.web_posted == False)
+        total = total_q.count()
+        articles = q.offset(offset).limit(limit).all()
+
+        import os as _os
+        web_url = _os.getenv("NEWSFLOW_WEB_URL", "http://localhost:3000").rstrip("/")
+
+        items = []
+        for a in articles:
+            web_slug = getattr(a, "web_slug", None)
+            web_published_at = getattr(a, "web_published_at", None)
+            scraped_img = getattr(a, "scraped_image_path", None)
+            scraped_url = getattr(a, "scraped_image_url", None)
+            ai_headline = getattr(a, "ai_headline", None)
+            items.append({
+                "id": a.id,
+                "title": ai_headline or a.title,
+                "original_title": a.title,
+                "source": a.source,
+                "url": a.url,
+                "body": a.body or "",
+                "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None,
+                "category": a.category,
+                "rank_score": a.rank_score or 75,
+                "scraped_image_path": scraped_img,
+                "scraped_image_url": scraped_url,
+                "image_url": scraped_img or scraped_url,
+                "web_posted": bool(a.web_posted),
+                "web_slug": web_slug,
+                "web_url": f"{web_url}/article/{web_slug}" if web_slug else None,
+                "web_published_at": web_published_at.isoformat() if web_published_at else None,
+                "ai_headline": ai_headline,
+                "ai_summary": getattr(a, "ai_summary", None),
+                "editorial_status": getattr(a, "editorial_status", "draft"),
+            })
+
+        return {
+            "success": True,
+            "articles": items,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "filter": filter,
+            "web_url": web_url,
+        }
