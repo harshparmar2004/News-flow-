@@ -85,7 +85,7 @@ def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
         cur = conn.cursor()
         cat_name = payload.get("category", "Tech & Innovation")
         cat_slug = re.sub(r"[^a-z0-9]+", "-", cat_name.lower()).strip("-")
-        cur.execute("SELECT id FROM Category WHERE slug=?", (cat_slug,))
+        cur.execute("SELECT id FROM Category WHERE slug=? OR name=?", (cat_slug, cat_name))
         row = cur.fetchone()
         now = datetime.utcnow().isoformat() + "Z"
         if row:
@@ -94,6 +94,11 @@ def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
             cat_id = "c" + hashlib.md5(cat_slug.encode()).hexdigest()[:20]
             cur.execute("INSERT OR IGNORE INTO Category (id,name,slug,description,display_order,created_at) VALUES(?,?,?,?,?,?)",
                         (cat_id, cat_name, cat_slug, f"Latest in {cat_name}", 0, now))
+            cur.execute("SELECT id FROM Category WHERE slug=? OR name=?", (cat_slug, cat_name))
+            re_row = cur.fetchone()
+            if re_row:
+                cat_id = re_row[0]
+
         slug_base = re.sub(r"[^a-z0-9]+", "-", payload["title"].lower()).strip("-")[:80]
         slug = slug_base
         cur.execute("SELECT id FROM Article WHERE slug=?", (slug,))
@@ -107,7 +112,7 @@ def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
             VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (art_id, slug, payload["title"], payload.get("summary",""), body,
              payload.get("cover_image_url"), cat_id, payload.get("author","NewsFlow AI"),
-             now, "published", payload.get("rank_score",75), 1 if payload.get("is_featured") else 0,
+             now, payload.get("status", "draft"), payload.get("rank_score",75), 1 if payload.get("is_featured") else 0,
              max(1, len(body.split())//200), payload.get("source_url"), now, now, 0))
         conn.commit()
         conn.close()
