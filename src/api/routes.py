@@ -1787,32 +1787,34 @@ def get_web_status():
 
 
 @router.post("/web/upload/{article_id}")
-def upload_article_to_web(article_id: int):
-    """Upload a single scraped article (with its authentic image) to NewsFlow Web."""
+def upload_article_to_web(article_id: int, status: str = Query("draft", description="draft or published")):
+    """Upload a single scraped article (with authentic photo) to NewsFlow Admin (default: draft)."""
     from src.publishers.web_publisher import publish_to_web
-    result = publish_to_web(article_id)
+    result = publish_to_web(article_id, status=status)
     if result.get("success"):
         return {
             "success": True,
-            "message": f"Article #{article_id} published to NewsFlow Web!",
+            "message": f"Article #{article_id} sent to NewsFlow Admin ({status})!",
             "slug": result.get("slug"),
             "url": result.get("url"),
             "cover_image": result.get("cover_image"),
             "method": result.get("method"),
+            "status": status,
         }
     raise HTTPException(status_code=500, detail=result.get("error", "Publish failed"))
 
 
 @router.post("/web/upload-all")
-def upload_all_to_web(limit: int = None, repub: bool = False):
-    """Upload ALL pending scraped articles line-by-line to NewsFlow Web (no ranking gate)."""
+def upload_all_to_web(limit: int = None, repub: bool = False, status: str = Query("draft", description="draft or published")):
+    """Upload ALL pending scraped articles line-by-line to NewsFlow Admin (default: draft)."""
     from src.publishers.web_publisher import publish_all_scraped
-    results = publish_all_scraped(limit=limit, skip_posted=not repub)
+    results = publish_all_scraped(limit=limit, skip_posted=not repub, status=status)
     return {
         "success": True,
-        "message": f"Published {results['published']} articles to NewsFlow Web.",
+        "message": f"Uploaded {results['published']} articles to NewsFlow Admin ({status}).",
         "published": results["published"],
         "failed": results["failed"],
+        "status": status,
         "items": results["items"][:50],  # cap to avoid huge responses
     }
 

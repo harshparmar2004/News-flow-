@@ -245,8 +245,8 @@ def stage_sync_to_app2() -> dict[str, int]:
 
         # Determine how many articles to dispatch based on rate limit mode
         if rate_mode == "instant":
-            to_dispatch = ready_articles
-            logger.info(f"⚡ Instant Dispatch Mode: Transmitting all {len(to_dispatch)} ready stories to connected App 2...")
+            to_dispatch = ready_articles[:10]
+            logger.info(f"⚡ Instant Dispatch Mode: Transmitting batch of {len(to_dispatch)} stories to connected App 2...")
         elif rate_mode in ("batch_10_2hr", "batch_10_1hr"):
             to_dispatch = ready_articles[:10]
             logger.info(f"📦 Batch Mode ({rate_mode}): Transmitting batch of {len(to_dispatch)} top stories to connected App 2...")

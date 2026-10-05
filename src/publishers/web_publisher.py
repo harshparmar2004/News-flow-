@@ -1,4 +1,4 @@
-﻿"""
+"""
 NewsFlow Web Publisher
 Publishes ALL scraped articles from the pipeline DB directly to the NewsFlow Web site
 (Next.js) via its REST API — line by line, no ranking gate.
@@ -155,7 +155,7 @@ def _resolve_category(article) -> str:
     return "Tech & Innovation"
 
 
-def publish_to_web(article_id: int) -> Dict[str, Any]:
+def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
     with get_session() as session:
         article = session.query(Article).filter(Article.id == article_id).first()
         if not article:
@@ -193,7 +193,7 @@ def publish_to_web(article_id: int) -> Dict[str, Any]:
             "title": title, "summary": summary, "body": body,
             "category": cat_name, "rank_score": rank,
             "source_url": article.url, "author": "NewsFlow AI",
-            "status": "published", "is_featured": rank >= 90,
+            "status": status, "is_featured": rank >= 90,
             "cover_image_url": cover_img,
         }
 
@@ -213,12 +213,12 @@ def publish_to_web(article_id: int) -> Dict[str, Any]:
             article.web_published_at = datetime.utcnow()
             session.commit()
             return {"success": True, "slug": slug, "url": f"{WEB_URL}/article/{slug}",
-                    "method": method, "cover_image": cover_img}
+                    "method": method, "cover_image": cover_img, "status": status}
         return {"success": False, "error": "Failed via HTTP and SQLite fallback"}
 
 
-def publish_all_scraped(limit: int = None, skip_posted: bool = True) -> Dict[str, Any]:
-    """Publish ALL scraped articles line-by-line (no ranking gate)."""
+def publish_all_scraped(limit: int = None, skip_posted: bool = True, status: str = "draft") -> Dict[str, Any]:
+    """Publish ALL scraped articles line-by-line to NewsFlow Admin & Web."""
     results = {"published": 0, "failed": 0, "items": []}
     with get_session() as session:
         q = session.query(Article)
@@ -229,15 +229,15 @@ def publish_all_scraped(limit: int = None, skip_posted: bool = True) -> Dict[str
             q = q.limit(limit)
         article_ids = [a.id for a in q.all()]
 
-    logger.info(f"Publishing {len(article_ids)} articles to NewsFlow Web...")
+    logger.info(f"Uploading {len(article_ids)} articles to NewsFlow Admin (status={status})...")
     for aid in article_ids:
         try:
-            res = publish_to_web(aid)
+            res = publish_to_web(aid, status=status)
             if res.get("success"):
                 results["published"] += 1
                 results["items"].append({"id": aid, "slug": res.get("slug"),
-                                          "url": res.get("url"), "method": res.get("method")})
-                logger.info(f"  OK #{aid} -> {res.get('url')}")
+                                          "url": res.get("url"), "method": res.get("method"), "status": status})
+                logger.info(f"  OK #{aid} -> {res.get('url')} ({status})")
             else:
                 results["failed"] += 1
         except Exception as e:

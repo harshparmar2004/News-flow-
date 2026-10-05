@@ -86,7 +86,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="NewsFlow Web Dashboard Server")
     parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address to bind (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8000, help="Port to listen on (default: 8000)")
-    parser.add_argument("--reload", action="store_true", default=True, help="Enable auto-reload for development")
+    parser.add_argument("--reload", action="store_true", default=False, help="Enable auto-reload for development")
     return parser.parse_args()
 
 
@@ -97,4 +97,10 @@ if __name__ == "__main__":
     print(f"  Dashboard Web UI: http://{args.host}:{args.port}")
     print(f"  API Documentation: http://{args.host}:{args.port}/docs")
     print("=" * 60)
-    uvicorn.run("dashboard:app", host=args.host, port=args.port, reload=args.reload)
+    
+    if args.reload:
+        reload_dirs = [os.path.join(PROJECT_ROOT, "src"), os.path.join(PROJECT_ROOT, "dashboard")]
+        reload_excludes = ["*.log", "*.db", "*.sqlite*", "*.webp", "*.png", "*.jpg", "*.json", "logs/*", "images/*", "config/*"]
+        uvicorn.run("dashboard:app", host=args.host, port=args.port, reload=True, reload_dirs=reload_dirs, reload_excludes=reload_excludes)
+    else:
+        uvicorn.run("dashboard:app", host=args.host, port=args.port, reload=False)
