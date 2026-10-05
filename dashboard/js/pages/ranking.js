@@ -1,8 +1,7 @@
 /**
  * Pillar 2: AI News Rank & Refine Studio
  * Displays strictly the Top 10 highest-ranked stories from the pipeline run.
- * Refines editorial context, synthesizes key takeaways, crafts Nano Banana visual prompts,
- * and connects directly to Nano Banana Studio for 4-slide catalog generation.
+ * Extracts authentic lead editorial photos and synthesizes structured Tech Notes.
  */
 const RankingPage = {
   top10: [],
@@ -74,7 +73,7 @@ const RankingPage = {
               </span>
             </div>
             <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 4px;">
-              Evaluates raw news with Custom AI Agent Rules, curates strictly the <strong>Top 10 breakthrough stories</strong>, refines executive summaries, and creates Nano Banana visual decks.
+              Evaluates raw news with Custom AI Agent Rules, curates strictly the <strong>Top 10 breakthrough stories</strong>, extracts authentic lead editorial photos, and synthesizes structured Tech Notes context.
             </p>
           </div>
 
@@ -82,14 +81,14 @@ const RankingPage = {
             <button class="btn btn-secondary" onclick="RankingPage.toggleRulesDrawer()">
               <i data-lucide="sliders"></i> Custom AI Agent Rules
             </button>
-            <button class="btn btn-secondary" id="batch-slides-btn" onclick="RankingPage.generateAllTop10Slides()">
-              <i data-lucide="sparkles"></i> Batch Generate 4-Slide Decks
+            <button class="btn btn-secondary" id="sync-photos-btn" onclick="RankingPage.syncAllPhotos()">
+              <i data-lucide="camera"></i> Verify Editorial Photos
             </button>
             <button class="btn btn-secondary" id="rerank-btn" onclick="RankingPage.runRerank()">
               <i data-lucide="refresh-cw"></i> Re-Rank Run
             </button>
-            <button class="btn btn-primary btn-glow" onclick="App.navigateTo('media')">
-              <i data-lucide="wand-2"></i> Nano Banana Studio →
+            <button class="btn btn-primary btn-glow" onclick="App.navigateTo('pipeline')">
+              <i data-lucide="send"></i> App 2 Gateway →
             </button>
           </div>
         </div>
@@ -127,13 +126,13 @@ const RankingPage = {
             </div>
           </div>
 
-          <div style="display: flex; align-items: center; gap: 12px; cursor: pointer;" onclick="App.navigateTo('media')">
-            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(193, 53, 132, 0.12); color: #c13584; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <i data-lucide="wand-2" style="width: 18px; height: 18px;"></i>
+          <div style="display: flex; align-items: center; gap: 12px; cursor: pointer;" onclick="App.navigateTo('pipeline')">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(46, 125, 50, 0.12); color: #2e7d32; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <i data-lucide="send" style="width: 18px; height: 18px;"></i>
             </div>
             <div>
               <span style="font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Stage 4</span>
-              <h5 style="font-size: 0.88rem; font-weight: 700; color: var(--primary-purple);">Nano Banana Studio →</h5>
+              <h5 style="font-size: 0.88rem; font-weight: 700; color: #2e7d32;">App 2 REST Gateway →</h5>
             </div>
           </div>
 
@@ -326,28 +325,8 @@ const RankingPage = {
       let scoreColor = score >= 90 ? '#d97757' : score >= 80 ? '#2e7d32' : '#2b7bb9';
       let scoreBg = score >= 90 ? 'rgba(217,119,87,0.12)' : score >= 80 ? 'rgba(46,125,50,0.12)' : 'rgba(43,123,185,0.12)';
 
-      const slideImagesHtml = (story.slide_urls && story.slide_urls.length > 0) ? `
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px;">
-          ${story.slide_urls.map((url, i) => `
-            <div style="border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: #faf7f2; cursor: pointer; transition: transform 0.15s ease;" onclick="window.open('${url}', '_blank')">
-              <img src="${url}" style="width: 100%; height: auto; display: block; aspect-ratio: 1/1; object-fit: cover;" alt="Slide ${i+1}" />
-              <div style="padding: 5px; font-size: 0.7rem; text-align: center; font-weight: 700; color: var(--text-muted); background: #ffffff;">
-                ${i === 0 ? '① Title Hook' : i === 1 ? '② Key Insight' : i === 2 ? '③ Deep Analysis' : '④ Discussion'}
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      ` : `
-        <div style="background: var(--bg-surface); padding: 16px; border-radius: 8px; border: 1px dashed var(--border-color); text-align: center; margin-top: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-          <div style="display: flex; align-items: center; gap: 8px; text-align: left;">
-            <i data-lucide="image" style="width: 20px; height: 20px; color: var(--primary-purple);"></i>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">4-Slide Visual Deck ready to be rendered for this story.</span>
-          </div>
-          <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.76rem;" onclick="RankingPage.generateSlides(${story.id})">
-            <i data-lucide="sparkles"></i> Generate 4-Slide Deck
-          </button>
-        </div>
-      `;
+      // 1 Authentic Extracted News Photo
+      const extractedPhotoUrl = story.scraped_image_path || story.image_url || null;
 
       return `
         <div class="glass-card" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 14px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 16px;">
@@ -375,7 +354,7 @@ const RankingPage = {
             </div>
           </div>
 
-          <!-- Main Story Headline (Clickable Link to Original Scraped Article) -->
+          <!-- Main Story Headline -->
           <div>
             <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 700; line-height: 1.35; color: var(--text-main); margin-bottom: 4px;">
               <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; display: inline-block; transition: color 0.15s ease;" onmouseover="this.style.color='var(--primary-purple)'" onmouseout="this.style.color='var(--text-main)'">
@@ -384,15 +363,44 @@ const RankingPage = {
             </h3>
           </div>
 
-          <!-- Section 1: AI Refined Narrative, Reference & Context -->
-          <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color);">
+          <!-- Section 1: Authentic Extracted Editorial Photo (From Source Website) -->
+          <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+              <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="camera" style="width: 15px; height: 15px; color: var(--primary-purple);"></i>
+                Authentic Scraped Lead Image (${story.source})
+              </span>
+              ${extractedPhotoUrl ? `
+                <a href="${extractedPhotoUrl}" target="_blank" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.72rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                  <i data-lucide="maximize-2" style="width: 11px; height: 11px;"></i> Full Resolution ↗
+                </a>
+              ` : ''}
+            </div>
+
+            ${extractedPhotoUrl ? `
+              <div style="border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); background: #ffffff; position: relative; max-height: 320px; text-align: center;">
+                <img src="${extractedPhotoUrl}" alt="${story.title}" style="width: 100%; max-height: 320px; object-fit: cover; display: block;" onerror="this.parentElement.innerHTML='<div style=\\'padding:30px;color:var(--text-muted);font-size:0.8rem;\\'>Photo unavailable on external CDN</div>'">
+                <div style="position: absolute; bottom: 8px; left: 10px; background: rgba(0,0,0,0.72); color: #ffffff; padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 5px;">
+                  <span>📷 Extracted from ${story.source}</span>
+                </div>
+              </div>
+            ` : `
+              <div style="background: #ffffff; padding: 24px; border-radius: 8px; border: 1px dashed var(--border-color); text-align: center; color: var(--text-muted); font-size: 0.82rem;">
+                <i data-lucide="image" style="width: 24px; height: 24px; color: var(--text-dim); margin-bottom: 6px;"></i>
+                <div>No editorial lead photo found on source webpage.</div>
+              </div>
+            `}
+          </div>
+
+          <!-- Section 2: AI Synthesized News Content & Tech Notes Context -->
+          <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border-color);">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 5px;">
-                <i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--primary-purple);"></i>
-                AI Refined Narrative & Strategic Context
+              <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 5px;">
+                <i data-lucide="file-text" style="width: 14px; height: 14px; color: var(--primary-purple);"></i>
+                AI Synthesized Tech Notes & Context Narrative
               </span>
               <span style="font-size: 0.72rem; color: #2e7d32; font-weight: 700; display: flex; align-items: center; gap: 4px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: #2e7d32;"></span> Gemini 2.5 Refined
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: #2e7d32;"></span> Gemini Refined
               </span>
             </div>
 
@@ -402,25 +410,14 @@ const RankingPage = {
                 <i data-lucide="globe" style="width: 15px; height: 15px; color: var(--primary-purple);"></i>
                 <span>Scraped Source Reference: <strong style="color: var(--text-main);">${story.source}</strong> <span style="color: var(--text-dim);">(${story.source_domain || story.source})</span></span>
               </div>
-              <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding: 5px 14px; font-size: 0.76rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; box-shadow: 0 2px 5px rgba(217,119,87,0.25);">
-                <i data-lucide="external-link" style="width: 13px; height: 13px;"></i> Visit Original Article Website ↗
+              <a href="${story.url || '#'}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.74rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                <i data-lucide="external-link" style="width: 12px; height: 12px;"></i> View Original Source ↗
               </a>
             </div>
 
-            <p style="font-size: 0.86rem; color: var(--text-main); line-height: 1.55; margin-bottom: 10px; font-weight: 500;">
-              ${story.refined_body}
-            </p>
-
-            ${story.key_takeaways && story.key_takeaways.length > 0 ? `
-              <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-color); display: flex; flex-direction: column; gap: 4px;">
-                ${story.key_takeaways.map(t => `
-                  <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: baseline; gap: 6px;">
-                    <span style="color: var(--primary-purple); font-weight: 700;">•</span>
-                    <span>${t}</span>
-                  </div>
-                `).join('')}
-              </div>
-            ` : ''}
+            <div style="background: #ffffff; border: 1px solid var(--border-color); padding: 12px 14px; border-radius: 8px; font-size: 0.84rem; color: var(--text-main); line-height: 1.55; white-space: pre-wrap; font-family: var(--font-mono); max-height: 240px; overflow-y: auto;">
+${story.refined_body}
+            </div>
 
             <!-- Multi-Platform Social Badges -->
             <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
@@ -436,43 +433,12 @@ const RankingPage = {
             </div>
           </div>
 
-          <!-- Section 2: Custom AI Agent Justification -->
+          <!-- Section 3: Custom AI Agent Justification -->
           <div style="background: rgba(217, 119, 87, 0.06); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(217, 119, 87, 0.2); font-size: 0.82rem; color: var(--text-main);">
             <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary-purple); margin-bottom: 2px;">
               <i data-lucide="bot" style="width: 14px; height: 14px;"></i> Custom AI Agent Ranking Justification:
             </div>
-            <p style="line-height: 1.45; font-size: 0.8rem;">${story.rank_reason}</p>
-          </div>
-
-          <!-- Section 3: Nano Banana Visual System Prompt & 4-Slide Deck -->
-          <div style="background: #ffffff; padding: 14px; border-radius: 10px; border: 1px solid var(--border-color);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 6px;">
-                <i data-lucide="wand-2" style="width: 14px; height: 14px; color: var(--primary-purple);"></i>
-                Nano Banana Visual System Prompt
-              </span>
-              <button class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.72rem;" onclick="RankingPage.copyPrompt(${story.id})">
-                <i data-lucide="copy"></i> Copy Prompt
-              </button>
-            </div>
-
-            <p id="prompt-text-${story.id}" style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-muted); background: var(--bg-surface); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color); line-height: 1.4; word-break: break-word;">
-              ${story.nano_banana_prompt}
-            </p>
-
-            <!-- 4-Slide Deck Display -->
-            <div style="margin-top: 12px;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.04em;">
-                  🎨 Nano Banana 4-Slide Catalog Deck
-                </span>
-                <button class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.72rem;" onclick="RankingPage.generateSlides(${story.id})">
-                  <i data-lucide="refresh-cw"></i> Re-Render Slides
-                </button>
-              </div>
-
-              ${slideImagesHtml}
-            </div>
+            <p style="line-height: 1.45; font-size: 0.8rem; margin: 0;">${story.rank_reason}</p>
           </div>
 
           <!-- Card Actions Footer -->
@@ -488,11 +454,8 @@ const RankingPage = {
               <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;" onclick="App.openArticleModal(${story.id})">
                 <i data-lucide="eye"></i> Inspect Full Article
               </button>
-              <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;" onclick="RankingPage.generateSlides(${story.id})">
-                <i data-lucide="sparkles"></i> 4-Slide Deck
-              </button>
-              <button class="btn btn-primary btn-glow" style="padding: 6px 14px; font-size: 0.78rem;" onclick="RankingPage.openInNanoBanana(${story.id})">
-                <i data-lucide="wand-2"></i> Open in Nano Banana Studio →
+              <button class="btn btn-primary btn-glow" style="padding: 6px 14px; font-size: 0.78rem;" onclick="RankingPage.dispatchStory(${story.id})">
+                <i data-lucide="send"></i> Send to App 2 Gateway →
               </button>
             </div>
           </div>
@@ -627,56 +590,40 @@ const RankingPage = {
     }
   },
 
-  async generateSlides(articleId) {
-    try {
-      App.showToast(`Generating Nano Banana 4-Slide Deck for Story #${articleId}...`, 'info');
-      const res = await App.fetchApi(`/api/articles/${articleId}/slides`, { method: 'POST' });
-      if (res && res.success) {
-        App.showToast(`4-Slide Deck generated successfully!`, 'success');
-        await this.loadData();
-      }
-    } catch (e) {
-      App.showToast(`Slide generation error: ${e.message}`, 'error');
-    }
-  },
-
-  async generateAllTop10Slides() {
-    const btn = document.getElementById('batch-slides-btn');
+  async syncAllPhotos() {
+    const btn = document.getElementById('sync-photos-btn');
     if (btn) {
-      btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Generating 10 Decks...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Verifying Photos...';
       btn.disabled = true;
     }
 
     try {
-      App.showToast('Generating 4-slide catalog decks for all Top 10 stories...', 'info');
-      const res = await App.fetchApi('/api/ranking/generate-all-slides', { method: 'POST' });
-      App.showToast(res.message || 'Generated 4-slide decks for Top 10 stories!', 'success');
+      App.showToast('Verifying authentic editorial photos from source sites...', 'info');
+      const res = await App.fetchApi('/api/scraped/backfill-images', { method: 'POST' });
+      App.showToast(`Verified and cached authentic photos for ${res.updated_count || 0} articles!`, 'success');
       await this.loadData();
     } catch (e) {
-      App.showToast(`Batch generation error: ${e.message}`, 'error');
+      App.showToast(`Photo sync error: ${e.message}`, 'error');
     } finally {
       if (btn) {
-        btn.innerHTML = '<i data-lucide="sparkles"></i> Batch Generate 4-Slide Decks';
+        btn.innerHTML = '<i data-lucide="camera"></i> Verify Editorial Photos';
         btn.disabled = false;
         if (window.lucide) window.lucide.createIcons();
       }
     }
   },
 
-  openInNanoBanana(articleId) {
-    sessionStorage.setItem('nano_banana_target_id', articleId.toString());
-    const story = this.top10.find(s => s.id === articleId);
-    if (story && story.nano_banana_prompt) {
-      sessionStorage.setItem('nano_banana_prompt', story.nano_banana_prompt);
-    }
-    App.navigateTo('media');
-  },
-
-  copyPrompt(articleId) {
-    const el = document.getElementById(`prompt-text-${articleId}`);
-    if (el) {
-      navigator.clipboard.writeText(el.textContent.trim());
-      App.showToast('Nano Banana visual prompt copied to clipboard!', 'success');
+  async dispatchStory(articleId) {
+    App.showToast(`Dispatching story #${articleId} + authentic photo to App 2 REST Gateway...`, 'info');
+    try {
+      const res = await App.fetchApi(`/api/dispatch/send/${articleId}`, { method: 'POST' });
+      if (res.success) {
+        App.showToast(`Story #${articleId} delivered successfully to connected App! (200 OK)`, 'success');
+      } else {
+        App.showToast(`Dispatch warning: ${res.error}`, 'error');
+      }
+    } catch (e) {
+      App.showToast(`Dispatch failed: ${e.message}`, 'error');
     }
   }
 };

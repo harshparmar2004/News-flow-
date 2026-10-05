@@ -161,14 +161,14 @@ const App = {
 
     const pageTitles = {
       scraped: { title: '1. Research Scraped Data Vault', subtitle: 'View raw content, extracted headlines, and text scraped from monitored web sources' },
-      space: { title: '🌌 3D Interactive Agentic Space', subtitle: 'Observe research, refinement, and image generation progression in 3D' },
-      dashboard: { title: 'Dashboard Overview', subtitle: 'Real-time research analytics, news ranking, and Nano Banana image studio' },
+      space: { title: '🌌 3D Interactive Agentic Space', subtitle: 'Observe news scraping, AI ranking, authentic photo extraction, and App 2 transfer in 3D' },
+      dashboard: { title: 'Dashboard Overview', subtitle: 'Real-time automation analytics, authentic photo extraction, and news ranking status' },
       sources: { title: 'News Sources & Web Links', subtitle: 'Manage news source links, RSS feeds, and trigger automated crawlers' },
-      ranking: { title: '2. AI News Rank & Refine Engine', subtitle: 'Scores news from 1 to 100 based on custom AI parameters and refines raw text' },
-      media: { title: '3. Studio (Nano Banana Graphic Engine)', subtitle: 'Custom visual prompt studio & 4-slide catalog carousel generator powered by Nano Banana 2' },
-      notes: { title: '4. Notebook Notes & Instagram Carousel Studio', subtitle: 'Generate handwritten spiral-notebook PDFs and crisp 1080x1350 PNG slides on demand' },
-      articles: { title: 'Refined Content Vault & Calendar Archive', subtitle: 'Database of refined news, scores, and generated Nano Banana visual assets' },
-      pipeline: { title: 'Research & Graphic Workflow Diagram', subtitle: 'Scrape ➔ Rank & Refine ➔ Nano Banana Image Generation workflow' },
+      ranking: { title: '2. AI News Rank & Refine Engine', subtitle: 'Scores news 1 to 100, extracts authentic lead photos, and synthesizes structured Tech Notes' },
+      media: { title: 'Visual Studio', subtitle: 'Editorial photo and graphic management' },
+      notes: { title: 'Tech Notes Vault', subtitle: 'Structured technical documentation and post archives' },
+      articles: { title: 'Refined Content Vault & Calendar Archive', subtitle: 'Database of refined news, ranking scores, and authentic source editorial photos' },
+      pipeline: { title: '3. Pipeline Workflow & API Dispatch Engine', subtitle: 'Scrape ➔ Rank & Score ➔ Tech-Notes Synthesis ➔ App 2 REST Gateway transfer' },
       logs: { title: 'System Logs Stream', subtitle: 'Live terminal stream from pipeline.log' },
       settings: { title: 'API Keys & Configuration', subtitle: 'Manage Groq, OpenAI, Gemini, and research pipeline credentials' }
     };

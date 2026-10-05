@@ -93,55 +93,51 @@ const SettingsPage = {
               </div>
             </div>
 
-            <!-- Google Gemini & Nano Banana API Key -->
+            <!-- Google Gemini API Key -->
             <div style="display: flex; flex-direction: column; gap: 4px; background: var(--bg-surface); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <label style="font-size: 0.84rem; font-weight: 700; color: #a855f7;">🍌 Nano Banana / Google Gemini API Key (AI Pro Plan - Imagen 3 / Gemini 2.5)</label>
+                <label style="font-size: 0.84rem; font-weight: 700; color: #a855f7;">✨ Google Gemini API Key (Gemini 2.0 Flash / Pro)</label>
                 <span style="font-size: 0.76rem; color: var(--text-dim);">Get key: <a href="https://aistudio.google.com/apikey" target="_blank" style="color: #a855f7; font-weight: 600;">aistudio.google.com/apikey</a></span>
               </div>
               <div style="display: flex; gap: 10px; margin-top: 4px;">
-                <input type="password" id="input-GOOGLE_API_KEY" class="filter-select" style="flex: 1; background: var(--bg-card);" placeholder="Enter Gemini / Nano Banana key (AIzaSy...)" />
+                <input type="password" id="input-GOOGLE_API_KEY" class="filter-select" style="flex: 1; background: var(--bg-card);" placeholder="Enter Gemini API key (AIzaSy...)" />
                 <button class="btn btn-secondary" onclick="SettingsPage.toggleVisibility('input-GOOGLE_API_KEY')">Show/Hide</button>
               </div>
               <span style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;">
-                Includes <strong>Nano Banana (Imagen 3.0 Generate)</strong> for high-resolution contextual social media post cards.
+                Powers <strong>Gemini 2.0 Flash</strong> for real-time editorial news ranking and Tech Notes narrative synthesis.
               </span>
             </div>
 
           </div>
         </div>
 
-        <!-- Nano Banana Image & 4-Slide Deck Settings -->
-        <div class="glass-card" style="border: 1px solid #a855f7;">
+        <!-- Authentic Image Extraction & Storage Settings -->
+        <div class="glass-card" style="border: 1px solid var(--border-color);">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
             <div style="display: flex; align-items: center; gap: 12px;">
-              <div class="stat-icon" style="color: #a855f7; background: rgba(168, 85, 247, 0.12); width: 40px; height: 40px; border-radius: 8px;">
-                <i data-lucide="image"></i>
+              <div class="stat-icon" style="color: #2e7d32; background: rgba(46, 125, 50, 0.12); width: 40px; height: 40px; border-radius: 8px;">
+                <i data-lucide="camera"></i>
               </div>
               <div>
-                <h3 style="font-family: var(--font-serif); font-size: 1.15rem;">🍌 Nano Banana 4-Slide Deck & Aspect Ratio Settings</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted);">Configure automatic 4-card image decks (1 Attracting Banner + 3 Context/Concept Details) & ratio</p>
+                <h3 style="font-family: var(--font-serif); font-size: 1.15rem;">📷 Authentic Image Extraction & Storage</h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">Web scraper image extraction, OpenGraph meta tag scraping, and local WebP optimization</p>
               </div>
             </div>
-            <span class="badge" style="font-size: 0.7rem; background: rgba(168, 85, 247, 0.15); color: #a855f7;">NANO BANANA</span>
+            <span class="badge" style="font-size: 0.7rem; background: rgba(46, 125, 50, 0.15); color: #2e7d32;">SCRAPER ENGINE</span>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 16px;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
               <div>
-                <label style="font-size: 0.84rem; font-weight: 600;">DEFAULT_ASPECT_RATIO</label>
-                <select id="input-DEFAULT_ASPECT_RATIO" class="filter-select" style="width: 100%; margin-top: 4px;">
-                  <option value="16:9" selected>16:9 Widescreen (Twitter, Reddit, LinkedIn - Recommended)</option>
-                  <option value="4:5">4:5 Mobile Portrait (Instagram Feed & Mobile)</option>
-                  <option value="1:1">1:1 Square (Classic Social Grid)</option>
-                </select>
-                <span style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; display: block;">Twitter, Reddit & LinkedIn perform best with 16:9 widescreen visuals!</span>
+                <label style="font-size: 0.84rem; font-weight: 600;">IMAGE_OPTIMIZATION_FORMAT</label>
+                <input type="text" class="filter-select" value="WebP (Lossless compression, instant delivery)" readonly style="width: 100%; margin-top: 4px; background: var(--bg-surface);" />
+                <span style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; display: block;">Images scraped from source articles are automatically converted and cached as WebP.</span>
               </div>
 
               <div>
-                <label style="font-size: 0.84rem; font-weight: 600;">4-SLIDE DECK SEQUENCE</label>
-                <input type="text" id="input-SLIDE_STRUCTURE" class="filter-select" value="1 Banner (Attract Hook) + 3 Concept/Context Breakdown Cards" readonly style="width: 100%; margin-top: 4px; background: var(--bg-surface);" />
-                <span style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; display: block;">Slide 1: High-impact Title Banner Hook ➔ Slides 2-4: Deep concept visualization & context.</span>
+                <label style="font-size: 0.84rem; font-weight: 600;">IMAGE_FALLBACK_STRATEGY</label>
+                <input type="text" class="filter-select" value="OpenGraph meta tags / Direct source URL extraction" readonly style="width: 100%; margin-top: 4px; background: var(--bg-surface);" />
+                <span style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; display: block;">Scraper falls back to verified source og:image tags if inline photos aren't found.</span>
               </div>
             </div>
           </div>
@@ -156,7 +152,7 @@ const SettingsPage = {
               </div>
               <div>
                 <h3 style="font-family: var(--font-serif); font-size: 1.15rem;">📡 App 2 (Omni-Channel AI Agent) Integration Gateway</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted);">Configures REST API transfer endpoints so App 2 can fetch refined news & Nano Banana graphics</p>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">Configures REST API transfer endpoints so App 2 can fetch refined news & authentic editorial images</p>
               </div>
             </div>
             <span class="badge" style="font-size: 0.7rem; background: rgba(46, 125, 50, 0.15); color: #2e7d32;">INTEGRATION READY</span>

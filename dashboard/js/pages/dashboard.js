@@ -21,7 +21,7 @@ const DashboardPage = {
                 📡 Omni-Channel AI Agent (App 2) REST Gateway: <span style="color: #2e7d32;">ONLINE & ACTIVE</span>
               </h4>
               <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
-                Export Endpoint: <code style="background: var(--bg-card); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color); color: var(--primary-purple);">/api/v1/export/refined-posts?min_score=75</code> (Transfers refined text & Nano Banana image decks)
+                Export Endpoint: <code style="background: var(--bg-card); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color); color: var(--primary-purple);">/api/v1/export/refined-posts?min_score=75</code> (Transfers refined tech notes & authentic source photos)
               </p>
             </div>
           </div>
@@ -60,7 +60,7 @@ const DashboardPage = {
             <div class="stat-icon"><i data-lucide="zap"></i></div>
             <div class="stat-data">
               <h3 id="stat-ready">0</h3>
-              <p>App 2 Sync Ready Decks</p>
+              <p>App 2 Sync Ready Stories</p>
             </div>
           </div>
         </div>
@@ -105,7 +105,7 @@ const DashboardPage = {
                 <th style="width: 38%;">ARTICLE HEADLINE</th>
                 <th style="width: 14%;">NEWS SOURCE</th>
                 <th style="width: 14%;">AI RANK SCORE</th>
-                <th style="width: 14%;">NANO BANANA DECK</th>
+                <th style="width: 14%;">AUTHENTIC PHOTO</th>
                 <th style="width: 20%;">SCRAPED AT</th>
               </tr>
             </thead>
@@ -319,9 +319,18 @@ const DashboardPage = {
             </span>
           </td>
           <td>
-            <span class="badge" style="background: rgba(217, 119, 87, 0.12); color: var(--primary-purple); font-weight: 700; border: 1px solid rgba(217, 119, 87, 0.3);">
-              🖼️ 4-Slide Deck
-            </span>
+            ${a.scraped_image_path || a.image_url ? `
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <img src="${a.scraped_image_path || a.image_url}" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-color);" onerror="this.style.display='none'" />
+                <span class="badge" style="background: rgba(46, 125, 50, 0.12); color: #2e7d32; font-weight: 600; font-size: 0.72rem;">
+                  📷 Scraped Photo
+                </span>
+              </div>
+            ` : `
+              <span class="badge" style="background: rgba(140, 130, 122, 0.12); color: var(--text-muted); font-size: 0.72rem;">
+                No Photo
+              </span>
+            `}
           </td>
           <td style="color: var(--text-muted); font-size: 0.8rem;">
             ${App.formatTimestamp(a.scraped_at)}

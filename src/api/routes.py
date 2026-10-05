@@ -742,9 +742,9 @@ def get_article_image(article_id: int):
         from fastapi import Response
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="400" height="220" viewBox="0 0 400 220">
           <rect width="100%" height="100%" fill="#FAF7F2"/>
-          <rect x="15" y="15" width="370" height="190" rx="8" fill="none" stroke="#D97757" stroke-width="2" stroke-dasharray="6,6"/>
-          <text x="50%" y="42%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#D97757">🎨 Nano Banana Studio</text>
-          <text x="50%" y="62%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#6E6B65">Click "Run Pipeline" to generate</text>
+          <rect x="15" y="15" width="370" height="190" rx="8" fill="none" stroke="#2E7D32" stroke-width="2" stroke-dasharray="6,6"/>
+          <text x="50%" y="42%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#2E7D32">📷 Authentic Editorial Photo</text>
+          <text x="50%" y="62%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#6E6B65">Extracted directly from source website</text>
         </svg>'''
         return Response(content=svg, media_type="image/svg+xml")
     return FileResponse(img_path, media_type="image/png")
@@ -752,7 +752,7 @@ def get_article_image(article_id: int):
 
 @router.post("/image-gen/custom")
 def generate_custom_nano_banana_image(payload: Dict[str, Any]):
-    """Generates a Nano Banana image using a custom prompt, style preset, and article context."""
+    """Generates an image using custom prompt and article context."""
     prompt = payload.get("prompt", "").strip()
     article_id = payload.get("article_id")
     style_preset = payload.get("style_preset", "Warm Claude Minimal")
@@ -766,20 +766,20 @@ def generate_custom_nano_banana_image(payload: Dict[str, Any]):
         success = generate_image(int(article_id))
         return {
             "success": success,
-            "message": f"Nano Banana image generated for Article #{article_id} with custom prompt!",
+            "message": f"Editorial image generated for Article #{article_id}!",
             "image_url": f"/api/images/{article_id}.png"
         }
     else:
         return {
             "success": True,
-            "message": f"Nano Banana prompt studio ready! Style: '{style_preset}'",
+            "message": f"Visual style ready: '{style_preset}'",
             "prompt_used": prompt
         }
 
 
 @router.api_route("/articles/{article_id}/slides", methods=["GET", "POST"])
 def get_or_create_article_slides(article_id: int):
-    """Generates and returns 4-slide catalog images (1 Banner Title + 3 Context slides) for a top post."""
+    """Generates and returns 4-slide catalog images for a top post."""
     from src.ai.image_gen import generate_carousel_slides
     slide_urls = generate_carousel_slides(article_id)
     return {
@@ -791,13 +791,13 @@ def get_or_create_article_slides(article_id: int):
 
 @router.get("/placeholder/{width}/{height}")
 def placeholder_image(width: int = 400, height: int = 220):
-    """Returns a clean SVG placeholder card when article image is pending generation."""
+    """Returns a clean SVG placeholder card when article image is pending extraction."""
     from fastapi import Response
     svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
       <rect width="100%" height="100%" fill="#FAF7F2"/>
-      <rect x="15" y="15" width="{width-30}" height="{height-30}" rx="6" fill="none" stroke="#D97757" stroke-width="2" stroke-dasharray="6,6"/>
-      <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#D97757">🎨 Nano Banana Studio</text>
-      <text x="50%" y="62%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#6E6B65">Click "Run Pipeline" to generate</text>
+      <rect x="15" y="15" width="{width-30}" height="{height-30}" rx="6" fill="none" stroke="#2E7D32" stroke-width="2" stroke-dasharray="6,6"/>
+      <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#2E7D32">📷 Authentic Editorial Photo</text>
+      <text x="50%" y="62%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#6E6B65">Extracted directly from source website</text>
     </svg>'''
     return Response(content=svg, media_type="image/svg+xml")
 
@@ -957,28 +957,36 @@ def get_top_10_ranked_news():
             from urllib.parse import urlparse
             source_domain = urlparse(a.url or "").netloc.replace("www.", "") if a.url else a.source
 
-            # High-quality structured AI-refined narrative without truncated sentences
-            raw_text = a.reddit_body or a.body or ""
-            if "Source:" in raw_text:
-                raw_text = raw_text.split("Source:")[0].strip()
+            scraped_web_path = None
+            if a.scraped_image_path and os.path.exists(a.scraped_image_path):
+                scraped_web_path = f"/images/scraped/{os.path.basename(a.scraped_image_path)}"
 
-            if len(raw_text) > 50:
-                if not raw_text.endswith((".", "!", "?", "\"")):
-                    last_stop = max(raw_text.rfind("."), raw_text.rfind("?"), raw_text.rfind("!"))
-                    if last_stop > 60:
-                        raw_text = raw_text[:last_stop + 1].strip()
-                refined_text = raw_text
+            # High-quality structured AI-refined Tech Notes context
+            if a.instagram_caption:
+                refined_text = a.instagram_caption
+            elif a.linkedin_text:
+                refined_text = a.linkedin_text
             else:
-                refined_text = (
-                    f"Comprehensive industry coverage from {a.source}: '{clean_title}'. "
-                    f"This technological breakthrough directly impacts the {niche} ecosystem, signaling significant industry disruption and new strategic opportunities."
-                )
+                raw_text = a.reddit_body or a.body or ""
+                if "Source:" in raw_text:
+                    raw_text = raw_text.split("Source:")[0].strip()
+                if len(raw_text) > 50:
+                    if not raw_text.endswith((".", "!", "?", "\"")):
+                        last_stop = max(raw_text.rfind("."), raw_text.rfind("?"), raw_text.rfind("!"))
+                        if last_stop > 60:
+                            raw_text = raw_text[:last_stop + 1].strip()
+                    refined_text = raw_text
+                else:
+                    refined_text = (
+                        f"Comprehensive industry coverage from {a.source}: '{clean_title}'. "
+                        f"This technological breakthrough directly impacts the {niche} ecosystem, signaling significant industry disruption and new strategic opportunities."
+                    )
 
             # Key takeaways referencing source
             takeaways = [
                 f"Original reporting verified on {a.source} ({cat}).",
                 f"Ranked #{idx} in '{niche}' run with custom AI Score of {a.rank_score or 75}/100.",
-                f"Contextualized and formatted for social deployment across Twitter/X, LinkedIn, and Reddit."
+                f"Contextualized and formatted into structured Tech Notes for social deployment."
             ]
 
             result.append({
@@ -1001,9 +1009,10 @@ def get_top_10_ranked_news():
                 "twitter_text": a.twitter_text or f"🔥 {clean_title[:200]}... via @{a.source or 'NewsFlow'}",
                 "linkedin_text": a.linkedin_text or f"Important development in {cat}: {clean_title}.\n\nAnalyzing strategic implications for founders and engineering teams.\n\nSource: {a.source}",
                 "instagram_caption": a.instagram_caption or f"Major tech story: {clean_title}\n\n#tech #ai #innovation #news",
-                "nano_banana_prompt": nb_prompt,
-                "has_image": bool(a.image_path and os.path.exists(a.image_path)),
-                "image_url": f"/api/images/{a.id}.png" if a.image_path and os.path.exists(a.image_path) else None,
+                "scraped_image_url": a.scraped_image_url,
+                "scraped_image_path": scraped_web_path,
+                "has_image": bool(scraped_web_path or (a.image_path and os.path.exists(a.image_path))),
+                "image_url": scraped_web_path or (f"/api/images/{a.id}.png" if a.image_path and os.path.exists(a.image_path) else None),
                 "slide_urls": slide_urls,
                 "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None
             })
@@ -1517,11 +1526,12 @@ def get_dispatch_articles(page: int = 1, limit: int = 15):
 
 
 @router.post("/scraped/backfill-images")
+@router.post("/images/scrape-all-top10")
 def backfill_images_endpoint(limit: int = 30):
     """Backfills authentic lead images from source websites for articles lacking images."""
     from src.scraper.image_scraper import backfill_scraped_images
     updated = backfill_scraped_images(limit=limit)
-    return {"success": True, "backfilled_count": updated, "message": f"Successfully backfilled images for {updated} articles!"}
+    return {"success": True, "total_cached": updated, "backfilled_count": updated, "message": f"Successfully cached authentic images for {updated} articles!"}
 
 
 @router.post("/dispatch/send/{article_id}")
