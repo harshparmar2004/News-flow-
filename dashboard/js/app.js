@@ -506,13 +506,19 @@ const App = {
             <button class="btn btn-secondary" id="modal-save-btn" onclick="App.saveArticleEditorial(${data.id})" style="padding: 8px 16px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;">
               <i data-lucide="save"></i> 💾 Save Article
             </button>
+            <a href="http://localhost:3000/admin" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.84rem; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+              <span>🔑</span> NewsFlow Admin ↗
+            </a>
             ${data.web_posted && data.web_slug ? `
               <a href="http://localhost:3000/article/${data.web_slug}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.84rem; font-weight: 700; color: #2e7d32; border-color: rgba(46,125,50,0.4); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
                 <span>🌐</span> View Live on Web ↗
               </a>
             ` : ''}
-            <button class="btn btn-primary btn-glow" id="modal-web-upload-btn" onclick="App.uploadArticleToWeb(${data.id})" style="padding: 8px 18px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;">
-              <i data-lucide="upload-cloud"></i> 🚀 Upload to NewsFlow Web
+            <button class="btn btn-primary btn-glow" id="modal-web-upload-btn" onclick="App.uploadArticleToWeb(${data.id}, 'draft')" style="padding: 8px 18px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;" title="Sends record as draft to NewsFlow Admin for review">
+              <i data-lucide="shield-check"></i> 📋 Send to Admin (Draft)
+            </button>
+            <button class="btn btn-secondary" onclick="App.uploadArticleToWeb(${data.id}, 'published')" style="padding: 8px 16px; font-size: 0.84rem; color: #2e7d32; font-weight: 700; display: flex; align-items: center; gap: 6px;" title="Publish immediately to public website">
+              <span>⚡</span> Publish Live
             </button>
           </div>
         </div>
@@ -608,19 +614,20 @@ const App = {
     }
   },
 
-  async uploadArticleToWeb(articleId) {
+  async uploadArticleToWeb(articleId, status = 'draft') {
     const btn = document.getElementById('modal-web-upload-btn');
     if (btn) {
-      btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Uploading to Web...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Uploading...';
       btn.disabled = true;
     }
     try {
+      const targetLabel = status === 'draft' ? 'NewsFlow Admin (Draft)' : 'NewsFlow Web (Live)';
       // Save changes first
       await this.saveArticleEditorial(articleId);
-      this.showToast(`Publishing story #${articleId} to NewsFlow Web...`, 'info');
-      const res = await this.fetchApi(`/api/web/upload/${articleId}`, { method: 'POST' });
+      this.showToast(`Sending story #${articleId} to ${targetLabel}...`, 'info');
+      const res = await this.fetchApi(`/api/web/upload/${articleId}?status=${status}`, { method: 'POST' });
       if (res.success) {
-        this.showToast(`Story #${articleId} published to NewsFlow Web!`, 'success');
+        this.showToast(`Story #${articleId} sent to ${targetLabel}!`, 'success');
         await this.openArticleModal(articleId); // Re-open to refresh badge and link
         if (typeof RankingPage !== 'undefined' && RankingPage.loadData) {
           RankingPage.loadData();
@@ -630,7 +637,7 @@ const App = {
       this.showToast(`Web upload failed: ${e.message}`, 'error');
     } finally {
       if (btn) {
-        btn.innerHTML = '<i data-lucide="upload-cloud"></i> 🚀 Upload to NewsFlow Web';
+        btn.innerHTML = '<i data-lucide="shield-check"></i> 📋 Send to Admin (Draft)';
         btn.disabled = false;
         if (window.lucide) window.lucide.createIcons();
       }

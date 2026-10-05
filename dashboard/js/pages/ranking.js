@@ -1,4 +1,4 @@
-﻿/**
+/**
  * NewsFlow Web Publishing Desk (Line-by-Line Feed)
  * Displays all scraped news articles line-by-line with authentic source photos.
  * Replaces the old ranking gate with direct, frictionless publishing to NewsFlow Web (localhost:3000).
@@ -33,11 +33,14 @@ const RankingPage = {
           </div>
 
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <button class="btn btn-primary btn-glow" id="upload-all-btn" onclick="RankingPage.uploadAll()" style="display: flex; align-items: center; gap: 8px; padding: 9px 20px; font-weight: 700; font-size: 0.88rem;">
-              <i data-lucide="upload-cloud" style="width: 17px; height: 17px;"></i> 🚀 Upload All to NewsFlow Web
+            <button class="btn btn-primary btn-glow" id="upload-all-btn" onclick="RankingPage.uploadAll('draft')" style="display: flex; align-items: center; gap: 8px; padding: 9px 18px; font-weight: 700; font-size: 0.86rem;" title="Upload all records as drafts to NewsFlow Admin for editorial review">
+              <i data-lucide="shield-check" style="width: 17px; height: 17px;"></i> 📋 Send All to NewsFlow Admin
             </button>
+            <a href="http://localhost:3000/admin" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; padding: 9px 15px; font-size: 0.82rem; font-weight: 700; color: #2B2622; background: #FAF7F2; text-decoration: none;" title="Open NewsFlow Admin Cockpit (Password: admin_newsflow_secret_2026)">
+              <i data-lucide="lock" style="width: 14px; height: 14px;"></i> 🔑 NewsFlow Admin ↗
+            </a>
             <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; padding: 9px 15px; font-size: 0.82rem; font-weight: 600; text-decoration: none;">
-              <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Open Website (localhost:3000) ↗
+              <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Public Website ↗
             </a>
             <button class="btn btn-secondary" onclick="RankingPage.triggerBackfill()" style="display: flex; align-items: center; gap: 6px; padding: 9px 13px; font-size: 0.82rem;" title="Scrapes authentic lead photos from websites for existing articles">
               <i data-lucide="camera" style="width: 14px; height: 14px;"></i> 📸 Fetch Photos
@@ -267,16 +270,23 @@ const RankingPage = {
       `;
 
       const uploadActionBtn = isPublished ? `
-        <a href="${liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 7px 14px; font-size: 0.78rem; font-weight: 700; color: #2e7d32; border-color: rgba(46,125,50,0.4); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-          <span>🌐</span> View Live ↗
-        </a>
-        <button class="btn btn-secondary" onclick="RankingPage.uploadArticle(${art.id})" id="btn-upload-${art.id}" style="padding: 7px 11px; font-size: 0.76rem;" title="Re-sync changes to NewsFlow Web">
-          🔄 Re-Upload
-        </button>
+        <div style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
+          <a href="${liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 7px 12px; font-size: 0.78rem; font-weight: 700; color: #2e7d32; border-color: rgba(46,125,50,0.4); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
+            <span>🌐</span> View Live ↗
+          </a>
+          <a href="http://localhost:3000/admin" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.72rem; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" title="Open in NewsFlow Admin Cockpit">
+            <span>🔑</span> Edit in Admin ↗
+          </a>
+        </div>
       ` : `
-        <button class="btn btn-primary btn-glow" onclick="RankingPage.uploadArticle(${art.id})" id="btn-upload-${art.id}" style="padding: 7px 16px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
-          <i data-lucide="upload" style="width: 13px; height: 13px;"></i> 🚀 Upload to Web
-        </button>
+        <div style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
+          <button class="btn btn-primary btn-glow" onclick="RankingPage.uploadArticle(${art.id}, 'draft')" id="btn-upload-${art.id}" style="padding: 7px 14px; font-size: 0.78rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 5px;" title="Sends to NewsFlow Admin for editorial review">
+            <i data-lucide="shield-check" style="width: 13px; height: 13px;"></i> 📋 Send to Admin
+          </button>
+          <button class="btn btn-secondary" onclick="RankingPage.uploadArticle(${art.id}, 'published')" style="padding: 5px 12px; font-size: 0.74rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 4px; color: #2e7d32;" title="Publish immediately to public website">
+            <span>⚡</span> Publish Live
+          </button>
+        </div>
       `;
 
       const imageBox = imgPath ? `
@@ -369,14 +379,15 @@ const RankingPage = {
     if (window.lucide) window.lucide.createIcons();
   },
 
-  async uploadArticle(articleId) {
+  async uploadArticle(articleId, status = 'draft') {
     const btn = document.getElementById(`btn-upload-${articleId}`);
     if (btn) {
       btn.innerHTML = '<i data-lucide="loader-2" class="spin" style="width:12px; height:12px;"></i> Uploading...';
       btn.disabled = true;
     }
     try {
-      App.showToast(`Uploading Story #${articleId} to NewsFlow Web with authentic photo...`, 'info');
+      const targetLabel = status === 'draft' ? 'NewsFlow Admin (Draft)' : 'NewsFlow Web (Live)';
+      App.showToast(`Uploading Story #${articleId} to ${targetLabel}...`, 'info');
       
       // Save any headline edits first
       const headInput = document.getElementById(`stream-headline-${articleId}`);
@@ -388,9 +399,9 @@ const RankingPage = {
         });
       }
 
-      const res = await App.fetchApi(`/api/web/upload/${articleId}`, { method: 'POST' });
+      const res = await App.fetchApi(`/api/web/upload/${articleId}?status=${status}`, { method: 'POST' });
       if (res.success) {
-        App.showToast(`Story #${articleId} published to NewsFlow Web!`, 'success');
+        App.showToast(`Story #${articleId} sent to ${targetLabel}!`, 'success');
         await this.loadData();
         await this.checkWebStatus();
       }
@@ -402,17 +413,17 @@ const RankingPage = {
     }
   },
 
-  async uploadAll() {
+  async uploadAll(status = 'draft') {
     const btn = document.getElementById('upload-all-btn');
     if (btn) {
-      btn.innerHTML = '<i data-lucide="loader-2" class="spin" style="width:16px; height:16px;"></i> Uploading Stream...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin" style="width:16px; height:16px;"></i> Sending Records...';
       btn.disabled = true;
     }
     try {
-      App.showToast('Publishing all pending scraped news line-by-line to NewsFlow Web...', 'info');
-      const res = await App.fetchApi('/api/web/upload-all', { method: 'POST' });
+      App.showToast('Sending all pending scraped news to NewsFlow Admin as draft records...', 'info');
+      const res = await App.fetchApi(`/api/web/upload-all?status=${status}`, { method: 'POST' });
       if (res.success) {
-        App.showToast(`Published ${res.published} articles to NewsFlow Web!`, 'success');
+        App.showToast(`Uploaded ${res.published} articles to NewsFlow Admin for editorial review!`, 'success');
         await this.loadData();
         await this.checkWebStatus();
       }
@@ -420,7 +431,7 @@ const RankingPage = {
       App.showToast(`Batch upload error: ${e.message}`, 'error');
     } finally {
       if (btn) {
-        btn.innerHTML = '<i data-lucide="upload-cloud" style="width: 17px; height: 17px;"></i> 🚀 Upload All to NewsFlow Web';
+        btn.innerHTML = '<i data-lucide="shield-check" style="width: 17px; height: 17px;"></i> 📋 Send All to NewsFlow Admin';
         btn.disabled = false;
         if (window.lucide) window.lucide.createIcons();
       }
