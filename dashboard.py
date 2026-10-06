@@ -40,9 +40,9 @@ from src.api.routes import router as api_router
 init_db()
 
 app = FastAPI(
-    title="NewsFlow Dashboard API",
-    description="Professional management console for news scraping, Gemini rewriting, image generation, and multi-platform publishing pipeline.",
-    version="1.0.0",
+    title="Research Agent API",
+    description="Autonomous news & authentic image scraper engine with line-by-line publishing to NewsFlow Web.",
+    version="2.0.0",
 )
 
 # CORS middleware
