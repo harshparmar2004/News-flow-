@@ -278,7 +278,10 @@ def run_pipeline(max_articles: int | None = None):
     start_time = time.time()
 
     logger.info("==========================================================")
-    logger.info("  NEWSFLOW PIPELINE — Scrape → Photos → Publish to Web")
+    logger.info("  RESEARCH AGENT — Sequential Scrape → Photos → NewsFlow Web")
+    logger.info("  Sources: TechCrunch → The Verge → Ars Technica → Wired")
+    logger.info("  → BBC → Reuters → HN → MIT → Guardian → Engadget →")
+    logger.info("  ZDNet → VentureBeat → CNBC → TechRadar → 9to5G → Bloomberg")
     logger.info("==========================================================")
 
     init_db()

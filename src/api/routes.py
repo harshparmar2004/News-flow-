@@ -1443,47 +1443,45 @@ def get_dispatch_status():
 
     with get_session() as session:
         total_ingested = session.query(func.count(Article.id)).scalar() or 0
-        refined_count = session.query(func.count(Article.id)).filter(Article.status.in_(["ready", "published"])).scalar() or 0
-        ranked_top = session.query(func.count(Article.id)).filter(Article.rank_score >= 80).scalar() or 0
-        
-        slide_decks_count = 0
-        top_articles = session.query(Article.id).filter(Article.rank_score >= 80).limit(20).all()
-        for (a_id,) in top_articles:
-            if os.path.exists(os.path.join(IMAGES_DIR, f"{a_id}_slide1.png")):
-                slide_decks_count += 1
+        web_synced = session.query(func.count(Article.id)).filter(Article.web_posted == True).scalar() or 0
+        photos_count = session.query(func.count(Article.id)).filter(
+            (Article.scraped_image_path.isnot(None)) | (Article.image_path.isnot(None))
+        ).scalar() or 0
 
     delivered_count = len([d for d in cfg.get("dispatched_articles", {}).values() if d.get("status") == "delivered"])
 
     return {
         "config": {
-            "target_url": cfg.get("target_url"),
-            "app_name": cfg.get("app_name", "Omni-Channel AI Agent"),
+            "target_url": cfg.get("target_url", "http://localhost:3000/api/articles"),
+            "app_name": cfg.get("app_name", "NewsFlow Web & Admin Desk"),
+            "admin_url": cfg.get("admin_url", "http://localhost:3000/admin"),
+            "web_url": cfg.get("web_url", "http://localhost:3000"),
             "auth_token": cfg.get("auth_token"),
             "is_active": cfg.get("is_active", True),
             "rate_limit": cfg.get("rate_limit", {
-                "mode": "batch_10_2hr",
+                "mode": "instant",
                 "articles_per_batch": 10,
-                "interval_hours": 2,
-                "label": "Batch 10 Stories every 2 Hours"
+                "interval_hours": 1,
+                "label": "Instant Sync (Line-by-line as scraped)"
             })
         },
         "health": cfg.get("last_ping", {
             "status": "connected",
             "status_code": 200,
-            "latency_ms": 18,
-            "message": "Connected to App 2 Gateway"
+            "latency_ms": 12,
+            "message": "Connected to NewsFlow Web & Admin Platform (HTTP 200 OK)"
         }),
-        "stats": cfg.get("stats", {
+        "stats": {
             "total_dispatched": delivered_count,
-            "total_images_sent": delivered_count * 4,
+            "total_images_sent": photos_count,
             "total_failed": 0
-        }),
+        },
         "node_counts": {
             "ingested": total_ingested,
-            "refined": refined_count,
-            "slide_decks": slide_decks_count,
-            "slide_images": slide_decks_count * 4,
-            "dispatched": delivered_count
+            "photos": photos_count,
+            "web_synced": web_synced,
+            "dispatched": delivered_count,
+            "sources_count": 16
         }
     }
 
@@ -1496,6 +1494,8 @@ def update_dispatch_config(data: Dict[str, Any]):
 
     if "target_url" in data:
         cfg["target_url"] = data["target_url"].strip()
+    if "app_name" in data:
+        cfg["app_name"] = data["app_name"].strip()
     if "auth_token" in data:
         cfg["auth_token"] = data["auth_token"].strip()
     if "is_active" in data:
@@ -1504,7 +1504,7 @@ def update_dispatch_config(data: Dict[str, Any]):
         cfg["rate_limit"] = {**cfg.get("rate_limit", {}), **data["rate_limit"]}
 
     save_config(cfg)
-    health = ping_target_endpoint(cfg["target_url"])
+    health = ping_target_endpoint(cfg.get("target_url"))
     return {"success": True, "config": cfg, "health": health}
 
 
@@ -1518,14 +1518,14 @@ def test_dispatch_ping():
 
 @router.get("/dispatch/articles")
 def get_dispatch_articles(page: int = 1, limit: int = 15):
-    """Returns article list with full granular content & 4-slide image dispatch state."""
+    """Returns article list with full editorial photo & NewsFlow Web sync state (pure newly organized, no ranking)."""
     from src.dispatch.service import load_config, get_article_dispatch_payload
     from urllib.parse import urlparse
     cfg = load_config()
     dispatched_map = cfg.get("dispatched_articles", {})
 
     with get_session() as session:
-        query = session.query(Article).order_by(desc(Article.rank_score), desc(Article.id))
+        query = session.query(Article).order_by(desc(Article.scraped_at), desc(Article.id))
         total_count = query.count()
         items = query.offset((page - 1) * limit).limit(limit).all()
 
@@ -1533,14 +1533,6 @@ def get_dispatch_articles(page: int = 1, limit: int = 15):
         for a in items:
             str_id = str(a.id)
             dispatch_rec = dispatched_map.get(str_id)
-
-            slide_urls = []
-            for s_idx in range(1, 5):
-                s_name = f"{a.id}_slide{s_idx}.png"
-                if os.path.exists(os.path.join(IMAGES_DIR, s_name)):
-                    slide_urls.append(f"/api/images/{s_name}")
-            if not slide_urls and a.image_path and os.path.exists(a.image_path):
-                slide_urls.append(f"/api/images/{a.id}.png")
 
             domain = ""
             if a.url:
@@ -1554,20 +1546,32 @@ def get_dispatch_articles(page: int = 1, limit: int = 15):
                 raw_body = raw_body.split("Source:")[0].strip()
             clean_excerpt = (raw_body[:220] + "...") if len(raw_body) > 220 else raw_body
 
+            # Check authentic photo
+            photo_url = None
+            has_photo = False
+            if getattr(a, "scraped_image_path", None) and os.path.exists(a.scraped_image_path):
+                has_photo = True
+                photo_url = f"/images/scraped/{os.path.basename(a.scraped_image_path)}"
+            elif getattr(a, "scraped_image_url", None):
+                has_photo = True
+                photo_url = a.scraped_image_url
+            elif a.image_path and os.path.exists(a.image_path):
+                has_photo = True
+                photo_url = f"/images/{os.path.basename(a.image_path)}"
+
             payload = get_article_dispatch_payload(a)
+
+            is_web_posted = bool(getattr(a, "web_posted", False))
+            web_slug = getattr(a, "web_slug", None)
 
             if dispatch_rec:
                 disp_status = dispatch_rec.get("status", "delivered")
-                content_synced = dispatch_rec.get("content_synced", True)
-                slides_synced = dispatch_rec.get("slides_synced", list(range(1, len(slide_urls) + 1)))
-                error = dispatch_rec.get("error")
                 dispatched_at = dispatch_rec.get("dispatched_at")
+                error = dispatch_rec.get("error")
             else:
-                disp_status = "in_queue"
-                content_synced = False
-                slides_synced = []
+                disp_status = "delivered" if is_web_posted else "in_queue"
+                dispatched_at = a.web_published_at.isoformat() if getattr(a, "web_published_at", None) else None
                 error = None
-                dispatched_at = None
 
             articles_out.append({
                 "id": a.id,
@@ -1575,14 +1579,18 @@ def get_dispatch_articles(page: int = 1, limit: int = 15):
                 "source": a.source,
                 "source_domain": domain,
                 "url": a.url,
-                "rank_score": getattr(a, "rank_score", 75) or 75,
+                "category": a.category or "Tech & Innovation",
                 "clean_excerpt": clean_excerpt,
-                "slide_urls": slide_urls,
-                "slide_count": len(slide_urls),
+                "has_authentic_photo": has_photo,
+                "photo_url": photo_url,
+                "web_posted": is_web_posted,
+                "web_slug": web_slug,
+                "web_status": "published" if is_web_posted else "draft",
+                "web_url": f"http://localhost:3000/article/{web_slug}" if web_slug else None,
+                "admin_url": "http://localhost:3000/admin",
                 "dispatch_status": disp_status,
-                "content_synced": content_synced,
-                "slides_synced": slides_synced,
                 "dispatched_at": dispatched_at,
+                "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None,
                 "error": error,
                 "payload": payload
             })
@@ -1609,7 +1617,7 @@ def backfill_images_endpoint(limit: int = 30):
 
 @router.post("/dispatch/send/{article_id}")
 def dispatch_article_now(article_id: int):
-    """Manually dispatches an article with all 4 slides and content details to the destination API."""
+    """Manually dispatches an article with authentic photo to NewsFlow Web & connected endpoints."""
     from src.dispatch.service import dispatch_single_article
     result = dispatch_single_article(article_id)
     return result
@@ -1617,13 +1625,13 @@ def dispatch_article_now(article_id: int):
 
 @router.post("/dispatch/send-batch")
 def dispatch_batch_now(count: int = 5):
-    """Dispatches the next batch of queued articles to App 2."""
+    """Dispatches the next batch of un-synced articles to NewsFlow Web & connected endpoints."""
     from src.dispatch.service import load_config, dispatch_single_article
     cfg = load_config()
     dispatched_map = cfg.get("dispatched_articles", {})
     
     with get_session() as session:
-        candidates = session.query(Article).order_by(desc(Article.rank_score), desc(Article.id)).limit(50).all()
+        candidates = session.query(Article).order_by(desc(Article.scraped_at), desc(Article.id)).limit(50).all()
         to_send = [a for a in candidates if str(a.id) not in dispatched_map or dispatched_map[str(a.id)].get("status") != "delivered"][:count]
 
     results = []

@@ -168,7 +168,7 @@ const App = {
       media: { title: 'Visual Studio', subtitle: 'Editorial photo and graphic management' },
       notes: { title: 'Tech Notes Vault', subtitle: 'Structured technical documentation and post archives' },
       articles: { title: 'Refined Content Vault & Calendar Archive', subtitle: 'Database of refined news, ranking scores, and authentic source editorial photos' },
-      pipeline: { title: 'Pipeline Workflow & API Dispatch Engine', subtitle: 'Scrape ➔ Rank & Score ➔ Tech-Notes Synthesis ➔ App 2 REST Gateway transfer' },
+      pipeline: { title: 'Pipeline Workflow & API Distribution Engine', subtitle: 'Sequential 16-Source Scraping ➔ Authentic Editorial Photos ➔ NewsFlow Web & Admin Sync (:3000) ➔ Outbound API Webhooks' },
       logs: { title: 'System Logs Stream', subtitle: 'Live terminal stream from pipeline.log' },
       settings: { title: 'API Keys & Configuration', subtitle: 'Manage Groq, OpenAI, Gemini, and research pipeline credentials' }
     };
@@ -362,172 +362,116 @@ const App = {
     const meta = document.getElementById('modal-article-meta');
     const badge = document.getElementById('modal-status-badge');
 
-    body.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--text-muted);">Loading article details...</p>';
+    body.innerHTML = '<p style="padding: 40px; text-align: center; color: var(--text-muted);">Loading article...</p>';
     modal.classList.add('active');
 
     try {
       const data = await this.fetchApi(`/api/articles/${articleId}`);
       this.currentModalArticle = data;
-      
+
       title.textContent = data.ai_headline || data.title;
-      meta.textContent = `${data.source} • Scraped: ${this.formatTimestamp(data.scraped_at)} • Category: ${data.category || 'General'}`;
-      
+      meta.textContent = `${data.source}  ·  ${this.formatTimestamp(data.scraped_at)}  ·  ${data.category || 'General'}`;
+
       const currentStatus = data.editorial_status || data.status || 'scraped';
-      badge.textContent = currentStatus.toUpperCase();
+      badge.textContent = currentStatus.replace('_', ' ').toUpperCase();
       badge.className = `badge badge-${currentStatus.toLowerCase() === 'approved' ? 'ready' : currentStatus.toLowerCase()}`;
 
-      const score = data.rank_score || 75;
-      const scoreColor = score >= 80 ? '#2e7d32' : score >= 60 ? '#2b7bb9' : '#d97757';
       const bodyContent = data.final_body || data.body || '';
       const wordCount = bodyContent.trim() ? bodyContent.trim().split(/\s+/).length : 0;
-      const charCount = bodyContent.length;
 
       let html = `
-        <!-- Top Status Bar -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface); padding: 12px 18px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
-          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <!-- Info Row -->
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span class="source-pill">${data.source}</span>
-            <span style="font-size: 0.85rem; font-weight: 800; color: ${scoreColor}; background: #ffffff; padding: 4px 10px; border-radius: 6px; border: 1px solid ${scoreColor};">
-              ★ Rank Score: ${score}/100
-            </span>
-            <span class="badge" style="background: rgba(46, 125, 50, 0.12); color: #2e7d32; font-weight: 700;">
-              ● Editorial Desk Active
-            </span>
+            ${data.web_posted
+              ? '<span class="badge" style="background: rgba(46,125,50,0.12); color: #2e7d32; font-size: 0.72rem; font-weight: 700;">✓ In NewsFlow</span>'
+              : '<span class="badge" style="background: rgba(217,119,87,0.1); color: var(--primary-purple); font-size: 0.72rem;">Pending Sync</span>'
+            }
           </div>
-
-          <div style="display: flex; gap: 8px;">
-            <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
-              <i data-lucide="external-link" style="width: 13px; height: 13px;"></i> Source Link ↗
-            </a>
-          </div>
+          <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 4px 11px; font-size: 0.78rem; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+            <i data-lucide="external-link" style="width: 12px; height: 12px;"></i> Source ↗
+          </a>
         </div>
 
-        <!-- Authentic Editorial Photo (Scraped from source) -->
-        ${data.scraped_image_path ? `
-          <div class="modal-section" style="margin-bottom: 18px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 16px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-              <span style="font-size: 0.78rem; font-weight: 700; color: #2e7d32; display: flex; align-items: center; gap: 6px; text-transform: uppercase;">
-                <i data-lucide="camera" style="width: 15px; height: 15px;"></i> Authentic Scraped Editorial Lead Image (${data.source})
-              </span>
-              <a href="${data.scraped_image_path}" target="_blank" class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.72rem; text-decoration: none;">
-                Full Resolution ↗
-              </a>
-            </div>
-            <div style="border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-surface); max-height: 280px; text-align: center;">
-              <img src="${data.scraped_image_path}" alt="Scraped Editorial Photo" style="width: 100%; max-height: 280px; object-fit: cover;" onerror="this.parentElement.style.display='none'">
-            </div>
+        <!-- Editorial Photo -->
+        ${(data.scraped_image_path || data.scraped_image_url) ? `
+          <div style="margin-bottom: 16px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); max-height: 220px; text-align: center; background: var(--bg-surface);">
+            <img src="${data.scraped_image_path || data.scraped_image_url}" alt="Photo" style="width: 100%; max-height: 220px; object-fit: cover;" onerror="this.parentElement.style.display='none'">
           </div>
         ` : ''}
 
-        <!-- AI LLM Packaging Studio (Headline + Summary + Key Points) -->
-        <div class="glass-card" style="margin-bottom: 20px; border: 1.5px solid var(--primary-purple); background: #ffffff; padding: 18px; border-radius: 12px; box-shadow: 0 2px 10px rgba(217,119,87,0.08);">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 1.1rem;">✨</span>
-                <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin: 0;">
-                  AI LLM Packaging Desk (Headline & Key Points)
-                </h4>
-              </div>
-              <p style="font-size: 0.78rem; color: var(--text-muted); margin: 3px 0 0 0;">
-                The raw web text below serves as the authentic article body. The AI LLM writes ONLY the headline, summary, and takeaways.
-              </p>
+        <!-- Headline -->
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.74rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Headline</label>
+          <input type="text" id="modal-edit-headline" value="${(data.ai_headline || data.title || '').replace(/"/g, '&quot;')}"
+            style="width: 100%; font-size: 1rem; font-weight: 700; font-family: var(--font-serif); padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main);" />
+        </div>
+
+        <!-- Summary & Key Points -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+              <label style="font-size: 0.74rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Summary</label>
+              <button class="btn btn-primary btn-glow" id="modal-gen-headline-btn" onclick="App.generateArticleAiHeadline(${data.id})" style="padding: 3px 8px; font-size: 0.7rem; display: flex; align-items: center; gap: 3px;">
+                <i data-lucide="sparkles" style="width: 10px; height: 10px;"></i> AI Generate
+              </button>
             </div>
-            <button class="btn btn-primary btn-glow" id="modal-gen-headline-btn" onclick="App.generateArticleAiHeadline(${data.id})" style="padding: 6px 14px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
-              <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Generate AI Headline & Takeaways
-            </button>
+            <textarea id="modal-edit-summary" rows="3" placeholder="Executive summary..."
+              style="width: 100%; font-size: 0.83rem; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); line-height: 1.5; resize: vertical; font-family: inherit;">${data.ai_summary || ''}</textarea>
           </div>
-
-          <div style="display: flex; flex-direction: column; gap: 14px;">
-            <!-- AI Headline Input -->
-            <div>
-              <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px;">
-                📰 AI-Crafted Headline (Published Title)
-              </label>
-              <input type="text" id="modal-edit-headline" value="${(data.ai_headline || data.title || '').replace(/"/g, '&quot;')}" class="filter-select" style="width: 100%; font-size: 1rem; font-weight: 700; font-family: var(--font-serif); padding: 9px 12px; background: #FAF7F2; border-color: rgba(217,119,87,0.4);" />
-            </div>
-
-            <!-- AI Summary & Key Points Grid -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-              <div>
-                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px;">
-                  ⚡ Executive Summary / Dek (1-2 Sentences)
-                </label>
-                <textarea id="modal-edit-summary" rows="3" class="filter-select" style="width: 100%; font-size: 0.84rem; padding: 8px 12px; line-height: 1.5; resize: vertical;" placeholder="AI-generated executive summary...">${data.ai_summary || ''}</textarea>
-              </div>
-
-              <div>
-                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px;">
-                  🎯 Key Architectural Takeaways (3 Bullet Points)
-                </label>
-                <textarea id="modal-edit-keypoints" rows="3" class="filter-select" style="width: 100%; font-size: 0.82rem; padding: 8px 12px; font-family: var(--font-mono); line-height: 1.45; resize: vertical;" placeholder="• Bullet 1&#10;• Bullet 2&#10;• Bullet 3">${data.ai_key_points || ''}</textarea>
-              </div>
-            </div>
+          <div>
+            <label style="display: block; font-size: 0.74rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Key Points</label>
+            <textarea id="modal-edit-keypoints" rows="3" placeholder="• Point 1&#10;• Point 2&#10;• Point 3"
+              style="width: 100%; font-size: 0.82rem; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); line-height: 1.45; resize: vertical; font-family: var(--font-mono);">${data.ai_key_points || ''}</textarea>
           </div>
         </div>
 
-        <!-- Raw Extracted Web Text: The Authentic Article Body -->
-        <div class="modal-section" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; margin-bottom: 18px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-            <div>
-              <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                <i data-lucide="file-text" style="width: 16px; height: 16px; color: var(--primary-purple);"></i>
-                Authentic Article Body (Raw Extracted Web Text)
-              </h4>
-              <span style="font-size: 0.74rem; color: var(--text-muted);">
-                Verbatim journalism extracted from ${data.source}. You can edit, trim, or use this entire text in the article.
-              </span>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span id="modal-text-stats" style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: var(--bg-surface); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
-                ${wordCount} words · ${charCount} chars
-              </span>
-              <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.74rem;" onclick="App.copyModalArticleText()">
-                <i data-lucide="copy"></i> Copy Text
+        <!-- Article Body -->
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+            <label style="font-size: 0.74rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Article Body</label>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span id="modal-text-stats" style="font-size: 0.72rem; color: var(--text-muted);">${wordCount} words</span>
+              <button class="btn btn-secondary" onclick="App.copyModalArticleText()" style="padding: 3px 8px; font-size: 0.7rem; display: flex; align-items: center; gap: 3px;">
+                <i data-lucide="copy" style="width: 11px; height: 11px;"></i> Copy
               </button>
-              <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.74rem;" onclick="App.resetModalArticleBody()">
-                <i data-lucide="rotate-ccw"></i> Reset to Raw
+              <button class="btn btn-secondary" onclick="App.resetModalArticleBody()" style="padding: 3px 8px; font-size: 0.7rem; display: flex; align-items: center; gap: 3px;">
+                <i data-lucide="rotate-ccw" style="width: 11px; height: 11px;"></i> Reset
               </button>
             </div>
           </div>
-
-          <textarea id="modal-edit-body" rows="12" class="filter-select" style="width: 100%; font-size: 0.88rem; line-height: 1.65; padding: 14px; resize: vertical; background: #FAF7F2; border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main);" oninput="App.updateModalStats(this.value)">${bodyContent}</textarea>
+          <textarea id="modal-edit-body" rows="10" oninput="App.updateModalStats(this.value)"
+            style="width: 100%; font-size: 0.86rem; line-height: 1.65; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); resize: vertical; font-family: inherit;">${bodyContent}</textarea>
         </div>
 
-        <!-- Sticky Modal Footer Actions -->
-        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px;">
-          <div style="font-size: 0.78rem; color: var(--text-muted);">
-            💡 Changes saved here persist permanently to your SQLite database.
-          </div>
-
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="btn btn-secondary" onclick="App.closeModal()">Close</button>
-            <button class="btn btn-secondary" id="modal-save-btn" onclick="App.saveArticleEditorial(${data.id})" style="padding: 8px 16px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;">
-              <i data-lucide="save"></i> 💾 Save Article
-            </button>
-            <a href="http://localhost:3000/admin" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.84rem; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-              <span>🔑</span> NewsFlow Admin ↗
+        <!-- Footer Actions -->
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-color); flex-wrap: wrap;">
+          <button class="btn btn-secondary" onclick="App.closeModal()" style="padding: 7px 14px; font-size: 0.82rem;">Close</button>
+          ${data.web_posted && data.web_slug ? `
+            <a href="http://localhost:3000/article/${data.web_slug}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 7px 14px; font-size: 0.82rem; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; color: #2e7d32; font-weight: 700;">
+              🌐 View on Web ↗
             </a>
-            ${data.web_posted && data.web_slug ? `
-              <a href="http://localhost:3000/article/${data.web_slug}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.84rem; font-weight: 700; color: #2e7d32; border-color: rgba(46,125,50,0.4); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-                <span>🌐</span> View Live on Web ↗
-              </a>
-            ` : ''}
-            <button class="btn btn-primary btn-glow" id="modal-web-upload-btn" onclick="App.uploadArticleToWeb(${data.id}, 'draft')" style="padding: 8px 18px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;" title="Sends record as draft to NewsFlow Admin for review">
-              <i data-lucide="shield-check"></i> 📋 Send to Admin (Draft)
-            </button>
-            <button class="btn btn-secondary" onclick="App.uploadArticleToWeb(${data.id}, 'published')" style="padding: 8px 16px; font-size: 0.84rem; color: #2e7d32; font-weight: 700; display: flex; align-items: center; gap: 6px;" title="Publish immediately to public website">
-              <span>⚡</span> Publish Live
-            </button>
-          </div>
+          ` : ''}
+          <a href="http://localhost:3000/admin" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 7px 14px; font-size: 0.82rem; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+            🔑 Admin Desk
+          </a>
+          <button class="btn btn-secondary" id="modal-save-btn" onclick="App.saveArticleEditorial(${data.id})" style="padding: 7px 16px; font-size: 0.82rem; display: flex; align-items: center; gap: 5px;">
+            <i data-lucide="save" style="width: 13px; height: 13px;"></i> Save
+          </button>
+          <button class="btn btn-secondary" onclick="App.uploadArticleToWeb(${data.id}, 'published')" style="padding: 7px 14px; font-size: 0.82rem; color: #2e7d32; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+            ⚡ Publish Live
+          </button>
+          <button class="btn btn-primary btn-glow" id="modal-web-upload-btn" onclick="App.uploadArticleToWeb(${data.id}, 'draft')" style="padding: 7px 16px; font-size: 0.82rem; display: flex; align-items: center; gap: 5px;">
+            <i data-lucide="shield-check" style="width: 13px; height: 13px;"></i> Send to Admin
+          </button>
         </div>
       `;
 
       body.innerHTML = html;
       if (window.lucide) window.lucide.createIcons();
     } catch (err) {
-      body.innerHTML = `<p class="error" style="padding: 20px; text-align: center; color: var(--status-failed);">Failed to load article details: ${err.message}</p>`;
+      body.innerHTML = `<p style="padding: 20px; text-align: center; color: var(--status-failed);">Failed to load article: ${err.message}</p>`;
     }
   },
 
