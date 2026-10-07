@@ -58,21 +58,25 @@ def copy_image_to_web(article_id: int, scraped_image_path: str) -> Optional[str]
         return None
 
 
-def send_article_to_web(payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def send_article_to_web(payload: Dict[str, Any], retries: int = 3) -> Optional[Dict[str, Any]]:
+    import time
     endpoint = f"{WEB_URL}/api/articles"
     headers = {"x-api-key": API_KEY, "Content-Type": "application/json", "User-Agent": "NewsFlow-Pipeline/2.0"}
-    try:
-        response = requests.post(endpoint, json=payload, headers=headers, timeout=15)
-        if response.status_code in (200, 201):
-            data = response.json()
-            logger.info(f"  Published: /article/{data.get('article', {}).get('slug', '?')}")
-            return data
-        else:
-            logger.error(f"  HTTP {response.status_code}: {response.text[:200]}")
-            return None
-    except requests.exceptions.RequestException as e:
-        logger.error(f"  Connection error: {e}")
-        return None
+    for attempt in range(1, retries + 1):
+        try:
+            response = requests.post(endpoint, json=payload, headers=headers, timeout=15)
+            if response.status_code in (200, 201):
+                data = response.json()
+                logger.info(f"  Published: /article/{data.get('article', {}).get('slug', '?')}")
+                return data
+            if response.status_code in (400, 401, 403):
+                logger.error(f"  HTTP {response.status_code} (not retrying): {response.text[:200]}")
+                return None
+            logger.warning(f"  HTTP {response.status_code} (attempt {attempt}/{retries}): {response.text[:120]}")
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"  Connection error (attempt {attempt}/{retries}): {e}")
+        time.sleep(2 * attempt)
+    return None
 
 
 def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
@@ -87,13 +91,13 @@ def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
         cat_slug = re.sub(r"[^a-z0-9]+", "-", cat_name.lower()).strip("-")
         cur.execute("SELECT id FROM Category WHERE slug=? OR name=?", (cat_slug, cat_name))
         row = cur.fetchone()
-        now = datetime.utcnow().isoformat() + "Z"
+        now_ms = int(datetime.utcnow().timestamp() * 1000)
         if row:
             cat_id = row[0]
         else:
             cat_id = "c" + hashlib.md5(cat_slug.encode()).hexdigest()[:20]
             cur.execute("INSERT OR IGNORE INTO Category (id,name,slug,description,display_order,created_at) VALUES(?,?,?,?,?,?)",
-                        (cat_id, cat_name, cat_slug, f"Latest in {cat_name}", 0, now))
+                        (cat_id, cat_name, cat_slug, f"Latest in {cat_name}", 0, now_ms))
             cur.execute("SELECT id FROM Category WHERE slug=? OR name=?", (cat_slug, cat_name))
             re_row = cur.fetchone()
             if re_row:
@@ -112,8 +116,8 @@ def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
             VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (art_id, slug, payload["title"], payload.get("summary",""), body,
              payload.get("cover_image_url"), cat_id, payload.get("author","NewsFlow AI"),
-             now, payload.get("status", "draft"), payload.get("rank_score",75), 1 if payload.get("is_featured") else 0,
-             max(1, len(body.split())//200), payload.get("source_url"), now, now, 0))
+             now_ms, payload.get("status", "draft"), payload.get("rank_score",75), 1 if payload.get("is_featured") else 0,
+             max(1, len(body.split())//200), payload.get("source_url"), now_ms, now_ms, 0))
         conn.commit()
         conn.close()
         logger.info(f"  [SQLite Fallback] slug='{slug}'")
@@ -123,14 +127,69 @@ def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
         return False
 
 
-CATEGORY_FALLBACKS = {
-    "AI & Robotics": "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1600&q=80",
-    "Startups & VC": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1600&q=80",
-    "Gadgets & Hardware": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=1600&q=80",
-    "Cybersecurity": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1600&q=80",
-    "Policy & Big Tech": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80",
-    "Tech & Innovation": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80",
+CATEGORY_IMAGE_POOLS = {
+    "AI & Robotics": [
+        "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1535378917042-10a22c95931a?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1617791160505-6f008e1e263c?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1516110833967-0b5788f6a9e1?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1600&q=80",
+    ],
+    "Startups & VC": [
+        "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80",
+    ],
+    "Gadgets & Hardware": [
+        "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=1600&q=80",
+    ],
+    "Cybersecurity": [
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1600&q=80",
+    ],
+    "Policy & Big Tech": [
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1600&q=80",
+    ],
+    "Tech & Innovation": [
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1600&q=80",
+    ],
 }
+
+CATEGORY_FALLBACKS = {k: v[0] for k, v in CATEGORY_IMAGE_POOLS.items()}
+
+def get_fallback_image(cat_name: str, seed: str = "") -> str:
+    pool = CATEGORY_IMAGE_POOLS.get(cat_name, CATEGORY_IMAGE_POOLS["Tech & Innovation"])
+    idx = abs(hash(seed or "article")) % len(pool)
+    return pool[idx]
 
 DOMAIN_MAP = {
     "ai-robotics": "AI & Robotics", "startups-vc": "Startups & VC",
@@ -191,15 +250,15 @@ def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
         if not cover_img and scraped_url:
             cover_img = scraped_url
         if not cover_img:
-            cover_img = CATEGORY_FALLBACKS.get(cat_name, CATEGORY_FALLBACKS["Tech & Innovation"])
+            cover_img = get_fallback_image(cat_name, title or str(article_id))
 
-        rank = article.rank_score or 75
         payload = {
             "title": title, "summary": summary, "body": body,
-            "category": cat_name, "rank_score": rank,
+            "category": cat_name,
             "source_url": article.url, "author": "NewsFlow AI",
-            "status": status, "is_featured": rank >= 90,
+            "status": status, "is_featured": False,
             "cover_image_url": cover_img,
+            "published_at": datetime.utcnow().isoformat() + "Z",
         }
 
         res = send_article_to_web(payload)
@@ -215,6 +274,7 @@ def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
         if slug:
             article.web_posted = True
             article.web_slug = str(slug)
+            article.web_status = (res.get("article", {}).get("status") if res else None) or status
             article.web_published_at = datetime.utcnow()
             session.commit()
             return {"success": True, "slug": slug, "url": f"{WEB_URL}/article/{slug}",
@@ -249,6 +309,38 @@ def publish_all_scraped(limit: int = None, skip_posted: bool = True, status: str
             results["failed"] += 1
             logger.error(f"  ERR #{aid}: {e}")
     return results
+
+
+def sync_web_status() -> Dict[str, Any]:
+    """Mirror NewsFlow Admin status (draft / published / scheduled) back into the dashboard DB."""
+    result = {"checked": 0, "updated": 0, "missing": 0, "error": None}
+    with get_session() as session:
+        rows = session.query(Article).filter(Article.web_posted == True, Article.web_slug != None).all()  # noqa: E712,E711
+        by_slug = {a.web_slug: a for a in rows}
+        slugs = list(by_slug.keys())
+        if not slugs:
+            return result
+        headers = {"x-api-key": API_KEY, "User-Agent": "NewsFlow-Pipeline/2.0"}
+        try:
+            for i in range(0, len(slugs), 100):
+                chunk = slugs[i:i + 100]
+                r = requests.get(f"{WEB_URL}/api/articles/status", params={"slugs": ",".join(chunk)},
+                                 headers=headers, timeout=15)
+                if r.status_code != 200:
+                    result["error"] = f"HTTP {r.status_code}"
+                    break
+                data = r.json()
+                for item in data.get("items", []):
+                    art = by_slug.get(item["slug"])
+                    result["checked"] += 1
+                    if art and art.web_status != item["status"]:
+                        art.web_status = item["status"]
+                        result["updated"] += 1
+                result["missing"] += len(data.get("missing", []))
+            session.commit()
+        except requests.exceptions.RequestException as e:
+            result["error"] = f"Website unreachable: {e}"
+    return result
 
 
 def publish_all_ready(limit: int = 10) -> int:
