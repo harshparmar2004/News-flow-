@@ -1,5 +1,5 @@
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -83,4 +83,23 @@ model DomainAd {
 
   @@unique([domain, slot])
   @@index([domain, slot, is_active])
+}
+
+model AiCrawlerHit {
+  id          String   @id @default(cuid())
+  bot_name    String   // "GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended", "Meta-ExternalAgent", "Bytespider", "Applebot", "Custom Scraper"
+  ai_lab      String   // "OpenAI", "Anthropic", "Perplexity", "Google", "Meta", "ByteDance", "Apple", "Independent"
+  agent_type  String   // "LLM Training Crawler", "Real-Time Search Agent", "Knowledge Graph", "Scraper Script"
+  user_agent  String
+  path        String   // Accessed URL path e.g. "/article/117-best-prime-day-deals"
+  article_id  String?  // Linked article if hit on article page
+  ip_address  String?
+  method      String   @default("GET")
+  status_code Int      @default(200)
+  created_at  DateTime @default(now())
+
+  @@index([bot_name])
+  @@index([ai_lab])
+  @@index([created_at])
+  @@index([path])
 }

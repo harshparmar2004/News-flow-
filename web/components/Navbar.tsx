@@ -18,23 +18,30 @@ import {
   LogOut
 } from "lucide-react";
 import { useTheme } from "./ThemeContext";
+import { useAdPreferences } from "./AdPreferencesContext";
 
 const PUBLIC_NAV_LINKS = [
-  { name: "AI & Robotics", href: "/category/ai-robotics" },
+  { name: "AI", href: "/category/ai" },
+  { name: "Robotics", href: "/category/robotics" },
   { name: "Startups & VC", href: "/category/startups-vc" },
   { name: "Gadgets", href: "/category/gadgets-hardware" },
   { name: "Cybersecurity", href: "/category/cybersecurity" },
-  { name: "Policy", href: "/category/policy-big-tech" },
   { name: "Tech & Innovation", href: "/category/tech" },
 ];
 
 export function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const { isAdFree, toggleAdFree } = useAdPreferences();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
   const isAdminRoute = pathname?.startsWith("/admin");
   const isLoginPage = pathname === "/admin/login";
+
+  // Hide global navbar on admin dashboard to allow full-viewport left sidebar dashboard layout
+  if (pathname === "/admin") {
+    return null;
+  }
 
   const handleAdminLogout = async () => {
     try {
@@ -47,8 +54,8 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-[#FBF9F5]/90 dark:bg-[#181816]/90 border-b border-[#EBE8DF] dark:border-[#282724] transition-colors duration-200">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="w-full px-3.5 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           
           {/* Logo & Context Badge */}
           <div className="flex items-center space-x-3">
@@ -185,6 +192,31 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
+
+            {/* Mobile Ad-Free Toggle Switch */}
+            <div className="mx-2 my-2 p-3 rounded-xl bg-white dark:bg-[#1E1D1B] border border-[#EBE8DF] dark:border-[#2A2925] flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold block text-[#1F1E1D] dark:text-[#F5F2EB]">Ad-Free Reading</span>
+                <span className="text-[10px] font-mono text-[#8E8B82] dark:text-[#A8A59D]">
+                  {isAdFree ? "3-story focus view" : "Standard view (ads)"}
+                </span>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isAdFree}
+                onClick={toggleAdFree}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out ${
+                  isAdFree ? "bg-[#C96442]" : "bg-[#D6D2C4] dark:bg-[#383631]"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                    isAdFree ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
             <div className="pt-2 border-t border-[#EBE8DF] dark:border-[#33322E] flex justify-between px-3">
               <Link
                 href="/about"

@@ -1,12 +1,10 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { ArticleCard } from "@/components/ArticleCard";
 import { LeftSidebar } from "@/components/LeftSidebar";
 import { RightAdsSidebar } from "@/components/RightAdsSidebar";
-import { CategoryDeskBanner } from "@/components/CategoryDeskBanner";
-import { ChevronRight } from "lucide-react";
+import { CategoryFeedClient } from "@/components/CategoryFeedClient";
 
 export const revalidate = 60;
 
@@ -16,6 +14,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  if (slug === "ai-robotics") {
+    return { title: "Artificial Intelligence Intelligence | NewsFlow" };
+  }
   const category = await prisma.category.findUnique({
     where: { slug },
   });
@@ -31,13 +32,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function CategoryPage({ params }: PageProps) {
   const { slug } = await params;
 
+  if (slug === "ai-robotics") {
+    redirect("/category/ai");
+  }
+
   const [category, categories, totalArticles] = await Promise.all([
     prisma.category.findUnique({
       where: { slug },
       include: {
         articles: {
           where: { status: "published" },
-          orderBy: { published_at: "desc" },
+          orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
           include: { category: true },
         },
       },
@@ -48,7 +53,7 @@ export default async function CategoryPage({ params }: PageProps) {
           select: { articles: { where: { status: "published" } } },
         },
       },
-      orderBy: { name: "asc" },
+      orderBy: [{ display_order: "asc" }, { name: "asc" }],
     }),
     prisma.article.count({ where: { status: "published" } }),
   ]);
@@ -58,8 +63,8 @@ export default async function CategoryPage({ params }: PageProps) {
   }
 
   return (
-    <div className="w-full flex h-[calc(100vh-4rem)] overflow-hidden bg-[#FAF7F0] dark:bg-[#121211]">
-      {/* 1. Left Sidebar: Fixed & Non-Scrollable */}
+    <div className="w-full flex min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-4rem)] lg:overflow-hidden bg-[#FAF7F0] dark:bg-[#121211]">
+      {/* 1. Left Sidebar: Fixed & Non-Scrollable on Desktop */}
       <div className="hidden lg:block shrink-0">
         <LeftSidebar
           categories={categories}
@@ -68,50 +73,12 @@ export default async function CategoryPage({ params }: PageProps) {
         />
       </div>
 
-      {/* 2. Middle Main Content: Scrollable Top to Down */}
-      <main className="flex-1 min-w-0 h-full overflow-y-auto px-5 sm:px-8 py-6 space-y-6">
-        {/* Breadcrumb Navigation */}
-        <nav className="flex items-center space-x-2 text-xs text-[#8E8B82] dark:text-[#A8A59D]">
-          <Link href="/" className="hover:text-[#C96442] transition-colors">
-            Home
-          </Link>
-          <ChevronRight className="w-3 h-3 text-[#A8A59D]" />
-          <span>Categories</span>
-          <ChevronRight className="w-3 h-3 text-[#A8A59D]" />
-          <span className="text-[#1F1E1D] dark:text-[#F5F2EB] font-medium">
-            {category.name}
-          </span>
-        </nav>
-
-        {/* Enhanced Category Desk Banner (No 'posts count' text, sleek UI/UX) */}
-        <CategoryDeskBanner
-          title={category.name}
-          description={category.description}
-          slug={category.slug}
-        />
-
-        {/* 3-in-a-Row Articles Grid */}
-        <div className="space-y-6 pt-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
-            {category.articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))}
-          </div>
-
-          {category.articles.length === 0 && (
-            <div className="text-center py-20 p-8 rounded-3xl border border-dashed border-[#EBE8DF] dark:border-[#2C2A26] bg-white dark:bg-[#1A1917]">
-              <p className="text-sm font-mono text-[#8E8B82]">
-                No published stories in this desk yet. The autonomous pipeline will dispatch updates soon.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Subtle spacing padding at bottom of scroll */}
-        <div className="h-10" />
+      {/* 2. Middle Main Content: Natural scroll on mobile, scrollable pane on desktop */}
+      <main className="flex-1 min-w-0 lg:h-full lg:overflow-y-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 lg:pb-6">
+        <CategoryFeedClient category={category} />
       </main>
 
-      {/* 3. Right Sidebar: Future Ad Slots (Fixed) */}
+      {/* 3. Right Sidebar: Future Ad Slots (Desktop only) */}
       <div className="hidden xl:block shrink-0">
         <RightAdsSidebar domain={category.slug} />
       </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ExternalLink } from "lucide-react";
+import { useAdPreferences } from "./AdPreferencesContext";
 
 interface AdItem {
   id: string;
@@ -21,11 +22,13 @@ interface RightAdsSidebarProps {
 }
 
 export function RightAdsSidebar({ domain = "global" }: RightAdsSidebarProps) {
+  const { isAdFree } = useAdPreferences();
   const [topAd, setTopAd] = useState<AdItem | null>(null);
   const [bottomAd, setBottomAd] = useState<AdItem | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    if (isAdFree) return;
     let isMounted = true;
     async function loadAds() {
       try {
@@ -59,6 +62,10 @@ export function RightAdsSidebar({ domain = "global" }: RightAdsSidebarProps) {
       }).catch(() => {});
     } catch {}
   };
+
+  if (isAdFree) {
+    return null;
+  }
 
   return (
     <aside className="w-80 shrink-0 h-[calc(100vh-4rem)] border-l border-[#EBE8DF] dark:border-[#282724] bg-[#FBF9F5] dark:bg-[#141413] p-6 hidden xl:flex flex-col gap-6 overflow-y-auto no-scrollbar select-none">

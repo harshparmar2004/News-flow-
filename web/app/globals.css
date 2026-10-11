@@ -46,12 +46,27 @@
   --accent: #C96442;
 }
 
+html {
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* Mobile Safe-Area Utilities */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
+}
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Claude-style typography prose styles */
@@ -160,4 +175,58 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ==========================================================================
+   THEME BOX SHADOW SYSTEM
+   - Outer Boxes Only: Crisp, tight outline with light orange (#C96442) in dark mode
+   - Inner Boxes: Explicitly clean and flat with no shadow, glow, or light
+   - Not too much spread: Tight, laser-clean outline contour only (no hazy spread)
+   ========================================================================== */
+
+:root {
+  /* Light mode: crisp, clean subtle elevation on outer cards */
+  --outer-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 2px 8px -1px rgba(28, 25, 23, 0.06);
+  --outer-box-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 14px -2px rgba(28, 25, 23, 0.08);
+}
+
+.dark {
+  /* Dark mode: crisp, tight light-orange (#C96442) outline only, minimal spread */
+  --outer-box-shadow: 0 0 0 1px rgba(201, 100, 66, 0.45), 0 0 6px 0 rgba(201, 100, 66, 0.18);
+  --outer-box-shadow-hover: 0 0 0 1px rgba(201, 100, 66, 0.70), 0 0 10px 0 rgba(201, 100, 66, 0.28);
+}
+
+/* Apply outline shadow ONLY to outer cards / primary boxes */
+.admin-card {
+  box-shadow: var(--outer-box-shadow) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-card:hover {
+  box-shadow: var(--outer-box-shadow-hover) !important;
+}
+
+/* Absolutely NO shadow or glow on any inner boxes, buttons, inputs, rows, or elements inside an outer card */
+.admin-card .admin-card,
+.admin-card div,
+.admin-card button,
+.admin-card a,
+.admin-card input,
+.admin-card textarea,
+.admin-card select,
+.admin-card span,
+.admin-card [class*="rounded-"],
+.admin-card .shadow-xs,
+.admin-card .shadow-2xs,
+.admin-card .shadow-sm,
+.admin-card .shadow-md,
+.admin-card .shadow-lg {
+  box-shadow: none !important;
+}
+
+/* Specific focus ring for active form inputs */
+.admin-card input:focus,
+.admin-card textarea:focus,
+.admin-card select:focus {
+  box-shadow: 0 0 0 2px rgba(201, 100, 66, 0.45) !important;
 }

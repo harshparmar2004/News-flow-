@@ -1,8 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeContext";
+import { AdPreferencesProvider } from "@/components/AdPreferencesContext";
 import { Navbar } from "@/components/Navbar";
+import { MobileCategoryBar } from "@/components/MobileCategoryBar";
+import { MobileNavShell } from "@/components/MobileNavShell";
 import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
@@ -63,6 +66,16 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FBF9F5" },
+    { media: "(prefers-color-scheme: dark)", color: "#181816" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -76,9 +89,13 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#FBF9F5] dark:bg-[#181816] text-[#1F1E1D] dark:text-[#F5F2EB] transition-colors duration-200">
         <ThemeProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <AdPreferencesProvider>
+            <Navbar />
+            <MobileCategoryBar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <MobileNavShell />
+          </AdPreferencesProvider>
         </ThemeProvider>
       </body>
     </html>

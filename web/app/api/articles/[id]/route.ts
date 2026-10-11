@@ -42,7 +42,14 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
       updateData.reading_time_minutes = calculateReadingTime(body.body);
     }
     if (body.cover_image_url !== undefined) updateData.cover_image_url = body.cover_image_url;
-    if (body.status) updateData.status = body.status;
+    if (body.status) {
+      updateData.status = body.status;
+      // When publishing an article or moving from draft to published, refresh published_at
+      // so it is immediately promoted to the top of its section
+      if (body.status === "published" && (!existing.published_at || existing.status !== "published" || body.publish_now)) {
+        updateData.published_at = new Date();
+      }
+    }
     if (body.is_featured !== undefined) updateData.is_featured = Boolean(body.is_featured);
     if (body.rank_score !== undefined) updateData.rank_score = Number(body.rank_score);
     if (body.source_url !== undefined) updateData.source_url = body.source_url;
@@ -58,7 +65,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
     // Revalidate caches
     try {
-      revalidatePath("/");
+      revalidatePath("/", "layout");
       revalidatePath(`/article/${updated.slug}`);
       revalidatePath(`/category/${updated.category.slug}`);
       revalidatePath("/archive");

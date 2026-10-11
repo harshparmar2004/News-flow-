@@ -7,13 +7,22 @@ import { Rss, ShieldCheck, Cpu } from "lucide-react";
 export function Footer() {
   const pathname = usePathname();
 
-  // Do not render public consumer footer on admin routes
-  if (pathname?.startsWith("/admin")) {
+  // Do not render outer footer on admin routes or app-shell 3-column routes
+  // (App-shell routes manage their own fixed-height viewport and internal colophon;
+  // rendering an outer footer causes double scrollbars, window scrolling, and an empty black void.)
+  const isAppShellRoute =
+    pathname === "/" ||
+    pathname?.startsWith("/category/") ||
+    pathname === "/search" ||
+    pathname === "/archive" ||
+    pathname === "/rss";
+
+  if (pathname?.startsWith("/admin") || isAppShellRoute) {
     return null;
   }
 
   return (
-    <footer className="mt-24 border-t border-[#EBE8DF] dark:border-[#33322E] bg-[#F7F4EC] dark:bg-[#151514] transition-colors duration-200">
+    <footer className="mt-20 border-t border-[#EBE8DF] dark:border-[#262522] bg-[#F7F4EC] dark:bg-[#151514] transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Column 1: Brand & Mission */}
@@ -39,8 +48,13 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-[#686660] dark:text-[#A8A59D]">
               <li>
-                <Link href="/category/ai-robotics" className="hover:text-[#C96442] transition-colors">
-                  AI & Robotics
+                <Link href="/category/ai" className="hover:text-[#C96442] transition-colors">
+                  Artificial Intelligence
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/robotics" className="hover:text-[#C96442] transition-colors">
+                  Robotics
                 </Link>
               </li>
               <li>

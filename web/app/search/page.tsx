@@ -26,7 +26,7 @@ export default async function SearchPage() {
           select: { articles: { where: { status: "published" } } },
         },
       },
-      orderBy: { name: "asc" },
+      orderBy: [{ display_order: "asc" }, { name: "asc" }],
     }),
     prisma.article.count({ where: { status: "published" } }),
   ]);

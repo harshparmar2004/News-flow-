@@ -51,7 +51,8 @@ export async function POST(req: NextRequest) {
               type: "choice",
               instructions: "Select the most accurate domain",
               criteria: {
-                "ai-robotics": "Artificial Intelligence, LLMs, Robotics, Autonomous Agents",
+                "ai": "Artificial Intelligence, LLMs, Neural Networks, Foundation Models, AI Agents",
+                "robotics": "Robotics, Humanoids, Drones, Bipedal Robots, Physical Automation, Robotaxis",
                 "startups-vc": "Startups, Venture Capital, Funding Rounds, Seed/Series A-D",
                 "gadgets-hardware": "Gadgets, Semiconductors, Chips, Consumer Hardware",
                 "cybersecurity": "Cybersecurity, Zero-Days, Vulnerabilities, Hacks, Breaches",
@@ -103,7 +104,8 @@ export async function POST(req: NextRequest) {
       if (apiKey.startsWith("ts_demo") || apiKey.startsWith("test_")) {
         const lower = (title + " " + summary).toLowerCase();
         let domain = "tech";
-        if (lower.includes("ai") || lower.includes("robot") || lower.includes("gpt") || lower.includes("claude")) domain = "ai-robotics";
+        if (lower.includes("robot") || lower.includes("humanoid") || lower.includes("drone")) domain = "robotics";
+        else if (lower.includes("ai") || lower.includes("gpt") || lower.includes("claude") || lower.includes("llm")) domain = "ai";
         else if (lower.includes("funding") || lower.includes("startup") || lower.includes("seed") || lower.includes("vc")) domain = "startups-vc";
         else if (lower.includes("chip") || lower.includes("apple") || lower.includes("phone") || lower.includes("hardware")) domain = "gadgets-hardware";
         else if (lower.includes("hack") || lower.includes("security") || lower.includes("breach") || lower.includes("exploit")) domain = "cybersecurity";
@@ -135,7 +137,7 @@ export async function POST(req: NextRequest) {
           success: true,
           latency_ms: 64,
           triage: {
-            domain: "ai-robotics",
+            domain: "ai",
             impact_score: 8.8,
             rank_score: 88,
             is_high_signal: true,

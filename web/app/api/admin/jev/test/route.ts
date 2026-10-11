@@ -59,7 +59,8 @@ export async function POST(req: NextRequest) {
               type: "choice",
               instructions: "Classify domain",
               criteria: {
-                "ai-robotics": "Artificial Intelligence & Robotics",
+                "ai": "Artificial Intelligence",
+                "robotics": "Robotics",
                 "startups-vc": "Startups & Venture Capital",
                 "gadgets-hardware": "Hardware",
                 "cybersecurity": "Security",
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
           latency_ms: latencyMs,
           status_code: response.status,
           decision: {
-            domain: data.choices?.domain?.choice || "ai-robotics",
+            domain: data.choices?.domain?.choice || "ai",
             impact_score: data.scores?.impact_score?.score || 9.4,
             is_signal: data.nouls?.is_high_signal?.value ?? true,
             confidence: data.nouls?.is_high_signal?.probability ?? 0.97,
@@ -113,7 +114,7 @@ export async function POST(req: NextRequest) {
           latency_ms: Math.max(38, latencyMs % 120),
           status_code: 200,
           decision: {
-            domain: "ai-robotics",
+            domain: "ai",
             impact_score: 9.3,
             is_signal: true,
             confidence: 0.96,
@@ -140,7 +141,7 @@ export async function POST(req: NextRequest) {
           latency_ms: 78,
           status_code: 200,
           decision: {
-            domain: "ai-robotics",
+            domain: "ai",
             impact_score: 9.1,
             is_signal: true,
             confidence: 0.95,

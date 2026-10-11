@@ -10,6 +10,13 @@ interface SocialShareBarProps {
 
 export function SocialShareBar({ title, url }: SocialShareBarProps) {
   const [copied, setCopied] = useState(false);
+  const [hasNativeShare, setHasNativeShare] = useState(false);
+
+  React.useEffect(() => {
+    if (typeof navigator !== "undefined" && !!navigator.share) {
+      setHasNativeShare(true);
+    }
+  }, []);
 
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
@@ -28,9 +35,36 @@ export function SocialShareBar({ title, url }: SocialShareBarProps) {
     }
   };
 
+  const handleNativeShare = async () => {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          url,
+        });
+        return;
+      } catch {
+        // User dismissed share dialog
+      }
+    }
+    copyToClipboard();
+  };
+
   return (
-    <div className="flex items-center space-x-2 py-2">
-      <span className="text-xs font-mono uppercase tracking-wider text-[#8E8B82] dark:text-[#686660] mr-1.5 flex items-center">
+    <div className="flex items-center space-x-2 py-1">
+      {/* Primary Mobile Native Share Button */}
+      {hasNativeShare && (
+        <button
+          onClick={handleNativeShare}
+          aria-label="Share article via native apps"
+          className="inline-flex sm:hidden items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#C96442] text-white text-xs font-semibold shadow-xs active:scale-95 transition-all"
+        >
+          <Share2 className="w-3.5 h-3.5" />
+          <span>Share</span>
+        </button>
+      )}
+
+      <span className="hidden sm:inline-flex text-xs font-mono uppercase tracking-wider text-[#8E8B82] dark:text-[#686660] mr-1.5 items-center">
         <Share2 className="w-3.5 h-3.5 mr-1 text-[#C96442]" />
         Share
       </span>

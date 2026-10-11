@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyApiKey } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { getThematicCoverImage } from "@/lib/imagePool";
+import { generateSlug, calculateReadingTime } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -230,96 +232,170 @@ export async function POST(request: NextRequest) {
     }
 
     // Action 2: Publish a Full Research Report / Synthesized Deep Dive
-    const {
-      title,
-      summary,
-      content,
-      domain = "AI & Robotics",
-      tags = [],
-      rank_score = 90,
-      source_url,
-      cover_image_url,
-    } = body;
+    const title = (body.title || body.headline || body.name || "").trim();
+    const content = (body.content || body.body || body.article || body.text || "").trim();
+    const summary = (
+      body.summary ||
+      body.description ||
+      body.excerpt ||
+      body.lead ||
+      (content.length > 250 ? content.slice(0, 250) + "..." : content)
+    ).trim();
 
     if (!title || !content) {
       return NextResponse.json(
-        { error: "Missing required fields: 'title' and 'content' are required." },
+        {
+          error:
+            "Missing required fields: 'title' (or 'headline') and 'content' (or 'body') are required.",
+        },
         { status: 400 }
       );
     }
 
-    // Resolve or find domain
+    const rawDomain = (body.domain || body.category || body.section || body.topic || "AI").trim();
+    let domainSlug = generateSlug(rawDomain);
+    let domainName = rawDomain;
+
+    if (domainSlug === "robotics" || domainSlug.includes("robot")) {
+      domainSlug = "robotics";
+      domainName = "Robotics";
+    } else if (domainSlug === "ai" || domainSlug === "artificial-intelligence" || domainSlug === "ai-robotics") {
+      domainSlug = "ai";
+      domainName = "Artificial Intelligence";
+    }
+
+    // Resolve or create category
     let category = await prisma.category.findFirst({
       where: {
         OR: [
-          { name: { equals: domain } },
-          { slug: domain.toLowerCase().replace(/[^a-z0-9]+/g, "-") },
+          { slug: domainSlug },
+          { name: { equals: domainName } },
+          { slug: domainName.toLowerCase().replace(/[^a-z0-9]+/g, "-") },
         ],
       },
     });
 
     if (!category) {
       category = await prisma.category.findFirst({
-        where: { slug: "ai-robotics" },
+        where: { slug: "ai" },
       });
+
+      if (!category) {
+        category = await prisma.category.create({
+          data: {
+            name: domainName,
+            slug: domainSlug,
+            description: `Intelligence and research updates on ${domainName}`,
+          },
+        });
+      }
     }
 
-    const cleanSlug = title
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/[\s_-]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    // Flexible cover image support
+    const rawImage =
+      body.cover_image_url ||
+      body.image_url ||
+      body.image ||
+      body.lead_image_url ||
+      body.cover_image ||
+      body.photo ||
+      body.img ||
+      null;
+
+    const finalCoverImage =
+      rawImage && typeof rawImage === "string" && rawImage.trim().startsWith("http")
+        ? rawImage.trim()
+        : getThematicCoverImage(category.slug, title);
+
+    const rank_score =
+      typeof body.rank_score === "number" ? body.rank_score : 95;
+    const is_featured =
+      body.is_featured !== undefined ? Boolean(body.is_featured) : rank_score >= 90;
+
+    let parsedTags = body.tags || [];
+    if (typeof parsedTags === "string") {
+      try {
+        parsedTags = JSON.parse(parsedTags);
+      } catch {
+        parsedTags = parsedTags.split(",").map((t: string) => t.trim()).filter(Boolean);
+      }
+    }
+
+    const cleanSlug = body.slug ? generateSlug(body.slug) : generateSlug(title);
+
+    // GUARANTEED TOP PLACEMENT:
+    // News articles across sections and the homepage order by published_at DESC.
+    // Setting published_at to the current exact timestamp guarantees this research piece
+    // is placed at the very top (first) of its section, category, and homepage feeds.
+    const nowTimestamp = new Date();
+
+    const readingTime = calculateReadingTime(content);
 
     const newReport = await prisma.article.upsert({
       where: { slug: cleanSlug },
       update: {
         title,
-        summary: summary || title,
+        summary,
         body: content,
-        categoryId: category!.id,
-        tags: JSON.stringify(tags),
+        categoryId: category.id,
+        tags: JSON.stringify(parsedTags),
         rank_score,
-        is_featured: rank_score >= 95,
-        cover_image_url:
-          cover_image_url ||
-          "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80",
-        source_url: source_url || "https://newsflow.ai/research",
+        is_featured,
+        reading_time_minutes: readingTime,
+        cover_image_url: finalCoverImage,
+        source_url: body.source_url || body.url || "https://newsflow.ai/research",
         status: "published",
+        published_at: nowTimestamp, // Updates timestamp so modified/re-researched news jumps to #1
+        author: body.author || "NewsFlow Research Agent",
       },
       create: {
         title,
         slug: cleanSlug,
-        summary: summary || title,
+        summary,
         body: content,
-        categoryId: category!.id,
-        tags: JSON.stringify(tags),
+        categoryId: category.id,
+        tags: JSON.stringify(parsedTags),
         rank_score,
-        is_featured: rank_score >= 95,
-        reading_time_minutes: Math.max(2, Math.ceil(content.split(/\s+/).length / 200)),
-        cover_image_url:
-          cover_image_url ||
-          "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80",
-        source_url: source_url || "https://newsflow.ai/research",
-        author: "NewsFlow Research Agent",
+        is_featured,
+        reading_time_minutes: readingTime,
+        cover_image_url: finalCoverImage,
+        source_url: body.source_url || body.url || "https://newsflow.ai/research",
+        author: body.author || "NewsFlow Research Agent",
         status: "published",
+        published_at: nowTimestamp,
+      },
+      include: {
+        category: true,
       },
     });
 
-    // Invalidate ISR cache so the research report appears instantly
-    revalidatePath("/");
-    revalidatePath(`/category/${category!.slug}`);
-    revalidatePath(`/article/${newReport.slug}`);
+    // Invalidate ISR cache across the whole site so the article appears on top instantly
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/");
+      revalidatePath(`/category/${category.slug}`);
+      revalidatePath(`/article/${newReport.slug}`);
+      revalidatePath("/archive");
+      revalidatePath("/rss.xml");
+    } catch (revalErr) {
+      console.warn("[Research ISR revalidation warning]:", revalErr);
+    }
 
     return NextResponse.json({
       success: true,
       action: "published_research_report",
+      position: "top",
       article: {
         id: newReport.id,
         title: newReport.title,
         slug: newReport.slug,
         url: `/article/${newReport.slug}`,
-        domain: category!.name,
+        category: newReport.category.name,
+        domain_slug: newReport.category.slug,
+        cover_image_url: newReport.cover_image_url,
+        published_at: newReport.published_at.toISOString(),
+        rank_score: newReport.rank_score,
+        is_featured: newReport.is_featured,
       },
     });
   } catch (error) {

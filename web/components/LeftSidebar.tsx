@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Rss, Search, Clock, Radio } from "lucide-react";
+import { useAdPreferences } from "./AdPreferencesContext";
 
 interface CategoryWithCount {
   id: string;
@@ -21,6 +22,7 @@ interface LeftSidebarProps {
 
 export function LeftSidebar({ categories, activeSlug, totalArticles }: LeftSidebarProps) {
   const pathname = usePathname();
+  const { isAdFree, toggleAdFree } = useAdPreferences();
 
   return (
     <aside className="w-64 shrink-0 h-[calc(100vh-4rem)] border-r border-[#EBE8DF] dark:border-[#282724] bg-[#FBF9F5] dark:bg-[#141413] p-5 flex flex-col justify-between overflow-y-auto no-scrollbar select-none">
@@ -106,21 +108,49 @@ export function LeftSidebar({ categories, activeSlug, totalArticles }: LeftSideb
           >
             <span>Timeline archive</span>
           </Link>
-          <Link
-            href="/rss"
-            className={`flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
-              pathname === "/rss"
-                ? "bg-[#EBE8DF] dark:bg-[#2A2925] text-[#C96442] font-semibold shadow-xs"
-                : "text-[#686660] dark:text-[#A8A59D] hover:bg-[#FAF7F0] dark:hover:bg-[#20201D] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB]"
-            }`}
-          >
-            <span>RSS 2.0 feed</span>
-          </Link>
         </div>
       </div>
 
-      {/* Bottom Live Agent Desk Card */}
-      <div className="pt-4 border-t border-[#EBE8DF]/60 dark:border-[#282724]">
+      {/* Bottom Controls: Ad-Free Sliding Button & Live Agent Desk */}
+      <div className="pt-4 border-t border-[#EBE8DF]/60 dark:border-[#282724] space-y-3">
+        {/* Ad-Free Focus Mode Sliding Switch */}
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1E1D1B] border border-[#EBE8DF] dark:border-[#2A2925] shadow-xs transition-all hover:border-[#C96442]/40">
+          <div className="flex items-center justify-between gap-3">
+            <div className="space-y-0.5 min-w-0">
+              <div className="flex items-center space-x-1.5">
+                <span className={`w-2 h-2 rounded-full ${isAdFree ? "bg-[#C96442]" : "bg-emerald-500"}`} />
+                <span className="text-xs font-semibold text-[#1F1E1D] dark:text-[#F5F2EB] truncate">
+                  Ad-Free Reading
+                </span>
+              </div>
+              <p className="text-[10px] font-mono text-[#8E8B82] dark:text-[#A8A59D] truncate">
+                {isAdFree ? "3-story focus view" : "Standard view (ads)"}
+              </p>
+            </div>
+
+            {/* Sliding Switch Button */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isAdFree}
+              onClick={toggleAdFree}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                isAdFree ? "bg-[#C96442]" : "bg-[#D6D2C4] dark:bg-[#383631]"
+              }`}
+              title={isAdFree ? "Ad-Free Mode is ON (showing 3 stories across screen). Click to turn OFF." : "Ad-Free Mode is OFF. Click to hide ads and show 3 stories."}
+            >
+              <span className="sr-only">Toggle Ad-Free Focus Mode</span>
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                  isAdFree ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Live Agent Desk Card */}
         <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1E1D1B] border border-[#EBE8DF] dark:border-[#2A2925] space-y-1.5 shadow-xs">
           <div className="flex items-center space-x-2">
             <span className="relative flex h-2 w-2">

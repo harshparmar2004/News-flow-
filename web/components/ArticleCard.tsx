@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { formatTimeAgo } from "@/lib/utils";
 
@@ -10,6 +12,7 @@ interface ArticleCardProps {
     cover_image_url?: string | null;
     published_at: Date;
     reading_time_minutes: number;
+    author?: string | null;
     category: {
       name: string;
       slug: string;
@@ -19,11 +22,11 @@ interface ArticleCardProps {
 
 export function ArticleCard({ article }: ArticleCardProps) {
   return (
-    <article className="group flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-200 hover:border-[#C96442]/60 hover:shadow-md hover:shadow-black/5">
+    <article className="group flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-200 hover:border-[#C96442]/60 hover:shadow-md hover:shadow-black/5 active:scale-[0.985] active:border-[#C96442]/40">
       {/* Cover Image Thumbnail */}
       <Link
         href={`/article/${article.slug}`}
-        className="block relative w-full aspect-16/10 overflow-hidden bg-[#FAF7F0] dark:bg-[#252422]"
+        className="block relative w-full aspect-16/9 sm:aspect-16/10 max-h-56 sm:max-h-72 overflow-hidden bg-[#FAF7F0] dark:bg-[#252422]"
       >
         {article.cover_image_url ? (
           <img
@@ -31,6 +34,17 @@ export function ArticleCard({ article }: ArticleCardProps) {
             alt={article.title}
             className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
             loading="lazy"
+            onError={(e) => {
+              const target = e.currentTarget;
+              target.style.display = "none";
+              const parent = target.parentElement;
+              if (parent && !parent.querySelector(".card-image-fallback")) {
+                const fallback = document.createElement("div");
+                fallback.className = "card-image-fallback w-full h-full flex items-center justify-center text-xs font-mono text-[#8E8B82] bg-gradient-to-br from-[#242320] to-[#171615]";
+                fallback.textContent = "NewsFlow AI";
+                parent.appendChild(fallback);
+              }
+            }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#8E8B82] bg-linear-to-br from-[#242320] to-[#171615]">
@@ -40,7 +54,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
       </Link>
 
       {/* Card Content Body */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
+      <div className="p-3.5 sm:p-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
         <div className="space-y-2">
           {/* Category & Read Time */}
           <div className="flex items-center space-x-1.5 text-xs text-[#C96442]">
@@ -71,8 +85,16 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
         {/* Footer Meta */}
         <div className="pt-3 border-t border-[#EBE8DF]/70 dark:border-[#282724] flex items-center justify-between text-[11px] text-[#8E8B82] dark:text-[#78756E]">
-          <span>NewsFlow AI</span>
-          <span>{formatTimeAgo(article.published_at)}</span>
+          <span className="flex items-center space-x-1.5 font-medium truncate max-w-[65%]">
+            {article.author?.includes("Research") ? (
+              <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#C96442]/10 text-[#C96442]">
+                <span>Research Agent</span>
+              </span>
+            ) : (
+              <span>{article.author || "NewsFlow AI"}</span>
+            )}
+          </span>
+          <span className="shrink-0">{formatTimeAgo(article.published_at)}</span>
         </div>
       </div>
     </article>

@@ -12,6 +12,7 @@ import {
 import { SocialShareBar } from "@/components/SocialShareBar";
 import { JsonLd } from "@/components/JsonLd";
 import { ArticleCard } from "@/components/ArticleCard";
+import { ReadingProgressBar } from "@/components/ReadingProgressBar";
 import { Clock, ExternalLink, ShieldCheck, ChevronRight, ArrowLeft } from "lucide-react";
 
 export const revalidate = 60;
@@ -67,7 +68,7 @@ export default async function ArticlePage({ params }: PageProps) {
     },
   });
 
-  if (!article || article.status !== "published") {
+  if (!article) {
     notFound();
   }
 
@@ -84,7 +85,7 @@ export default async function ArticlePage({ params }: PageProps) {
   const tags: string[] = safeJsonParse(article.tags, []);
 
   // Complete end-to-end markdown rendered cleanly without ad interruption
-  const bodyHtml = renderMarkdown(article.body);
+  const bodyHtml = renderMarkdown(article.body, article.title);
 
   // Fetch 3 related articles from same category
   const relatedArticles = await prisma.article.findMany({
@@ -100,37 +101,49 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <>
+      <ReadingProgressBar />
       <JsonLd article={article} siteUrl={siteUrl} />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <article className="space-y-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-10 pb-24 lg:pb-12">
+        {article.status !== "published" && (
+          <div className="mb-6 px-4 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs flex items-center justify-between">
+            <span className="flex items-center gap-2 font-medium">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              Editorial Preview Mode — Queued in NewsFlow Desk
+            </span>
+            <span className="font-mono uppercase text-[10px] bg-amber-500/20 px-2 py-0.5 rounded font-semibold">
+              {article.status}
+            </span>
+          </div>
+        )}
+        <article className="space-y-6 sm:space-y-8">
           {/* Breadcrumb Navigation & Return to Feed */}
-          <nav className="flex items-center justify-between text-xs text-[#8E8B82] dark:text-[#A8A59D] pb-4 border-b border-[#EBE8DF] dark:border-[#33322E]">
-            <div className="flex items-center space-x-2">
-              <Link href="/" className="hover:text-[#C96442] transition-colors flex items-center gap-1 font-medium">
+          <nav className="flex items-center justify-between text-xs text-[#8E8B82] dark:text-[#A8A59D] pb-3 sm:pb-4 border-b border-[#EBE8DF] dark:border-[#33322E]">
+            <div className="flex items-center space-x-1.5 sm:space-x-2 truncate mr-2">
+              <Link href="/" className="hover:text-[#C96442] transition-colors flex items-center gap-1 font-medium shrink-0">
                 <ArrowLeft className="w-3.5 h-3.5" />
-                Home
+                <span>Home</span>
               </Link>
-              <ChevronRight className="w-3 h-3 text-[#B0ACA2]" />
+              <ChevronRight className="w-3 h-3 text-[#B0ACA2] shrink-0" />
               <Link
                 href={`/category/${article.category.slug}`}
-                className="hover:text-[#C96442] transition-colors font-medium"
+                className="hover:text-[#C96442] transition-colors font-medium truncate"
               >
                 {article.category.name}
               </Link>
             </div>
-            <div className="flex items-center space-x-1.5 text-[11px] font-mono">
+            <div className="flex items-center space-x-1.5 text-[11px] font-mono shrink-0">
               <Clock className="w-3.5 h-3.5 text-[#C96442]" />
               <span>{article.reading_time_minutes} min read</span>
             </div>
           </nav>
 
           {/* Article Header */}
-          <header className="space-y-5">
-            <div className="flex items-center space-x-3 text-xs">
+          <header className="space-y-4 sm:space-y-5">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs">
               <Link
                 href={`/category/${article.category.slug}`}
-                className="font-medium px-3.5 py-1 rounded-full bg-[#FAF7F0] dark:bg-[#2A2925] border border-[#EBE8DF] dark:border-[#3A3832] text-[#C96442]"
+                className="font-medium px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full bg-[#FAF7F0] dark:bg-[#2A2925] border border-[#EBE8DF] dark:border-[#3A3832] text-[#C96442]"
               >
                 {article.category.name}
               </Link>
@@ -139,18 +152,18 @@ export default async function ArticlePage({ params }: PageProps) {
               </span>
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.18] text-[#1F1E1D] dark:text-[#F5F2EB]">
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight leading-[1.22] text-[#1F1E1D] dark:text-[#F5F2EB]">
               {article.title}
             </h1>
 
             {article.summary && (
-              <p className="text-lg md:text-xl text-[#686660] dark:text-[#A8A59D] leading-relaxed font-normal border-l-2 border-[#C96442] pl-4 italic">
+              <p className="text-base sm:text-lg md:text-xl text-[#686660] dark:text-[#A8A59D] leading-relaxed font-normal border-l-2 border-[#C96442] pl-3.5 sm:pl-4 italic">
                 {article.summary}
               </p>
             )}
 
             {/* Byline & Sharing Toolbar */}
-            <div className="pt-4 border-t border-[#EBE8DF] dark:border-[#33322E] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="pt-3 sm:pt-4 border-t border-[#EBE8DF] dark:border-[#33322E] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-full bg-[#C96442]/10 text-[#C96442] flex items-center justify-center font-mono text-sm font-bold border border-[#C96442]/20">
                   AI
