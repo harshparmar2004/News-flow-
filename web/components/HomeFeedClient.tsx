@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ChevronRight, ArrowRight } from "lucide-react";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CategoryDeskBanner } from "@/components/CategoryDeskBanner";
-import { EditorialColophon } from "@/components/EditorialColophon";
 import { useAdPreferences } from "./AdPreferencesContext";
 
 interface ArticleItem {
@@ -227,9 +226,6 @@ export function HomeFeedClient({ recentArticles, categorySections }: HomeFeedCli
           );
         })}
       </div>
-
-      {/* In-feed colophon footer */}
-      <EditorialColophon />
     </div>
   );
 }

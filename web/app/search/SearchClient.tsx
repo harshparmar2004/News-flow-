@@ -6,7 +6,6 @@ import { Search, X, ChevronRight, RotateCcw } from "lucide-react";
 import { ArticleCard } from "@/components/ArticleCard";
 import { LeftSidebar } from "@/components/LeftSidebar";
 import { RightAdsSidebar } from "@/components/RightAdsSidebar";
-import { EditorialColophon } from "@/components/EditorialColophon";
 import { useAdPreferences } from "@/components/AdPreferencesContext";
 
 interface SearchArticle {
@@ -89,8 +88,8 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
   };
 
   return (
-    <div className="w-full flex min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-4rem)] lg:overflow-hidden bg-[#FAF7F0] dark:bg-[#121211]">
-      {/* 1. Left Sidebar: Fixed & Non-Scrollable on Desktop */}
+    <div className="w-full flex min-h-screen bg-[#FAF7F0] dark:bg-[#121211]">
+      {/* 1. Left Sidebar: Sticky alongside feed on Desktop */}
       <div className="hidden lg:block shrink-0">
         <LeftSidebar
           categories={categories}
@@ -98,8 +97,8 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
         />
       </div>
 
-      {/* 2. Middle Main Content: Natural scroll on mobile, scrollable pane on desktop */}
-      <main className="flex-1 min-w-0 lg:h-full lg:overflow-y-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 lg:pb-6 space-y-6">
+      {/* 2. Middle Main Content: Natural document flow */}
+      <main className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 lg:pb-12 space-y-6">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-xs text-[#8E8B82] dark:text-[#A8A59D]">
           <Link href="/" className="hover:text-[#C96442] transition-colors">
@@ -259,9 +258,6 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
             </p>
           </div>
         )}
-
-        {/* In-feed colophon footer */}
-        <EditorialColophon />
       </main>
 
       {/* 3. Right Sidebar: Future Ad Slots (Fixed) */}

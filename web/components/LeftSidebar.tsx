@@ -25,7 +25,7 @@ export function LeftSidebar({ categories, activeSlug, totalArticles }: LeftSideb
   const { isAdFree, toggleAdFree } = useAdPreferences();
 
   return (
-    <aside className="w-64 shrink-0 h-[calc(100vh-4rem)] border-r border-[#EBE8DF] dark:border-[#282724] bg-[#FBF9F5] dark:bg-[#141413] p-5 flex flex-col justify-between overflow-y-auto no-scrollbar select-none">
+    <aside className="w-64 shrink-0 sticky top-14 sm:top-16 self-start max-h-[calc(100vh-3.5rem)] sm:max-h-[calc(100vh-4rem)] border-r border-[#EBE8DF] dark:border-[#282724] bg-[#FBF9F5] dark:bg-[#141413] p-5 flex flex-col justify-between overflow-y-auto no-scrollbar select-none">
       {/* Top Navigation Block */}
       <div className="space-y-6">
         {/* Brand / Title Indicator */}

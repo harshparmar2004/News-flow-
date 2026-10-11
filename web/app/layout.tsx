@@ -98,7 +98,7 @@ export default function RootLayout({
           <AdPreferencesProvider>
             <Navbar />
             <MobileCategoryBar />
-            <main className="flex-1">{children}</main>
+            <div className="flex-1">{children}</div>
             <Footer />
             <MobileNavShell />
           </AdPreferencesProvider>
