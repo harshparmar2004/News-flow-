@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { formatTimeAgo } from "@/lib/utils";
+import { getThematicCoverImage } from "@/lib/imagePool";
 
 interface ArticleCardProps {
   article: {
@@ -21,6 +23,13 @@ interface ArticleCardProps {
 }
 
 export function ArticleCard({ article }: ArticleCardProps) {
+  const fallbackUrl = getThematicCoverImage(article.category?.slug || "tech", article.title);
+  const initialImg = article.cover_image_url && article.cover_image_url.startsWith("http")
+    ? article.cover_image_url
+    : fallbackUrl;
+
+  const [imgSrc, setImgSrc] = useState<string>(initialImg);
+
   return (
     <article className="group flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-200 hover:border-[#C96442]/60 hover:shadow-md hover:shadow-black/5 active:scale-[0.985] active:border-[#C96442]/40">
       {/* Cover Image Thumbnail */}
@@ -28,29 +37,18 @@ export function ArticleCard({ article }: ArticleCardProps) {
         href={`/article/${article.slug}`}
         className="block relative w-full aspect-16/9 sm:aspect-16/10 max-h-56 sm:max-h-72 overflow-hidden bg-[#FAF7F0] dark:bg-[#252422]"
       >
-        {article.cover_image_url ? (
-          <img
-            src={article.cover_image_url}
-            alt={article.title}
-            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
-            loading="lazy"
-            onError={(e) => {
-              const target = e.currentTarget;
-              target.style.display = "none";
-              const parent = target.parentElement;
-              if (parent && !parent.querySelector(".card-image-fallback")) {
-                const fallback = document.createElement("div");
-                fallback.className = "card-image-fallback w-full h-full flex items-center justify-center text-xs font-mono text-[#8E8B82] bg-gradient-to-br from-[#242320] to-[#171615]";
-                fallback.textContent = "NewsFlow AI";
-                parent.appendChild(fallback);
-              }
-            }}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#8E8B82] bg-linear-to-br from-[#242320] to-[#171615]">
-            NewsFlow AI
-          </div>
-        )}
+        <img
+          src={imgSrc}
+          alt={article.title}
+          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={() => {
+            if (imgSrc !== fallbackUrl) {
+              setImgSrc(fallbackUrl);
+            }
+          }}
+        />
       </Link>
 
       {/* Card Content Body */}

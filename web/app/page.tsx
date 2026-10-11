@@ -3,36 +3,33 @@ import { LeftSidebar } from "@/components/LeftSidebar";
 import { RightAdsSidebar } from "@/components/RightAdsSidebar";
 import { HomeFeedClient } from "@/components/HomeFeedClient";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 30;
 
 export default async function HomePage() {
-  // 1. Fetch total published count
-  const totalArticles = await prisma.article.count({
-    where: { status: "published" },
-  });
-
-  // 2. Fetch categories with article counts
-  const categories = await prisma.category.findMany({
-    include: {
-      _count: {
-        select: { articles: { where: { status: "published" } } },
+  // 1. Fetch total count, categories, and recent articles in parallel
+  const [totalArticles, categories, recentArticles] = await Promise.all([
+    prisma.article.count({
+      where: { status: "published" },
+    }),
+    prisma.category.findMany({
+      include: {
+        _count: {
+          select: { articles: { where: { status: "published" } } },
+        },
       },
-    },
-    orderBy: [{ display_order: "asc" }, { name: "asc" }],
-  });
-
-  // 3. Fetch latest published news for "All Intelligence / Recent Dispatches"
-  const recentArticles = await prisma.article.findMany({
-    where: { status: "published" },
-    orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
-    take: 9,
-    include: {
-      category: {
-        select: { name: true, slug: true },
+      orderBy: [{ display_order: "asc" }, { name: "asc" }],
+    }),
+    prisma.article.findMany({
+      where: { status: "published" },
+      orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
+      take: 9,
+      include: {
+        category: {
+          select: { name: true, slug: true },
+        },
       },
-    },
-  });
+    }),
+  ]);
 
   // 4. Fetch articles for each category news desk (ordered by published_at desc, created_at desc)
   const categorySections = await Promise.all(

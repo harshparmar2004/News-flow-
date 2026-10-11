@@ -326,12 +326,11 @@ def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
         cat_name = _resolve_category(article)
 
         cover_img = None
-        scraped_path = getattr(article, "scraped_image_path", None)
         scraped_url = getattr(article, "scraped_image_url", None)
-        if scraped_path and os.path.exists(scraped_path):
-            cover_img = copy_image_to_web(article_id, scraped_path)
-        if not cover_img and scraped_url:
+        if scraped_url and str(scraped_url).startswith("http"):
             cover_img = scraped_url
+        elif getattr(article, "scraped_image_path", None) and os.path.exists(article.scraped_image_path):
+            cover_img = copy_image_to_web(article_id, article.scraped_image_path)
         if not cover_img:
             cover_img = get_fallback_image(cat_name, title or str(article_id))
 
