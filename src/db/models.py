@@ -91,6 +91,7 @@ class Article(Base):
     web_posted: Mapped[bool] = mapped_column(Boolean, default=False)
     web_slug: Mapped[str | None] = mapped_column(String(255), nullable=True)
     web_published_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    web_status: Mapped[str | None] = mapped_column(String(20), nullable=True)  # draft | published | scheduled (mirrors NewsFlow Admin)
 
     # --- Editorial Desk (AI writes ONLY headline + summary + key points; body = raw scraped text) ---
     ai_headline: Mapped[str | None] = mapped_column(Text, nullable=True)       # LLM-written headline
@@ -192,6 +193,7 @@ def init_db() -> None:
                 "edited_at": "DATETIME",
                 "web_slug": "VARCHAR(255)",
                 "web_published_at": "DATETIME",
+                "web_status": "VARCHAR(20)",
             }
             for col, ddl in editorial_cols.items():
                 if col not in columns:

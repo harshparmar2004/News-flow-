@@ -64,8 +64,46 @@ def load_sources() -> list[dict[str, Any]]:
     return sources
 
 
+_LAST_RUN_SOURCES = []
+
+
+def get_last_run_sources() -> list[dict[str, Any]]:
+    """Returns sequential per-source metrics from the most recent scraping run."""
+    global _LAST_RUN_SOURCES
+    if _LAST_RUN_SOURCES:
+        return _LAST_RUN_SOURCES
+
+    sources = load_sources()
+    result = []
+    try:
+        with get_session() as session:
+            from sqlalchemy import func
+            counts = dict(session.query(Article.source, func.count(Article.id)).group_by(Article.source).all())
+    except Exception:
+        counts = {}
+
+    for idx, s in enumerate(sources, 1):
+        name = s.get("name", "Unknown")
+        result.append({
+            "order": idx,
+            "name": name,
+            "tier": s.get("tier", 1),
+            "url": s.get("url"),
+            "category": s.get("category", "tech"),
+            "scraped": 0,
+            "new": 0,
+            "total_in_db": counts.get(name, 0),
+            "status": "ready",
+            "error": None
+        })
+    return result
+
+
 def stage_scrape(sources: list[dict], max_articles: int | None = None) -> int:
     """Stage 1: Scrape articles sequentially across 100% of configured sources (from source #1 to #N)."""
+    global _LAST_RUN_SOURCES
+    _LAST_RUN_SOURCES = []
+
     logger.info("=" * 60)
     logger.info(f"STAGE 1: SCRAPING ARTICLES ACROSS ALL {len(sources)} SOURCES (100% TRAVERSAL)")
     logger.info("=" * 60)
@@ -96,6 +134,7 @@ def stage_scrape(sources: list[dict], max_articles: int | None = None) -> int:
                 articles = scrape_html(source_config)
 
             total_scraped += len(articles)
+            new_count = 0
             if articles:
                 new_count = dedupe_and_store(articles)
                 total_new += new_count
@@ -103,8 +142,33 @@ def stage_scrape(sources: list[dict], max_articles: int | None = None) -> int:
             else:
                 logger.info(f" ⚠️ [{idx}/{len(sources)}] {name}: 0 articles extracted")
 
+            _LAST_RUN_SOURCES.append({
+                "order": idx,
+                "name": name,
+                "tier": tier,
+                "url": source.get("url"),
+                "category": source.get("category", "tech"),
+                "scraped": len(articles),
+                "new": new_count,
+                "status": "ok" if articles else "empty",
+                "error": None,
+                "timestamp": datetime.utcnow().isoformat() + "Z"
+            })
+
         except Exception as e:
             logger.error(f" ❌ [{idx}/{len(sources)}] Error scraping {name}: {e}")
+            _LAST_RUN_SOURCES.append({
+                "order": idx,
+                "name": name,
+                "tier": tier,
+                "url": source.get("url"),
+                "category": source.get("category", "tech"),
+                "scraped": 0,
+                "new": 0,
+                "status": "error",
+                "error": str(e),
+                "timestamp": datetime.utcnow().isoformat() + "Z"
+            })
 
     logger.info(f"Stage 1 complete: Processed {len(sources)} sources | {total_scraped} total items scraped | {total_new} new stored")
     return total_new
@@ -173,25 +237,27 @@ def stage_rewrite(top_n: int | None = 10) -> int:
     return rewritten_count
 
 
-def stage_sync_scraped_images(top_n: int | None = 10) -> int:
-    """Stage 4: Verify and sync authentic editorial photos scraped directly from source websites."""
-    limit_val = top_n if (top_n is not None and top_n > 0) else 10
+def stage_sync_scraped_images(limit: int | None = None) -> int:
+    """Stage 2: Fetch authentic editorial photos for every article that has none yet (scrape order, no ranking)."""
     logger.info("=" * 60)
-    logger.info(f"STAGE 4: VERIFYING AUTHENTIC EDITORIAL PHOTOS FROM SOURCE WEBSITES (TOP {limit_val})")
+    logger.info("STAGE 2: AUTHENTIC EDITORIAL PHOTOS FROM SOURCE WEBSITES")
     logger.info("=" * 60)
 
     with get_session() as session:
-        articles = session.query(Article).order_by(Article.rank_score.desc()).limit(limit_val).all()
-        article_ids = [a.id for a in articles]
+        q = session.query(Article).filter(
+            (Article.scraped_image_path == None) | (Article.scraped_image_path == "")  # noqa: E711
+        ).order_by(Article.scraped_at.desc())
+        if limit:
+            q = q.limit(limit)
+        article_ids = [a.id for a in q.all()]
 
-    logger.info(f"Verifying authentic editorial photos for {len(article_ids)} Top Ranked stories...")
+    logger.info(f"Fetching authentic photos for {len(article_ids)} articles without a photo...")
     verified_count = 0
 
     for aid in article_ids:
         if is_abort_requested():
-            logger.warning("Stage 4 Image Sync aborted by user.")
+            logger.warning("Stage 2 image sync aborted by user.")
             break
-
         try:
             cached_path = scrape_and_cache_article_image(aid)
             if cached_path and os.path.exists(cached_path):
@@ -201,74 +267,15 @@ def stage_sync_scraped_images(top_n: int | None = 10) -> int:
                     if art:
                         if not art.image_path:
                             art.image_path = cached_path
-                        art.status = "ready"
                         sess.commit()
-                logger.info(f" ✓ Verified authentic scraped photo for story #{aid}: {cached_path}")
+                logger.info(f" ✓ Photo saved for story #{aid}")
             else:
-                logger.info(f" ℹ️ Story #{aid}: No authentic editorial photo found on source site.")
+                logger.info(f" ℹ️ Story #{aid}: no editorial photo found on source site.")
         except Exception as e:
-            logger.error(f"Failed authentic photo sync for article #{aid}: {e}")
+            logger.error(f"Photo sync failed for article #{aid}: {e}")
 
-    logger.info(f"Stage 4 complete: {verified_count}/{len(article_ids)} authentic source photos confirmed")
+    logger.info(f"Stage 2 complete: {verified_count}/{len(article_ids)} photos saved")
     return verified_count
-
-
-def stage_sync_to_app2() -> dict[str, int]:
-    """Stage 5: App 2 (Omni-Channel AI Agent) Integration Gateway REST Transfer."""
-    logger.info("=" * 60)
-    logger.info("STAGE 5: OMNI-CHANNEL AI AGENT (APP 2) REST TRANSFER GATEWAY")
-    logger.info("=" * 60)
-
-    if is_abort_requested():
-        logger.warning("Stage 5 App 2 Transfer aborted by user.")
-        return {"synced_to_app2": 0}
-
-    from src.dispatch.service import load_config, dispatch_single_article
-    cfg = load_config()
-    is_active = cfg.get("is_active", True)
-    rate_mode = cfg.get("rate_limit", {}).get("mode", "batch_10_2hr")
-
-    synced_count = 0
-    with get_session() as session:
-        # Fetch articles that have been synthesized and are ready for dispatch
-        ready_articles = session.query(Article).filter(
-            Article.status.in_(["ready", "scraped"])
-        ).order_by(Article.rank_score.desc(), Article.id.desc()).all()
-
-        for a in ready_articles:
-            a.status = "ready"
-        session.commit()
-
-        if not is_active:
-            logger.info("ℹ️ Outbound API Dispatch is currently PAUSED in configuration. Articles marked ready in queue.")
-            return {"synced_to_app2": 0}
-
-        # Determine how many articles to dispatch based on rate limit mode
-        if rate_mode == "instant":
-            to_dispatch = ready_articles[:10]
-            logger.info(f"⚡ Instant Dispatch Mode: Transmitting batch of {len(to_dispatch)} stories to connected App 2...")
-        elif rate_mode in ("batch_10_2hr", "batch_10_1hr"):
-            to_dispatch = ready_articles[:10]
-            logger.info(f"📦 Batch Mode ({rate_mode}): Transmitting batch of {len(to_dispatch)} top stories to connected App 2...")
-        elif rate_mode == "1_per_hour":
-            to_dispatch = ready_articles[:1]
-            logger.info(f"⏱️ 1-per-hour Mode: Transmitting single top story #{to_dispatch[0].id if to_dispatch else 'None'} to connected App 2...")
-        else:
-            to_dispatch = ready_articles[:10]
-
-        target_url = cfg.get("target_url", "http://localhost:5000/api/inbound/news")
-        for a in to_dispatch:
-            if is_abort_requested():
-                break
-            res = dispatch_single_article(a.id)
-            if res.get("success"):
-                synced_count += 1
-                logger.info(f" ✓ [App 2 Outbound API] Story #{a.id} ('{a.title[:35]}...') + authentic photo dispatched to {target_url} (HTTP {res.get('status_code')})")
-            else:
-                logger.warning(f" ⚠️ [App 2 Outbound API] Story #{a.id} dispatch warning: {res.get('error')}")
-
-    logger.info(f"Stage 5 complete: {synced_count} refined articles + authentic editorial photos transferred to App 2 REST Gateway!")
-    return {"synced_to_app2": synced_count}
 
 
 def run_pipeline(max_articles: int | None = None):
@@ -290,25 +297,37 @@ def run_pipeline(max_articles: int | None = None):
     # Stage 1: Scrape all sources
     new_articles = stage_scrape(sources, max_articles)
 
-    # Stage 2: Sync authentic scraped images for ALL articles (not just top 10)
-    img_limit = max_articles  # None means all
-    images = stage_sync_scraped_images(img_limit)
+    # Stage 2: Authentic photos for articles missing one (prioritizing new items)
+    photo_limit = max_articles or max(12, (new_articles or 0) * 2)
+    images = stage_sync_scraped_images(limit=photo_limit)
 
     # Stage 3: Publish ALL scraped articles line-by-line to NewsFlow Web (no ranking gate)
     web_published_count = 0
-    try:
-        from src.publishers.web_publisher import publish_all_scraped
-        pub_results = publish_all_scraped(limit=max_articles, skip_posted=True)
-        web_published_count = pub_results.get("published", 0)
-        logger.info(f"🌐 [NewsFlow Web] Published {web_published_count} articles to public website!")
-    except Exception as web_ex:
-        logger.warning(f"⚠️ [NewsFlow Web] Publishing warning: {web_ex}")
+    auto_pub = os.getenv("AUTO_PUBLISH_TO_WEB", "true").strip().lower() in ("1", "true", "yes", "on")
+    default_web_status = os.getenv("DEFAULT_WEB_STATUS", "draft").strip() or "draft"
 
-    # Stage 4 (optional): App 2 dispatch still available for social channels
-    sync_results = stage_sync_to_app2()
+    if auto_pub:
+        try:
+            from src.publishers.web_publisher import publish_all_scraped
+            pub_results = publish_all_scraped(limit=max_articles, skip_posted=True, status=default_web_status)
+            web_published_count = pub_results.get("published", 0)
+            logger.info(f"🌐 [NewsFlow Web] Uploaded {web_published_count} articles to NewsFlow Admin (status={default_web_status})!")
+        except Exception as web_ex:
+            logger.warning(f"⚠️ [NewsFlow Web] Publishing warning: {web_ex}")
+
+        # Mirror Admin status (draft/published) back into the dashboard
+        try:
+            from src.publishers.web_publisher import sync_web_status
+            st = sync_web_status()
+            logger.info(f"🔄 [NewsFlow Web] Status sync: {st['updated']} updated, {st['checked']} checked"
+                        + (f" (error: {st['error']})" if st.get("error") else ""))
+        except Exception as sync_ex:
+            logger.warning(f"⚠️ Status sync warning: {sync_ex}")
+    else:
+        logger.info("ℹ️ [NewsFlow Web] Auto-publishing to web is disabled in settings. Skipping stage 3.")
 
     elapsed = time.time() - start_time
-    synced_count = sync_results.get("synced_to_app2", 0) + web_published_count
+    synced_count = web_published_count
     status_label = "stopped_by_user" if is_abort_requested() else "completed"
 
     try:
@@ -329,14 +348,27 @@ def run_pipeline(max_articles: int | None = None):
     except Exception as ex:
         logger.warning(f"Failed to record PipelineRun history: {ex}")
 
-    app2_count = sync_results.get("synced_to_app2", 0)
+    # Dispatch Executive Run Digest to Telegram Bot Cockpit
+    try:
+        from src.notifications.telegram_bot import send_pipeline_digest
+        run_stats = {
+            "status": status_label,
+            "articles_scraped": new_articles,
+            "images_generated": images,
+            "published_count": web_published_count,
+            "duration_seconds": round(elapsed, 2)
+        }
+        send_pipeline_digest(run_stats)
+    except Exception as tg_ex:
+        logger.warning(f"Failed to dispatch Telegram run digest: {tg_ex}")
+
     logger.info("+----------------------------------------------------------+")
     logger.info(f"|   PIPELINE RUN {status_label.upper():<36}|")
     logger.info("+----------------------------------------------------------+")
     logger.info(f"|  New articles scraped:    {new_articles:<30}|")
     logger.info(f"|  Authentic photos synced: {images:<30}|")
-    logger.info(f"|  🌐 NewsFlow Web published:{web_published_count:<30}|")
-    logger.info(f"|  Synced to App 2:         {app2_count:<30}|")
+    logger.info(f"|  🌐 NewsFlow Web uploaded:{web_published_count:<30}|")
     logger.info(f"|  Total execution time:    {elapsed:.1f}s{' ' * (29 - len(f'{elapsed:.1f}s'))}|")
     logger.info("+----------------------------------------------------------+")
+
 

@@ -159,16 +159,21 @@ const App = {
       item.classList.toggle('active', item.getAttribute('data-page') === page);
     });
 
+    const headerActions = document.querySelector('.header-actions');
+    if (headerActions) {
+      headerActions.style.display = (page === 'dashboard') ? 'flex' : 'none';
+    }
+
     const pageTitles = {
       scraped: { title: 'Scraped News Data Vault', subtitle: 'View raw content, extracted headlines, and text scraped from monitored web sources' },
-      space: { title: '🌌 3D Interactive Agentic Space', subtitle: 'Observe news scraping, AI ranking, authentic photo extraction, and App 2 transfer in 3D' },
-      dashboard: { title: 'Dashboard Overview', subtitle: 'Real-time automation analytics, authentic photo extraction, and news ranking status' },
+      space: { title: '🌌 3D Interactive Agentic Space', subtitle: 'Observe news scraping, authentic photo extraction, and NewsFlow sync in 3D' },
+      dashboard: { title: 'Dashboard Overview', subtitle: 'Real-time automation analytics, authentic photos, and 16-source NewsFlow pipeline status' },
       sources: { title: 'News Sources & Web Links', subtitle: 'Manage news source links, RSS feeds, and trigger automated crawlers' },
-      ranking: { title: 'NewsFlow Web Publishing Desk', subtitle: 'Publish all scraped news articles line-by-line to NewsFlow Web (localhost:3000) with authentic photos. No ranking gates.' },
+      ranking: { title: 'News Website Desk', subtitle: 'Review scraped stories, inspect editorial packaging, and sync directly to NewsFlow Web & Admin' },
       media: { title: 'Visual Studio', subtitle: 'Editorial photo and graphic management' },
       notes: { title: 'Tech Notes Vault', subtitle: 'Structured technical documentation and post archives' },
-      articles: { title: 'Refined Content Vault & Calendar Archive', subtitle: 'Database of refined news, ranking scores, and authentic source editorial photos' },
-      pipeline: { title: 'Pipeline Workflow & API Distribution Engine', subtitle: 'Sequential 16-Source Scraping ➔ Authentic Editorial Photos ➔ NewsFlow Web & Admin Sync (:3000) ➔ Outbound API Webhooks' },
+      articles: { title: 'Editorial Articles Vault', subtitle: 'Central archive of ingested stories, authentic photo assets, and publication status' },
+      pipeline: { title: 'Pipeline Operations & Sources Ingest', subtitle: 'Sequential 16-source crawler execution, authentic photo caching, and automated sync' },
       logs: { title: 'System Logs Stream', subtitle: 'Live terminal stream from pipeline.log' },
       settings: { title: 'API Keys & Configuration', subtitle: 'Manage Groq, OpenAI, Gemini, and research pipeline credentials' }
     };

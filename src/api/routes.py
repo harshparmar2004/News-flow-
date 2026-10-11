@@ -7,6 +7,7 @@ import os
 import json
 import yaml
 import asyncio
+import time
 import logging
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
@@ -82,9 +83,11 @@ def get_stats():
         instagram_queued = session.query(func.count(Article.id)).filter(Article.instagram_queued == True).scalar() or 0
         linkedin_queued = session.query(func.count(Article.id)).filter(Article.linkedin_queued == True).scalar() or 0
 
-        # Category breakdown
-        cat_rows = session.query(Article.category, func.count(Article.id)).group_by(Article.category).all()
-        categories = {cat or "General": cnt for cat, cnt in cat_rows}
+        # Editorial beat categories breakdown
+        from src.publishers.web_publisher import _resolve_category
+        from collections import Counter
+        all_articles = session.query(Article).all()
+        categories = dict(Counter([_resolve_category(a) for a in all_articles]))
 
         # Source breakdown
         src_rows = session.query(Article.source, func.count(Article.id)).group_by(Article.source).all()
@@ -214,7 +217,14 @@ def list_articles(
         query = session.query(Article)
 
         if status and status != "all":
-            query = query.filter(Article.status == status)
+            if status == "published":
+                query = query.filter(Article.web_status == "published")
+            elif status == "draft":
+                query = query.filter(Article.web_posted == True, (Article.web_status != "published") | (Article.web_status.is_(None)))
+            elif status == "pending":
+                query = query.filter((Article.web_posted == False) | (Article.web_posted.is_(None)))
+            else:
+                query = query.filter(Article.status == status)
 
         if source and source != "all":
             query = query.filter(Article.source == source)
@@ -320,7 +330,11 @@ def list_articles(
                     "twitter": a.twitter_posted,
                     "instagram": a.instagram_queued,
                     "linkedin": a.linkedin_queued,
-                }
+                },
+                "web_posted": bool(getattr(a, "web_posted", False)),
+                "web_status": getattr(a, "web_status", "draft") if getattr(a, "web_posted", False) else "pending",
+                "web_slug": getattr(a, "web_slug", None),
+                "web_url": getattr(a, "web_url", None)
             })
 
     return {
@@ -686,59 +700,46 @@ def delete_source(source_index: int):
 # Auto-Pilot Mode Scheduler
 # ---------------------------------------------------------------------------
 
-_autopilot_state = {
-    "enabled": False,
-    "interval_minutes": 15,
-    "last_run": None,
-    "next_run": None
-}
-
-_autopilot_task = None
-
-
-async def _autopilot_loop():
-    logger.info("Auto-Pilot loop started")
-    while _autopilot_state["enabled"]:
-        interval_secs = _autopilot_state["interval_minutes"] * 60
-        _autopilot_state["next_run"] = (datetime.utcnow() + timedelta(seconds=interval_secs)).isoformat() + "Z"
-        
-        await asyncio.sleep(interval_secs)
-        
-        if not _autopilot_state["enabled"]:
-            break
-            
-        if not _pipeline_state["is_running"]:
-            logger.info("Auto-Pilot: Triggering scheduled automatic pipeline check...")
-            _autopilot_state["last_run"] = datetime.utcnow().isoformat() + "Z"
-            _run_pipeline_background(max_articles=3)
-
-
 @router.get("/autopilot")
-def get_autopilot_status():
-    return _autopilot_state
+def get_autopilot_status_route():
+    """Returns Auto-Pilot state synchronized across Dashboard and Telegram."""
+    from src.scheduler.autopilot_manager import get_autopilot_status
+    st = get_autopilot_status()
+    return {
+        "enabled": st["is_active"],
+        "interval_minutes": st["interval_minutes"],
+        "last_run": st["last_run"],
+        "next_run": st["next_run"],
+        "cycle_count": st["cycle_count"],
+        "current_status": st["current_status"],
+        "seconds_until_next_run": st["seconds_until_next_run"]
+    }
 
 
 @router.post("/autopilot")
-async def toggle_autopilot(data: Dict[str, Any]):
-    global _autopilot_task, _autopilot_state
-    
+def toggle_autopilot_route(data: Dict[str, Any]):
+    """Enables or disables 24/7 continuous autonomous loop."""
+    from src.scheduler.autopilot_manager import start_autopilot, stop_autopilot, get_autopilot_status
     enabled = bool(data.get("enabled", False))
-    interval = int(data.get("interval_minutes", 15))
-    
-    _autopilot_state["enabled"] = enabled
-    _autopilot_state["interval_minutes"] = interval
-    
+    interval = int(data.get("interval_minutes", 60))
+
     if enabled:
-        if _autopilot_task is None or _autopilot_task.done():
-            _autopilot_task = asyncio.create_task(_autopilot_loop())
-        msg = f"Auto-Pilot ENABLED! Checking sources every {interval} minutes."
+        res = start_autopilot(interval_minutes=interval, immediate_first_run=True)
     else:
-        if _autopilot_task and not _autopilot_task.done():
-            _autopilot_task.cancel()
-        _autopilot_state["next_run"] = None
-        msg = "Auto-Pilot DISABLED."
-        
-    return {"success": True, "message": msg, "state": _autopilot_state}
+        res = stop_autopilot()
+
+    st = get_autopilot_status()
+    return {
+        "success": True,
+        "message": res.get("message"),
+        "state": {
+            "enabled": st["is_active"],
+            "interval_minutes": st["interval_minutes"],
+            "last_run": st["last_run"],
+            "next_run": st["next_run"],
+            "cycle_count": st["cycle_count"]
+        }
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -934,6 +935,17 @@ def get_pipeline_history(limit: int = 50):
     with get_session() as session:
         runs = session.query(PipelineRun).order_by(PipelineRun.id.desc()).limit(limit).all()
         return {"history": [r.to_dict() for r in runs]}
+
+
+@router.get("/pipeline/last-run")
+def get_pipeline_last_run():
+    """Returns sequential 16-source progress and outcome from the latest pipeline run."""
+    from src.orchestrator import get_last_run_sources
+    return {
+        "success": True,
+        "sources": get_last_run_sources(),
+        "state": _pipeline_state
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -1214,6 +1226,15 @@ ENV_KEYS = [
     "INSTAGRAM_ACCOUNT_ID",
     "LINKEDIN_ACCESS_TOKEN",
     "LINKEDIN_AUTHOR_URN",
+    "NEWSFLOW_WEB_URL",
+    "NEWSFLOW_WEB_API_KEY",
+    "TYPESAFE_API_KEY",
+    "AUTO_PUBLISH_TO_WEB",
+    "DEFAULT_WEB_STATUS",
+    "TELEGRAM_BOT_TOKEN",
+    "TELEGRAM_CHAT_ID",
+    "TELEGRAM_NOTIFY_COMPLETION",
+    "TELEGRAM_REMOTE_CONTROL",
 ]
 
 def _mask_val(val: Optional[str]) -> str:
@@ -1315,6 +1336,146 @@ def update_settings(settings: Dict[str, str]):
             f.write(f'{k}="{clean_v}"\n')
 
     return {"success": True, "message": ".env settings updated successfully!"}
+
+
+# ---------------------------------------------------------------------------
+# DIRECT WEB INGESTION & JEV (TYPESAFE AI) DISTRIBUTION ENDPOINTS
+# ---------------------------------------------------------------------------
+
+@router.get("/web/status")
+def get_web_integration_status():
+    """Returns status of Direct Web & JEV TypeSafe AI bridge."""
+    web_url = os.getenv("NEWSFLOW_WEB_URL", "http://localhost:3000").rstrip("/")
+    api_key = os.getenv("NEWSFLOW_WEB_API_KEY", "")
+    typesafe_key = os.getenv("TYPESAFE_API_KEY", "")
+    auto_pub = os.getenv("AUTO_PUBLISH_TO_WEB", "true").lower() in ("1", "true", "yes")
+    default_status = os.getenv("DEFAULT_WEB_STATUS", "draft")
+
+    return {
+        "web_url": web_url,
+        "api_key_set": bool(api_key and not api_key.startswith("your_")),
+        "typesafe_key_set": bool(typesafe_key and not typesafe_key.startswith("your_")),
+        "typesafe_masked": _mask_val(typesafe_key) if typesafe_key else "",
+        "auto_publish": auto_pub,
+        "default_status": default_status
+    }
+
+
+@router.post("/web/test-connection")
+def test_web_connection():
+    """Tests connection and authentication to NewsFlow Web API and JEV Bridge."""
+    web_url = os.getenv("NEWSFLOW_WEB_URL", "http://localhost:3000").rstrip("/")
+    api_key = os.getenv("NEWSFLOW_WEB_API_KEY", "nf_live_sec_9942a8b7e1034f68a")
+    typesafe_key = os.getenv("TYPESAFE_API_KEY", "")
+
+    endpoint = f"{web_url}/api/articles?limit=1"
+    headers = {"x-api-key": api_key, "User-Agent": "NewsFlow-Pipeline/2.0"}
+    
+    start_t = time.time()
+    try:
+        import requests
+        resp = requests.get(endpoint, headers=headers, timeout=6)
+        latency_ms = round((time.time() - start_t) * 1000, 1)
+        
+        if resp.status_code == 200:
+            return {
+                "success": True,
+                "status_code": resp.status_code,
+                "latency_ms": latency_ms,
+                "message": f"Successfully connected to NewsFlow Web ({latency_ms}ms)!",
+                "jev_ready": bool(typesafe_key),
+                "endpoint": endpoint
+            }
+        else:
+            return {
+                "success": False,
+                "status_code": resp.status_code,
+                "latency_ms": latency_ms,
+                "message": f"HTTP {resp.status_code}: {resp.text[:120]}",
+                "jev_ready": bool(typesafe_key)
+            }
+    except Exception as e:
+        latency_ms = round((time.time() - start_t) * 1000, 1)
+        return {
+            "success": False,
+            "status_code": 0,
+            "latency_ms": latency_ms,
+            "message": f"Connection failed: {str(e)}",
+            "jev_ready": bool(typesafe_key)
+        }
+
+
+@router.get("/web/crawlers")
+def get_web_crawlers_proxy():
+    """Proxy endpoint to fetch AI Crawler telemetry from NewsFlow Web."""
+    web_url = os.getenv("NEWSFLOW_WEB_URL", "http://localhost:3000").rstrip("/")
+    try:
+        import requests
+        resp = requests.get(f"{web_url}/api/admin/crawlers", timeout=6)
+        if resp.status_code == 200:
+            return resp.json()
+        return {"error": f"Web API returned HTTP {resp.status_code}", "summary": {"totalHits": 0}}
+    except Exception as e:
+        return {"error": str(e), "summary": {"totalHits": 0}}
+
+
+# ---------------------------------------------------------------------------
+# TELEGRAM BOT REMOTE CONTROL & DIGEST ENDPOINTS
+# ---------------------------------------------------------------------------
+
+@router.get("/telegram/status")
+def get_telegram_status():
+    """Returns Telegram bot configuration and polling status."""
+    from src.notifications.telegram_bot import get_bot_status
+    return get_bot_status()
+
+
+@router.post("/telegram/test")
+def test_telegram_message():
+    """Sends a test ping message from the dashboard to Telegram."""
+    from src.notifications.telegram_bot import send_message, get_bot_token, get_chat_id, get_web_url
+    token = get_bot_token()
+    chat_id = get_chat_id()
+    if not token or not chat_id:
+        raise HTTPException(status_code=400, detail="Telegram bot token and chat ID must be configured in settings.")
+    
+    web_url = get_web_url()
+    msg = (
+        "🚀 <b>NewsFlow Intelligence — Remote Ping</b>\\n\\n"
+        "Your Telegram Bot connection is successfully verified and operational!\\n"
+        "• <b>Status:</b> Healthy & Connected\\n"
+        f"• <b>Web Endpoint:</b> <code>{web_url}</code>\\n"
+        "• <b>Type:</b> Autonomous Pipeline Remote Cockpit\\n\\n"
+        "<i>Send <code>/help</code> in this chat to see remote commands.</i>"
+    )
+    from src.notifications.telegram_bot import is_valid_button_url
+    keyboard = [
+        [{"text": "📊 Live Status", "callback_data": "cmd_status"}],
+        [{"text": "▶️ Start Pipeline", "callback_data": "cmd_run"}]
+    ]
+    if is_valid_button_url(web_url):
+        keyboard.insert(0, [{"text": "🌐 Open Website", "url": web_url}])
+    reply_markup = {"inline_keyboard": keyboard}
+    ok = send_message(msg, reply_markup=reply_markup)
+    if ok:
+        return {"success": True, "message": "Test ping sent to your Telegram chat!"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to send Telegram test message. Check bot token and chat ID.")
+
+
+@router.post("/telegram/toggle-polling")
+def toggle_telegram_polling():
+    """Starts or stops the Telegram background polling daemon."""
+    from src.notifications.telegram_bot import _daemon_running, start_polling, stop_polling, get_bot_status
+    if _daemon_running:
+        stop_polling()
+        msg = "Telegram remote listener stopped."
+    else:
+        start_polling()
+        msg = "Telegram remote listener started and listening for commands."
+    status = get_bot_status()
+    status["message"] = msg
+    return status
 
 
 # ---------------------------------------------------------------------------
@@ -1516,6 +1677,51 @@ def test_dispatch_ping():
     return {"success": True, "health": health}
 
 
+@router.post("/web/sync-status")
+def sync_web_status_route():
+    """Pull the real NewsFlow Admin status (draft/published/scheduled) for every synced story."""
+    from src.publishers.web_publisher import sync_web_status
+    return {"success": True, **sync_web_status()}
+
+
+@router.get("/system/health")
+def system_health():
+    """One-call health check: website reachable, API key valid, DB writable, image folder OK."""
+    import requests as _rq
+    from src.publishers.web_publisher import WEB_URL, API_KEY, WEB_PUBLIC_SCRAPED
+    checks = {}
+
+    try:
+        r = _rq.get(f"{WEB_URL}/api/health", timeout=5)
+        checks["website"] = {"ok": r.status_code == 200, "detail": f"HTTP {r.status_code}"}
+    except Exception as e:
+        checks["website"] = {"ok": False, "detail": f"Unreachable: {e}"}
+
+    try:
+        r = _rq.get(f"{WEB_URL}/api/articles/status", params={"slugs": "x"},
+                    headers={"x-api-key": API_KEY}, timeout=5)
+        checks["api_key"] = {"ok": r.status_code == 200,
+                             "detail": "valid" if r.status_code == 200 else f"HTTP {r.status_code} (check NEWSFLOW_WEB_API_KEY)"}
+    except Exception as e:
+        checks["api_key"] = {"ok": False, "detail": str(e)}
+
+    try:
+        with get_session() as s:
+            total = s.query(Article).count()
+            pending = s.query(Article).filter(Article.web_posted == False).count()  # noqa: E712
+        checks["database"] = {"ok": True, "detail": f"{total} articles, {pending} pending sync"}
+    except Exception as e:
+        checks["database"] = {"ok": False, "detail": str(e)}
+
+    try:
+        os.makedirs(WEB_PUBLIC_SCRAPED, exist_ok=True)
+        checks["images_folder"] = {"ok": os.access(WEB_PUBLIC_SCRAPED, os.W_OK), "detail": WEB_PUBLIC_SCRAPED}
+    except Exception as e:
+        checks["images_folder"] = {"ok": False, "detail": str(e)}
+
+    return {"ok": all(c["ok"] for c in checks.values()), "checks": checks}
+
+
 @router.get("/dispatch/articles")
 def get_dispatch_articles(page: int = 1, limit: int = 15):
     """Returns article list with full editorial photo & NewsFlow Web sync state (pure newly organized, no ranking)."""
@@ -1585,7 +1791,7 @@ def get_dispatch_articles(page: int = 1, limit: int = 15):
                 "photo_url": photo_url,
                 "web_posted": is_web_posted,
                 "web_slug": web_slug,
-                "web_status": "published" if is_web_posted else "draft",
+                "web_status": (getattr(a, "web_status", None) or ("draft" if is_web_posted else "pending")),
                 "web_url": f"http://localhost:3000/article/{web_slug}" if web_slug else None,
                 "admin_url": "http://localhost:3000/admin",
                 "dispatch_status": disp_status,
@@ -1877,6 +2083,7 @@ def get_web_articles(page: int = 1, limit: int = 50, filter: str = "all"):
                 "ai_headline": ai_headline,
                 "ai_summary": getattr(a, "ai_summary", None),
                 "editorial_status": getattr(a, "editorial_status", "draft"),
+                "web_status": getattr(a, "web_status", None) or ("draft" if a.web_posted else "pending"),
             })
 
         return {

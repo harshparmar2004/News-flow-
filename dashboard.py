@@ -57,6 +57,25 @@ app.add_middleware(
 # Mount API router
 app.include_router(api_router)
 
+@app.on_event("startup")
+async def startup_event():
+    """Start background services like Telegram polling if enabled."""
+    try:
+        from src.notifications.telegram_bot import start_polling, get_bot_token, is_remote_control_enabled
+        if get_bot_token() and is_remote_control_enabled():
+            start_polling()
+    except Exception as e:
+        print(f"Telegram Bot startup notice: {e}")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Safely shut down background listeners."""
+    try:
+        from src.notifications.telegram_bot import stop_polling
+        stop_polling()
+    except Exception:
+        pass
+
 # No-cache middleware for dashboard UI files
 @app.middleware("http")
 async def add_no_cache_headers(request, call_next):

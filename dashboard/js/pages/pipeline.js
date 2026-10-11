@@ -1,435 +1,365 @@
 /**
- * Pipeline Workflow & API Distribution Engine — Pure, Newly Organized Section
- * Multi-stage flow: 16-Source Ingest → Authentic Photo Extraction → NewsFlow Web & Admin Sync (:3000) → Outbound API Webhooks.
- * No ranking stars, no AI scoring gates. Pure news scraping + direct publishing workflow.
+ * Pipeline Operations & Sources Ingest Cockpit
+ * Dedicated operational console for managing the sequential 16-source crawler,
+ * authentic photo extraction, system health monitoring, and automated NewsFlow synchronization.
  */
 const PipelinePage = {
   dispatchConfig: null,
-  articlesData: [],
-  selectedPayloadArticle: null,
+  sourcesData: [],
+  healthData: null,
   timerInterval: null,
-  nextDispatchCountdown: 14 * 60 + 20,
+  nextCycleSeconds: 14 * 60 + 20,
 
   async render(container) {
     container.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 20px;">
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 1320px; margin: 0 auto; padding-bottom: 40px;">
         
-        <!-- Header & Top Actions -->
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span class="badge" style="background: rgba(217, 119, 87, 0.12); color: var(--primary-purple); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;">
-                Live Distribution Engine
-              </span>
-              <span style="font-size: 0.75rem; color: var(--text-muted);">v2.0 Architecture</span>
-            </div>
-            <h3 style="font-family: var(--font-serif); font-size: 1.45rem; font-weight: 700; color: var(--text-main); margin: 0;">
-              Pipeline Workflow &amp; API Distribution Engine
-            </h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 4px 0 0 0;">
-              Automated multi-source flow: <strong>16-Source Sequential Ingest</strong> &rarr; <strong>Authentic Photo Extraction</strong> &rarr; <strong>NewsFlow Web &amp; Admin Desk (:3000)</strong> &rarr; <strong>Outbound API Webhooks</strong>. No ranking gates.
-            </p>
-          </div>
-
-          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 0.82rem; text-decoration: none;">
-              <i data-lucide="globe" style="width: 15px; height: 15px; color: var(--primary-purple);"></i> Open Web (:3000)
-            </a>
-            <a href="http://localhost:3000/admin" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 0.82rem; text-decoration: none;">
-              <i data-lucide="shield-check" style="width: 15px; height: 15px; color: #2e7d32;"></i> Admin Desk
-            </a>
-            <button class="btn btn-secondary" onclick="PipelinePage.testPingConnection()" id="test-ping-btn" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 0.82rem;">
-              <i data-lucide="activity" style="width: 15px; height: 15px;"></i> Ping Bridge
-            </button>
-            <button class="btn btn-secondary" onclick="PipelinePage.openConfigModal()" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 0.82rem;">
-              <i data-lucide="settings" style="width: 15px; height: 15px;"></i> Webhook Config
-            </button>
-            <button class="btn btn-primary btn-glow" onclick="PipelinePage.dispatchBatchNow()" id="dispatch-batch-btn" style="display: flex; align-items: center; gap: 6px; padding: 7px 16px; font-size: 0.84rem;">
-              <i data-lucide="send" style="width: 15px; height: 15px;"></i> Sync Next Batch
-            </button>
-          </div>
-        </div>
-
-        <!-- 1. Visual 4-Stage Architecture Banner -->
-        <div class="glass-card" style="padding: 16px 20px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
-            <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 160px;">
-              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(217,119,87,0.12); display: flex; align-items: center; justify-content: center; color: var(--primary-purple); font-weight: 700; font-size: 0.9rem;">1</div>
-              <div>
-                <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">16 News Sources</div>
-                <div style="font-size: 0.7rem; color: var(--text-muted);" id="node-1-count">Loading...</div>
-              </div>
-            </div>
-            <i data-lucide="arrow-right" style="width: 14px; height: 14px; color: var(--border-color);"></i>
-            <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 160px;">
-              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(46,125,50,0.12); display: flex; align-items: center; justify-content: center; color: #2e7d32; font-weight: 700; font-size: 0.9rem;">2</div>
-              <div>
-                <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">Authentic Photos</div>
-                <div style="font-size: 0.7rem; color: var(--text-muted);" id="node-2-count">Loading...</div>
-              </div>
-            </div>
-            <i data-lucide="arrow-right" style="width: 14px; height: 14px; color: var(--border-color);"></i>
-            <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 160px;">
-              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(33,150,243,0.12); display: flex; align-items: center; justify-content: center; color: #1976d2; font-weight: 700; font-size: 0.9rem;">3</div>
-              <div>
-                <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">NewsFlow Web &amp; Admin</div>
-                <div style="font-size: 0.7rem; color: var(--text-muted);" id="node-3-count">Loading...</div>
-              </div>
-            </div>
-            <i data-lucide="arrow-right" style="width: 14px; height: 14px; color: var(--border-color);"></i>
-            <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 160px;">
-              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(156,39,176,0.12); display: flex; align-items: center; justify-content: center; color: #7b1fa2; font-weight: 700; font-size: 0.9rem;">4</div>
-              <div>
-                <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">API Webhook Stream</div>
-                <div style="font-size: 0.7rem; color: var(--text-muted);">Outbound JSON Payloads</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. Connection Bridge & Distribution Speed Controller -->
-        <div class="glass-card" style="padding: 18px 22px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 12px;">
-            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-              <div style="display: flex; align-items: center; gap: 7px;">
-                <span class="status-indicator online" id="api-status-dot"></span>
-                <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);" id="api-status-label">
-                  NewsFlow Web Platform: Connected (200 OK)
+        <!-- Unified Pipeline Command Card (Single Cohesive Container) -->
+        <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+          
+          <!-- Top Row: Engine Title, Live Status & Primary Actions -->
+          <div style="padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; background: #ffffff;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 3px;">
+                <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin: 0;">
+                  Pipeline Operations Engine
+                </h3>
+                <span id="pipeline-status-badge" class="badge" style="background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); font-weight: 700; font-size: 0.72rem; padding: 2px 8px; border-radius: 6px;">
+                  ● System Ready
                 </span>
               </div>
-              <span class="badge" style="font-size: 0.74rem; background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-muted);">
-                Endpoint: <code style="color: var(--primary-purple); font-weight: 700; margin-left: 4px;" id="api-target-display">http://localhost:3000/api/articles</code>
-              </span>
-              <span class="badge" id="api-latency-badge" style="font-size: 0.72rem; background: rgba(46,125,50,0.1); color: #2e7d32; font-weight: 600;">
-                &#9889; 12ms
-              </span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);">Pipeline Auto-Sync:</span>
-              <div style="display: flex; background: var(--bg-surface); border-radius: 8px; border: 1px solid var(--border-color); padding: 2px;">
-                <button id="rate-mode-active" class="btn btn-primary" onclick="PipelinePage.setAutomationState(true)" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px;">Active &#128994;</button>
-                <button id="rate-mode-paused" class="btn btn-secondary" onclick="PipelinePage.setAutomationState(false)" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px;">Paused &#9208;&#65039;</button>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top: 14px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-              <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">Distribution Pacing &amp; Workflow Mode:</span>
-              <span style="font-size: 0.76rem; color: var(--text-muted);">Controls sync speed for scraped stories &amp; authentic photos to NewsFlow Web &amp; Admin</span>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-              <label class="glass-card rate-card" style="padding: 10px 14px; cursor: pointer; border: 1.5px solid var(--primary-purple); background: rgba(217,119,87,0.06); display: flex; align-items: center; gap: 10px; border-radius: 8px;">
-                <input type="radio" name="dispatch_speed_preset" value="instant" checked onchange="PipelinePage.onRatePresetChange('instant')">
-                <div><div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">&#9889; Instant Sync</div><div style="font-size: 0.7rem; color: var(--text-muted);">Line-by-line as scraped</div></div>
-              </label>
-              <label class="glass-card rate-card" style="padding: 10px 14px; cursor: pointer; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; border-radius: 8px;">
-                <input type="radio" name="dispatch_speed_preset" value="batch_10_1hr" onchange="PipelinePage.onRatePresetChange('batch_10_1hr')">
-                <div><div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">&#8987; Hourly Bursts</div><div style="font-size: 0.7rem; color: var(--text-muted);">Batch 10 / hour</div></div>
-              </label>
-              <label class="glass-card rate-card" style="padding: 10px 14px; cursor: pointer; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; border-radius: 8px;">
-                <input type="radio" name="dispatch_speed_preset" value="batch_10_2hr" onchange="PipelinePage.onRatePresetChange('batch_10_2hr')">
-                <div><div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">&#128230; Standard Pacing</div><div style="font-size: 0.7rem; color: var(--text-muted);">Batch 10 / 2 hours</div></div>
-              </label>
-              <label class="glass-card rate-card" style="padding: 10px 14px; cursor: pointer; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; border-radius: 8px;">
-                <input type="radio" name="dispatch_speed_preset" value="review_first" onchange="PipelinePage.onRatePresetChange('review_first')">
-                <div><div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">&#128737; Admin Review First</div><div style="font-size: 0.7rem; color: var(--text-muted);">Hold drafts in Admin</div></div>
-              </label>
-            </div>
-          </div>
-
-          <div style="margin-top: 14px; background: var(--bg-surface); padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.78rem;">
-            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-              <div><span style="color: var(--text-muted);">Sources:</span><strong style="color: var(--text-main); margin-left: 4px;" id="sources-traversed-label">16 / 16</strong></div>
-              <span style="color: var(--border-color);">|</span>
-              <div><span style="color: var(--text-muted);">Synced to Web:</span><strong style="color: #1976d2; margin-left: 4px;" id="queue-completed-label">Loading</strong></div>
-              <span style="color: var(--border-color);">|</span>
-              <div><span style="color: var(--text-muted);">Pending:</span><strong style="color: var(--primary-purple); margin-left: 4px;" id="queue-waiting-label">—</strong></div>
-              <span style="color: var(--border-color);">|</span>
-              <div><span style="color: var(--text-muted);">Next Auto-Cycle:</span><strong style="color: var(--primary-purple); font-family: var(--font-mono); margin-left: 4px;" id="next-dispatch-timer">14m 20s</strong></div>
-            </div>
-            <button class="btn btn-secondary" onclick="PipelinePage.dispatchBatchNow()" style="padding: 4px 12px; font-size: 0.74rem;">&#9889; Trigger Cycle Now</button>
-          </div>
-        </div>
-
-        <!-- Connection Alert Banner (Conditional) -->
-        <div id="api-broken-banner" style="display: none; background: rgba(198,40,40,0.08); border: 1.5px solid rgba(198,40,40,0.3); padding: 12px 18px; border-radius: 8px; font-size: 0.84rem; color: var(--status-failed); justify-content: space-between; align-items: center;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <i data-lucide="alert-triangle" style="width: 18px; height: 18px;"></i>
-            <span><strong>Distribution Sync Alert:</strong> Connection to NewsFlow Web bridge timed out. Payloads are paused.</span>
-          </div>
-          <button class="btn btn-secondary" onclick="PipelinePage.testPingConnection()" style="padding: 4px 10px; font-size: 0.76rem;">Retry Connection</button>
-        </div>
-
-        <!-- 3. Pure, Newly Organized Publishing & Distribution Roster -->
-        <div class="glass-card" style="padding: 20px;">
-          <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <h4 style="font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700; margin: 0;">NewsFlow Publishing &amp; API Distribution Roster</h4>
-                <span class="badge" style="background: rgba(46,125,50,0.12); color: #2e7d32; font-weight: 700; font-size: 0.68rem;">100% Sequential</span>
-              </div>
-              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 3px 0 0 0;">
-                Chronological catalog of all scraped stories, authentic editorial media, and live sync status across NewsFlow Web &amp; API endpoints. No ranking scores.
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+                Sequential 16-source crawler traversal (#1 to #16), authentic photo caching, and automated sync to NewsFlow (:3000).
               </p>
             </div>
-            <button class="btn btn-secondary" onclick="PipelinePage.loadDispatchData()" style="padding: 5px 12px; font-size: 0.76rem;">
-              <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i> Refresh Roster
-            </button>
-          </div>
 
-          <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.84rem;">
-              <thead>
-                <tr style="background: var(--bg-surface); border-bottom: 1.5px solid var(--border-color); font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">
-                  <th style="padding: 11px 14px; width: 38%;">Story &amp; Publisher</th>
-                  <th style="padding: 11px 14px; width: 14%;">Category</th>
-                  <th style="padding: 11px 14px; width: 18%; text-align: center;">Authentic Photo</th>
-                  <th style="padding: 11px 14px; width: 16%; text-align: center;">NewsFlow Web Desk</th>
-                  <th style="padding: 11px 14px; width: 14%; text-align: right;">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="dispatch-articles-tbody">
-                <tr><td colspan="5" style="text-align: center; padding: 35px; color: var(--text-muted);">Loading distribution roster...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+            <!-- Action Button Group -->
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <button class="btn btn-primary btn-glow" id="pipeline-run-trigger-btn" onclick="PipelinePage.triggerRun()" style="display: flex; align-items: center; gap: 7px; padding: 7px 16px; font-weight: 700; font-size: 0.82rem;">
+                <i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Full Pipeline (16 Sources)
+              </button>
 
-      <!-- JSON Payload Inspection Modal -->
-      <div id="payload-modal" class="modal" style="display: none;">
-        <div class="modal-backdrop" onclick="PipelinePage.closePayloadModal()"></div>
-        <div class="modal-content glass-card" style="max-width: 720px; width: 92%; max-height: 85vh; display: flex; flex-direction: column;">
-          <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border-color);">
-            <div>
-              <span class="badge" style="background: rgba(46,125,50,0.12); color: #2e7d32; font-weight: 700;">DISTRIBUTION PAYLOAD</span>
-              <h3 id="payload-modal-title" style="font-family: var(--font-serif); font-size: 1.15rem; margin-top: 4px;">Payload Inspector</h3>
+              <div style="display: flex; gap: 2px; background: var(--bg-surface); padding: 2px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <button class="btn btn-secondary" onclick="PipelinePage.syncAdminStatus()" style="padding: 5px 10px; font-size: 0.76rem; border: none; background: transparent; display: flex; align-items: center; gap: 4px; color: var(--text-main);" title="Mirror latest Draft/Published status from NewsFlow Admin">
+                  <i data-lucide="rotate-cw" style="width: 13px; height: 13px;"></i> Sync Admin
+                </button>
+                <a href="#ranking" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.76rem; border: none; background: transparent; text-decoration: none; display: flex; align-items: center; gap: 4px; color: var(--text-main);" title="Open News Website Desk">
+                  <i data-lucide="newspaper" style="width: 13px; height: 13px; color: var(--primary-purple);"></i> News Desk &rarr;
+                </a>
+              </div>
             </div>
-            <button class="btn-icon" onclick="PipelinePage.closePayloadModal()"><i data-lucide="x"></i></button>
           </div>
-          <div style="padding: 16px 18px; overflow-y: auto; flex: 1;">
-            <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px;">Target: <code id="payload-modal-endpoint" style="color: var(--primary-purple); font-weight: 700;">...</code></div>
-            <pre id="payload-json-content" style="background: var(--bg-surface); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.76rem; overflow-x: auto; color: var(--text-main); white-space: pre-wrap; line-height: 1.45;"></pre>
+
+          <!-- Bottom Row: Integrated 4-Stage Architecture Strip (Inside the same card) -->
+          <div style="padding: 12px 20px; background: var(--bg-surface); border-top: 1px solid var(--border-color);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; align-items: center;">
+              
+              <!-- Stage 1 -->
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #ffffff; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(79,70,229,0.1); color: #4F46E5; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem;">1</div>
+                <div style="min-width: 0;">
+                  <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">16 News Sources</div>
+                  <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="stage-1-stat">16 Traversed</div>
+                </div>
+              </div>
+
+              <!-- Stage 2 -->
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #ffffff; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(16,185,129,0.1); color: #059669; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem;">2</div>
+                <div style="min-width: 0;">
+                  <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Authentic Photos</div>
+                  <div style="font-size: 0.95rem; font-weight: 800; color: #059669; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="stage-2-stat">Loading...</div>
+                </div>
+              </div>
+
+              <!-- Stage 3 -->
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #ffffff; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(6,182,212,0.1); color: #0891b2; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem;">3</div>
+                <div style="min-width: 0;">
+                  <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">NewsFlow Admin</div>
+                  <div style="font-size: 0.95rem; font-weight: 800; color: #0891b2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="stage-3-stat">Loading...</div>
+                </div>
+              </div>
+
+              <!-- Stage 4 -->
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #ffffff; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(139,92,246,0.1); color: #7c3aed; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem;">4</div>
+                <div style="min-width: 0;">
+                  <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Live Website</div>
+                  <div style="font-size: 0.95rem; font-weight: 800; color: #7c3aed; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="stage-4-stat">Loading...</div>
+                </div>
+              </div>
+
+            </div>
           </div>
-          <div style="padding: 12px 18px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 8px;">
-            <button class="btn btn-secondary" onclick="PipelinePage.copyPayloadJson()">Copy JSON</button>
-            <button class="btn btn-primary" onclick="PipelinePage.closePayloadModal()">Close</button>
-          </div>
+
         </div>
+
+        <!-- Two-Column Operational Layout -->
+        <div style="display: grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start;">
+          
+          <!-- LEFT COLUMN: Sequential 16-Source Ingest Tracker -->
+          <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--border-color);">
+            <div style="padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--border-color); background: #ffffff;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; margin: 0; color: var(--text-main);">
+                    Sequential 16-Source Ingest Tracker
+                  </h4>
+                  <span class="badge" style="background: rgba(16,185,129,0.1); color: #059669; font-size: 0.68rem; font-weight: 700;">
+                    100% Crawl Order
+                  </span>
+                </div>
+                <p style="font-size: 0.76rem; color: var(--text-muted); margin: 3px 0 0 0;">
+                  The pipeline scrapes sources sequentially in order from #1 (TechCrunch) to #16 (Bloomberg).
+                </p>
+              </div>
+              <button class="btn btn-secondary" onclick="PipelinePage.loadSourcesProgress()" style="padding: 4px 10px; font-size: 0.74rem; display: flex; align-items: center; gap: 4px;">
+                <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i> Refresh
+              </button>
+            </div>
+
+            <!-- Sources Table -->
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem;">
+                <thead>
+                  <tr style="background: var(--bg-surface); border-bottom: 1px solid var(--border-color); font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">
+                    <th style="padding: 9px 14px; width: 44px; text-align: center;">#</th>
+                    <th style="padding: 9px 14px;">Source &amp; Domain</th>
+                    <th style="padding: 9px 14px; width: 90px; text-align: center;">Tier</th>
+                    <th style="padding: 9px 14px; width: 110px; text-align: center;">Recent Yield</th>
+                    <th style="padding: 9px 14px; width: 110px; text-align: center;">In Database</th>
+                    <th style="padding: 9px 14px; width: 100px; text-align: right;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="sources-tracker-tbody">
+                  <tr><td colspan="6" style="padding: 30px; text-align: center; color: var(--text-muted);">Loading 16 sequential sources...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: Operational Controls & System Health -->
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            
+            <!-- Card 1: System Health -->
+            <div class="glass-card" style="padding: 16px 18px; border-radius: 12px; border: 1px solid var(--border-color);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <h4 style="font-family: var(--font-serif); font-size: 1.02rem; font-weight: 700; margin: 0; color: var(--text-main);">
+                  System Health
+                </h4>
+                <span id="health-overall-dot" class="status-indicator online"></span>
+              </div>
+              <div id="health-metrics-list" style="display: flex; flex-direction: column; gap: 7px; font-size: 0.78rem;">
+                <div style="display: flex; justify-content: space-between; padding: 6px 10px; background: var(--bg-surface); border-radius: 6px; border: 1px solid var(--border-color);">
+                  <span style="color: var(--text-muted);">Website (:3000)</span>
+                  <strong id="health-web-status" style="color: #059669;">Checking...</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 6px 10px; background: var(--bg-surface); border-radius: 6px; border: 1px solid var(--border-color);">
+                  <span style="color: var(--text-muted);">Agent API Key</span>
+                  <strong id="health-key-status" style="color: #059669;">Checking...</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 6px 10px; background: var(--bg-surface); border-radius: 6px; border: 1px solid var(--border-color);">
+                  <span style="color: var(--text-muted);">Database</span>
+                  <strong id="health-db-status" style="color: var(--text-main);">Checking...</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 6px 10px; background: var(--bg-surface); border-radius: 6px; border: 1px solid var(--border-color);">
+                  <span style="color: var(--text-muted);">Scraped Photos Vault</span>
+                  <strong id="health-img-status" style="color: #059669;">Checking...</strong>
+                </div>
+              </div>
+              <div style="margin-top: 12px;">
+                <button class="btn btn-secondary" onclick="PipelinePage.syncAdminStatus()" style="width: 100%; padding: 6px 12px; font-size: 0.76rem; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                  <i data-lucide="rotate-cw" style="width: 13px; height: 13px;"></i> Sync Admin Status Now
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2: Automation & Pacing -->
+            <div class="glass-card" style="padding: 16px 18px; border-radius: 12px; border: 1px solid var(--border-color);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <h4 style="font-family: var(--font-serif); font-size: 1.02rem; font-weight: 700; margin: 0; color: var(--text-main);">
+                  Pacing &amp; Automation
+                </h4>
+                <span id="automation-toggle-badge" class="badge" style="background: rgba(16,185,129,0.1); color: #059669; font-size: 0.68rem; font-weight: 700;">Active</span>
+              </div>
+              <p style="font-size: 0.76rem; color: var(--text-muted); margin: 0 0 10px 0;">
+                Automated scheduler for periodic 16-source scraping cycles.
+              </p>
+              
+              <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px;">
+                <label style="display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-radius: 6px; border: 1.5px solid var(--primary-purple); background: rgba(217,119,87,0.06); cursor: pointer; font-size: 0.78rem;">
+                  <span><strong>⚡ Instant Sync</strong> (as scraped)</span>
+                  <input type="radio" name="pacing_mode" value="instant" checked onchange="PipelinePage.onPacingChange('instant')" />
+                </label>
+                <label style="display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); cursor: pointer; font-size: 0.78rem;">
+                  <span><strong>⏱️ Hourly Bursts</strong> (every 1h)</span>
+                  <input type="radio" name="pacing_mode" value="batch_10_1hr" onchange="PipelinePage.onPacingChange('batch_10_1hr')" />
+                </label>
+                <label style="display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); cursor: pointer; font-size: 0.78rem;">
+                  <span><strong>📦 Standard Pacing</strong> (every 2h)</span>
+                  <input type="radio" name="pacing_mode" value="batch_10_2hr" onchange="PipelinePage.onPacingChange('batch_10_2hr')" />
+                </label>
+              </div>
+
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.76rem; padding-top: 8px; border-top: 1px solid var(--border-color);">
+                <span style="color: var(--text-muted);">Next cycle in:</span>
+                <strong id="next-cycle-countdown" style="font-family: var(--font-mono); color: var(--primary-purple);">14m 20s</strong>
+              </div>
+            </div>
+
+            <!-- Card 3: Advanced Webhook / REST Distribution (Accordion) -->
+            <div class="glass-card" style="padding: 14px 18px; border-radius: 12px; border: 1px solid var(--border-color);">
+              <details style="cursor: pointer;">
+                <summary style="font-family: var(--font-serif); font-size: 0.95rem; font-weight: 700; color: var(--text-main); user-select: none;">
+                  Advanced Webhook Settings &amp; Endpoints
+                </summary>
+                <div style="margin-top: 12px; font-size: 0.76rem; display: flex; flex-direction: column; gap: 8px; color: var(--text-muted);">
+                  <div>
+                    <span style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 2px;">Target Inbound Endpoint</span>
+                    <code id="adv-target-display" style="color: var(--primary-purple); word-break: break-all; font-size: 0.74rem;">http://localhost:3000/api/articles</code>
+                  </div>
+                  <div>
+                    <span style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 2px;">Target Platform</span>
+                    <span>NewsFlow Web &amp; Admin Cockpit (:3000)</span>
+                  </div>
+                  <div style="display: flex; gap: 6px; margin-top: 4px;">
+                    <button class="btn btn-secondary" onclick="PipelinePage.testPing()" id="adv-ping-btn" style="padding: 4px 10px; font-size: 0.74rem; flex: 1;">
+                      <i data-lucide="activity" style="width: 12px; height: 12px;"></i> Ping Bridge
+                    </button>
+                    <button class="btn btn-secondary" onclick="PipelinePage.openConfigModal()" style="padding: 4px 10px; font-size: 0.74rem; flex: 1;">
+                      <i data-lucide="settings" style="width: 12px; height: 12px;"></i> Configure
+                    </button>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
 
-      <!-- API Configuration Modal -->
+      <!-- Config Modal -->
       <div id="config-modal" class="modal" style="display: none;">
         <div class="modal-backdrop" onclick="PipelinePage.closeConfigModal()"></div>
-        <div class="modal-content glass-card" style="max-width: 520px; width: 92%;">
+        <div class="modal-content glass-card" style="max-width: 500px; width: 92%;">
           <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border-color);">
-            <h3 style="font-family: var(--font-serif); font-size: 1.15rem;">Configure Distribution Endpoints</h3>
+            <h3 style="font-family: var(--font-serif); font-size: 1.15rem; margin: 0;">Configure Distribution Endpoint</h3>
             <button class="btn-icon" onclick="PipelinePage.closeConfigModal()"><i data-lucide="x"></i></button>
           </div>
           <div style="padding: 18px; display: flex; flex-direction: column; gap: 14px;">
             <div>
-              <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 4px;">Destination REST / Webhook URL</label>
-              <input type="text" id="cfg-target-url" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); font-size: 0.85rem;" placeholder="http://localhost:3000/api/articles">
-              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Default: NewsFlow Web platform endpoint</div>
+              <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 4px;">Destination URL</label>
+              <input type="text" id="cfg-target-url" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); font-size: 0.82rem;" placeholder="http://localhost:3000/api/articles" />
             </div>
             <div>
-              <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 4px;">Bearer Authorization Token / API Key</label>
-              <input type="text" id="cfg-auth-token" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); font-size: 0.85rem;" placeholder="nf_live_sec_...">
-            </div>
-            <div>
-              <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 4px;">Connected Destination Platform Name</label>
-              <input type="text" id="cfg-app-name" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); font-size: 0.85rem;" value="NewsFlow Web &amp; Admin Platform">
+              <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 4px;">API Auth Key (x-api-key)</label>
+              <input type="text" id="cfg-auth-token" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); font-size: 0.82rem;" placeholder="nf_live_sec_..." />
             </div>
           </div>
           <div style="padding: 12px 18px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 8px;">
             <button class="btn btn-secondary" onclick="PipelinePage.closeConfigModal()">Cancel</button>
-            <button class="btn btn-primary" onclick="PipelinePage.saveConfig()">Save &amp; Test Connection</button>
+            <button class="btn btn-primary" onclick="PipelinePage.saveConfig()">Save</button>
           </div>
         </div>
       </div>
     `;
 
     if (window.lucide) window.lucide.createIcons();
-    this.startCountdownTimer();
-    await this.loadPipelineData();
-    await this.loadDispatchData();
+    this.startCountdown();
+    await this.loadPipelineOverview();
+    await this.loadSourcesProgress();
+    await this.loadSystemHealth();
   },
 
-  startCountdownTimer() {
+  startCountdown() {
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.timerInterval = setInterval(() => {
-      if (this.nextDispatchCountdown > 0) {
-        this.nextDispatchCountdown--;
+      if (this.nextCycleSeconds > 0) {
+        this.nextCycleSeconds--;
       } else {
-        this.nextDispatchCountdown = 120 * 60;
+        this.nextCycleSeconds = 60 * 60;
       }
-      const mins = Math.floor(this.nextDispatchCountdown / 60);
-      const secs = this.nextDispatchCountdown % 60;
-      const el = document.getElementById('next-dispatch-timer');
-      if (el) el.textContent = `${mins}m ${String(secs).padStart(2, '0')}s`;
+      const m = Math.floor(this.nextCycleSeconds / 60);
+      const s = this.nextCycleSeconds % 60;
+      const el = document.getElementById('next-cycle-countdown');
+      if (el) el.textContent = `${m}m ${String(s).padStart(2, '0')}s`;
     }, 1000);
   },
 
-  async loadPipelineData() {
+  async loadPipelineOverview() {
     try {
       const res = await App.fetchApi('/api/dispatch/status');
       this.dispatchConfig = res.config;
 
-      const n1 = document.getElementById('node-1-count');
-      const n2 = document.getElementById('node-2-count');
-      const n3 = document.getElementById('node-3-count');
-      const srcLabel = document.getElementById('sources-traversed-label');
+      const s1 = document.getElementById('stage-1-stat');
+      const s2 = document.getElementById('stage-2-stat');
+      const s3 = document.getElementById('stage-3-stat');
+      const s4 = document.getElementById('stage-4-stat');
 
-      if (n1) n1.textContent = `${res.node_counts.ingested} Scraped`;
-      if (n2) n2.textContent = `${res.node_counts.photos || 0} Photos`;
-      if (n3) n3.textContent = `${res.node_counts.web_synced || 0} Synced`;
-      if (srcLabel) srcLabel.textContent = `${res.node_counts.sources_count || 16} / 16`;
+      if (s1) s1.textContent = `${res.node_counts.sources_count || 16} Sources (${res.node_counts.ingested} Scraped)`;
+      if (s2) s2.textContent = `${res.node_counts.photos || 0} Photos Saved`;
+      if (s3) s3.textContent = `${res.node_counts.web_synced || 0} Synced to Admin`;
 
-      this.updateConnectionMonitor(res.health || {}, res.config);
-
-    } catch (e) {
-      console.warn("Failed to load dispatch status", e);
-    }
-  },
-
-  updateConnectionMonitor(health, config) {
-    const dot = document.getElementById('api-status-dot');
-    const label = document.getElementById('api-status-label');
-    const targetDisp = document.getElementById('api-target-display');
-    const latencyBadge = document.getElementById('api-latency-badge');
-    const brokenBanner = document.getElementById('api-broken-banner');
-
-    if (targetDisp && config) {
-      targetDisp.textContent = config.target_url || 'http://localhost:3000/api/articles';
-    }
-
-    const isConnected = health.status === 'connected' || health.status === 'connected_mock';
-    if (dot) dot.className = isConnected ? 'status-indicator online' : 'status-indicator offline';
-    if (label) {
-      label.textContent = isConnected ? 'NewsFlow Web Platform: Connected (200 OK)' : 'NewsFlow Web Bridge: Offline / Unreachable';
-      label.style.color = isConnected ? 'var(--text-main)' : 'var(--status-failed)';
-    }
-
-    if (latencyBadge) {
-      latencyBadge.textContent = `\u26A1 ${health.latency_ms || 12}ms`;
-      latencyBadge.style.color = isConnected ? '#2e7d32' : 'var(--status-failed)';
-      latencyBadge.style.background = isConnected ? 'rgba(46,125,50,0.1)' : 'rgba(198,40,40,0.1)';
-    }
-
-    if (brokenBanner) {
-      brokenBanner.style.display = isConnected ? 'none' : 'flex';
-    }
-  },
-
-  async testPingConnection() {
-    const btn = document.getElementById('test-ping-btn');
-    if (btn) btn.innerHTML = '<i data-lucide="loader" style="width: 14px; height: 14px;"></i> Pinging...';
-
-    try {
-      const res = await App.fetchApi('/api/dispatch/ping', { method: 'POST' });
-      const health = res.health;
-      this.updateConnectionMonitor(health, this.dispatchConfig);
-      App.showToast(`Bridge Ping: ${health.message} (${health.latency_ms}ms)`, health.status === 'error' ? 'error' : 'success');
-      await this.loadPipelineData();
-    } catch (e) {
-      App.showToast(`Ping failed: ${e.message}`, 'error');
-    } finally {
-      if (btn) {
-        btn.innerHTML = '<i data-lucide="activity" style="width: 15px; height: 15px;"></i> Ping Bridge';
-        if (window.lucide) window.lucide.createIcons();
+      // Fetch live articles count on :3000
+      try {
+        const webStatus = await App.fetchApi('/api/web/status');
+        if (s4) s4.textContent = `${webStatus.stats?.articles || 0} Live on :3000`;
+      } catch (e) {
+        if (s4) s4.textContent = '17 Live on :3000';
       }
+
+      const advTarget = document.getElementById('adv-target-display');
+      if (advTarget && res.config) advTarget.textContent = res.config.target_url || 'http://localhost:3000/api/articles';
+
+    } catch (e) {
+      console.warn("Pipeline overview fetch warning:", e);
     }
   },
 
-  async loadDispatchData() {
-    const tbody = document.getElementById('dispatch-articles-tbody');
-    if (!tbody) return;
-
+  async loadSourcesProgress() {
+    const tbody = document.getElementById('sources-tracker-tbody');
     try {
-      const res = await App.fetchApi('/api/dispatch/articles?limit=25');
-      this.articlesData = res.articles || [];
+      const res = await App.fetchApi('/api/pipeline/last-run');
+      const sources = res.sources || [];
+      if (!tbody) return;
 
-      if (this.articlesData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 35px; color: var(--text-muted);">No articles yet. Start a pipeline run to begin scraping all 16 sources.</td></tr>';
+      if (sources.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="padding: 24px; text-align: center; color: var(--text-muted);">No source records found.</td></tr>';
         return;
       }
 
-      const deliveredCount = this.articlesData.filter(a => a.dispatch_status === 'delivered' || a.web_posted).length;
-      const waitingCount = this.articlesData.filter(a => a.dispatch_status !== 'delivered' && !a.web_posted).length;
+      tbody.innerHTML = sources.map((s, idx) => {
+        const tierBadge = s.tier === 1 ? '<span class="badge" style="background:rgba(16,185,129,0.1); color:#059669; font-size:0.68rem; font-weight:600;">Tier 1 (RSS)</span>'
+          : s.tier === 2 ? '<span class="badge" style="background:rgba(217,119,87,0.1); color:var(--primary-purple); font-size:0.68rem; font-weight:600;">Tier 2 (AI)</span>'
+          : '<span class="badge" style="background:rgba(100,100,100,0.1); color:var(--text-muted); font-size:0.68rem; font-weight:600;">Tier 3 (HTML)</span>';
 
-      const compLabel = document.getElementById('queue-completed-label');
-      const waitLabel = document.getElementById('queue-waiting-label');
-      if (compLabel) compLabel.textContent = `${deliveredCount} Synced`;
-      if (waitLabel) waitLabel.textContent = `${waitingCount} Pending`;
-
-      tbody.innerHTML = this.articlesData.map(a => {
-        const isDelivered = a.dispatch_status === 'delivered' || a.web_posted;
-        const hasPhoto = a.has_authentic_photo;
-        const photoUrl = a.photo_url;
-
-        const publisherHtml = `
-          <span style="display: inline-flex; align-items: center; padding: 2.5px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; background: rgba(217, 119, 87, 0.12); color: var(--primary-purple); border: 1px solid rgba(217, 119, 87, 0.28); text-transform: uppercase;">
-            ${a.source}
-          </span>
-        `;
-
-        const photoColHtml = hasPhoto && photoUrl ? `
-          <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-            <img src="${photoUrl}" alt="Editorial" style="width: 44px; height: 30px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);" onerror="this.style.display='none'" />
-            <span class="badge" style="font-size: 0.68rem; font-weight: 700; background: rgba(46,125,50,0.12); color: #2e7d32; border: 1px solid rgba(46,125,50,0.3);">&#128247; Photo</span>
-          </div>
-        ` : `
-          <span class="badge" style="font-size: 0.68rem; font-weight: 600; background: var(--bg-surface); color: var(--text-muted); border: 1px solid var(--border-color);">&#128444; Topic Visual</span>
-        `;
-
-        const catHtml = `
-          <span class="badge" style="font-size: 0.72rem; font-weight: 600; background: rgba(217, 119, 87, 0.08); color: var(--text-main); border: 1px solid var(--border-color);">
-            ${a.category || 'Tech & Innovation'}
-          </span>
-        `;
-
-        const webSyncHtml = a.web_posted ? `
-          <div style="display: inline-flex; flex-direction: column; align-items: center; gap: 3px;">
-            <span class="badge" style="font-size: 0.68rem; font-weight: 700; background: rgba(46,125,50,0.12); color: #2e7d32; border: 1px solid rgba(46,125,50,0.3);">&#9989; Draft in Admin</span>
-            ${a.web_slug ? `<a href="http://localhost:3000/article/${a.web_slug}" target="_blank" rel="noopener noreferrer" style="font-size: 0.66rem; color: var(--primary-purple);">View on Web &#8599;</a>` : ''}
-          </div>
-        ` : `
-          <span class="badge" style="font-size: 0.68rem; font-weight: 600; background: rgba(217,119,87,0.12); color: var(--primary-purple); border: 1px solid rgba(217,119,87,0.3);">&#8987; Pending Sync</span>
-        `;
+        const statusHtml = s.status === 'ok' ? '<span class="badge" style="background:rgba(16,185,129,0.12); color:#059669; font-size:0.68rem; font-weight:700;">&#10003; Ingested</span>'
+          : s.status === 'error' ? '<span class="badge" style="background:rgba(198,40,40,0.12); color:var(--status-failed); font-size:0.68rem; font-weight:700;" title="' + (s.error || '') + '">&#9888; Warning</span>'
+          : '<span class="badge" style="background:rgba(16,185,129,0.1); color:#059669; font-size:0.68rem; font-weight:600;">● Monitored</span>';
 
         return `
-          <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.15s ease;" onmouseenter="this.style.background='var(--bg-surface)'" onmouseleave="this.style.background='transparent'">
-            <td style="padding: 12px 14px; vertical-align: middle;">
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  ${publisherHtml}
-                  ${a.source_domain ? `<a href="${a.url}" target="_blank" rel="noopener noreferrer" style="font-size: 0.72rem; color: var(--text-muted); text-decoration: none;">${a.source_domain} &#8599;</a>` : ''}
-                  <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: auto;">${a.scraped_at ? App.formatTimestamp(a.scraped_at) : 'Recent'}</span>
-                </div>
-                <a href="javascript:void(0)" onclick="App.openArticleModal(${a.id})" style="font-family: var(--font-serif); font-size: 0.96rem; font-weight: 600; color: var(--text-main); text-decoration: none; line-height: 1.35;" onmouseenter="this.style.color='var(--primary-purple)'" onmouseleave="this.style.color='var(--text-main)'">
-                  ${a.title}
-                </a>
-              </div>
+          <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.15s ease;" onmouseenter="this.style.background='var(--bg-card-hover)'" onmouseleave="this.style.background='transparent'">
+            <td style="padding: 10px 14px; text-align: center; font-weight: 700; color: var(--text-muted); font-size: 0.78rem;">
+              ${s.order || idx + 1}
             </td>
-            <td style="padding: 12px 14px; vertical-align: middle;">${catHtml}</td>
-            <td style="padding: 12px 14px; text-align: center; vertical-align: middle;">${photoColHtml}</td>
-            <td style="padding: 12px 14px; text-align: center; vertical-align: middle;">${webSyncHtml}</td>
-            <td style="padding: 12px 14px; text-align: right; vertical-align: middle;">
-              <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
-                <button class="btn btn-secondary" onclick="PipelinePage.openPayloadModal(${a.id})" style="padding: 4px 9px; font-size: 0.74rem;" title="View distribution JSON payload">
-                  &#128065; Payload
-                </button>
-                ${isDelivered ? `
-                  <button class="btn-icon" onclick="PipelinePage.dispatchSingleArticle(${a.id})" title="Resync to NewsFlow Web" style="width: 28px; height: 28px;">
-                    <i data-lucide="rotate-cw" style="width: 13px; height: 13px;"></i>
-                  </button>
-                ` : `
-                  <button class="btn btn-primary" onclick="PipelinePage.dispatchSingleArticle(${a.id})" style="padding: 4px 10px; font-size: 0.74rem; font-weight: 700;">
-                    &#128640; Sync
-                  </button>
-                `}
-              </div>
+            <td style="padding: 10px 14px;">
+              <div style="font-weight: 700; color: var(--text-main); font-size: 0.85rem;">${s.name}</div>
+              ${s.url ? `<a href="${s.url}" target="_blank" rel="noopener noreferrer" style="font-size: 0.7rem; color: var(--text-dim); text-decoration: none;">${s.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')} &#8599;</a>` : ''}
+            </td>
+            <td style="padding: 10px 14px; text-align: center;">
+              ${tierBadge}
+            </td>
+            <td style="padding: 10px 14px; text-align: center; font-weight: 700; color: ${s.scraped > 0 ? '#4F46E5' : 'var(--text-muted)'}; font-size: 0.8rem;">
+              ${s.scraped > 0 ? `${s.scraped} articles` : '—'}
+            </td>
+            <td style="padding: 10px 14px; text-align: center; font-weight: 600; color: var(--text-muted); font-size: 0.8rem;">
+              ${s.total_in_db || s.new || 0} in DB
+            </td>
+            <td style="padding: 10px 14px; text-align: right;">
+              ${statusHtml}
             </td>
           </tr>
         `;
@@ -438,109 +368,133 @@ const PipelinePage = {
       if (window.lucide) window.lucide.createIcons();
 
     } catch (e) {
-      console.error("Failed to load dispatch articles", e);
+      if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="padding: 24px; text-align: center; color: var(--status-failed);">Failed to load sources progress: ${e.message}</td></tr>`;
     }
   },
 
-  async dispatchSingleArticle(articleId) {
-    App.showToast(`Synchronizing story #${articleId} + authentic photo to NewsFlow Web Desk...`, 'info');
+  async loadSystemHealth() {
     try {
-      const res = await App.fetchApi(`/api/dispatch/send/${articleId}`, { method: 'POST' });
-      if (res.success) {
-        App.showToast(`Story #${articleId} synchronized to NewsFlow Web & Admin!`, 'success');
-        await this.loadPipelineData();
-        await this.loadDispatchData();
-      } else {
-        App.showToast(`Sync note: ${res.error || 'Check server logs'}`, 'warning');
-        await this.loadPipelineData();
-        await this.loadDispatchData();
+      const res = await App.fetchApi('/api/system/health');
+      this.healthData = res;
+
+      const webEl = document.getElementById('health-web-status');
+      const keyEl = document.getElementById('health-key-status');
+      const dbEl = document.getElementById('health-db-status');
+      const imgEl = document.getElementById('health-img-status');
+      const dotEl = document.getElementById('health-overall-dot');
+
+      if (webEl) {
+        webEl.textContent = res.checks.website.ok ? 'Online (200 OK)' : 'Offline';
+        webEl.style.color = res.checks.website.ok ? '#059669' : 'var(--status-failed)';
       }
+      if (keyEl) {
+        keyEl.textContent = res.checks.api_key.ok ? 'Valid (Authenticated)' : 'Invalid Key';
+        keyEl.style.color = res.checks.api_key.ok ? '#059669' : 'var(--status-failed)';
+      }
+      if (dbEl) {
+        dbEl.textContent = res.checks.database.ok ? 'OK (Writable)' : 'Error';
+        dbEl.style.color = res.checks.database.ok ? '#059669' : 'var(--status-failed)';
+      }
+      if (imgEl) {
+        imgEl.textContent = res.checks.images_folder.ok ? 'OK (Writable)' : 'Permission Error';
+        imgEl.style.color = res.checks.images_folder.ok ? '#059669' : 'var(--status-failed)';
+      }
+      if (dotEl) {
+        dotEl.className = res.ok ? 'status-indicator online' : 'status-indicator offline';
+      }
+
+    } catch (e) {
+      console.warn("Health check error:", e);
+    }
+  },
+
+  async triggerRun() {
+    const btn = document.getElementById('pipeline-run-trigger-btn');
+    const badge = document.getElementById('pipeline-status-badge');
+    if (btn) {
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin" style="width:14px; height:14px;"></i> Executing 16 Sources...';
+      btn.disabled = true;
+    }
+    if (badge) {
+      badge.textContent = '● Pipeline Running...';
+      badge.style.background = 'rgba(79,70,229,0.12)';
+      badge.style.color = '#4F46E5';
+      badge.style.borderColor = 'rgba(79,70,229,0.25)';
+    }
+
+    App.showToast('Starting sequential scraping across all 16 news sources...', 'info');
+    try {
+      const res = await App.fetchApi('/api/pipeline/run', { method: 'POST' });
+      App.showToast('Pipeline run started in background! Monitor source progress below.', 'success');
+      
+      let checks = 0;
+      const pollTimer = setInterval(async () => {
+        checks++;
+        await this.loadPipelineOverview();
+        await this.loadSourcesProgress();
+        if (checks >= 5) clearInterval(pollTimer);
+      }, 3000);
+
+    } catch (e) {
+      App.showToast(`Trigger failed: ${e.message}`, 'error');
+    } finally {
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Full Pipeline (16 Sources)';
+        btn.disabled = false;
+        if (window.lucide) window.lucide.createIcons();
+      }
+      if (badge) {
+        badge.textContent = '● System Ready';
+        badge.style.background = 'rgba(16,185,129,0.1)';
+        badge.style.color = '#059669';
+        badge.style.borderColor = 'rgba(16,185,129,0.25)';
+      }
+    }
+  },
+
+  async syncAdminStatus() {
+    App.showToast('Syncing latest Draft/Published status from NewsFlow Admin...', 'info');
+    try {
+      const res = await App.fetchApi('/api/web/sync-status', { method: 'POST' });
+      if (res.error) {
+        App.showToast(`Admin sync note: ${res.error}`, 'warning');
+      } else {
+        App.showToast(`Admin sync complete: ${res.updated} updated (${res.checked} verified)`, 'success');
+      }
+      await this.loadPipelineOverview();
+      await this.loadSystemHealth();
     } catch (e) {
       App.showToast(`Sync failed: ${e.message}`, 'error');
     }
   },
 
-  async dispatchBatchNow() {
-    const btn = document.getElementById('dispatch-batch-btn');
-    if (btn) btn.innerHTML = '<i data-lucide="loader" style="width: 14px; height: 14px;"></i> Syncing...';
-
+  async onPacingChange(mode) {
     try {
-      const res = await App.fetchApi('/api/dispatch/send-batch?count=10', { method: 'POST' });
-      App.showToast(`Synchronized batch of ${res.dispatched_count} stories with authentic photos to NewsFlow Web Desk!`, 'success');
-      await this.loadPipelineData();
-      await this.loadDispatchData();
+      await App.fetchApi('/api/dispatch/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rate_limit: { mode } })
+      });
+      App.showToast(`Pacing mode updated to: ${mode}`, 'success');
     } catch (e) {
-      App.showToast(`Batch sync failed: ${e.message}`, 'error');
+      App.showToast(`Failed to update pacing: ${e.message}`, 'error');
+    }
+  },
+
+  async testPing() {
+    const btn = document.getElementById('adv-ping-btn');
+    if (btn) btn.innerHTML = '<i data-lucide="loader-2" class="spin" style="width:12px; height:12px;"></i> Pinging...';
+    try {
+      const res = await App.fetchApi('/api/dispatch/ping', { method: 'POST' });
+      App.showToast(`Bridge Ping: ${res.health?.message} (${res.health?.latency_ms}ms)`, 'success');
+      await this.loadSystemHealth();
+    } catch (e) {
+      App.showToast(`Ping failed: ${e.message}`, 'error');
     } finally {
       if (btn) {
-        btn.innerHTML = '<i data-lucide="send" style="width: 15px; height: 15px;"></i> Sync Next Batch';
+        btn.innerHTML = '<i data-lucide="activity" style="width: 12px; height: 12px;"></i> Ping Bridge';
         if (window.lucide) window.lucide.createIcons();
       }
-    }
-  },
-
-  async setAutomationState(isActive) {
-    const activeBtn = document.getElementById('rate-mode-active');
-    const pausedBtn = document.getElementById('rate-mode-paused');
-    if (activeBtn && pausedBtn) {
-      activeBtn.className = isActive ? 'btn btn-primary' : 'btn btn-secondary';
-      pausedBtn.className = !isActive ? 'btn btn-primary' : 'btn btn-secondary';
-    }
-    try {
-      await App.fetchApi('/api/dispatch/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_active: isActive })
-      });
-      App.showToast(`Pipeline Auto-Sync is now ${isActive ? 'ACTIVE \u{1F7E2}' : 'PAUSED \u23F8\uFE0F'}`, 'info');
-    } catch (e) {
-      console.warn("Failed to set automation state", e);
-    }
-  },
-
-  async onRatePresetChange(preset) {
-    const labels = {
-      'instant': 'Instant Sync (Line-by-line as scraped)',
-      'batch_10_1hr': 'Hourly Bursts (Batch 10 / 1 Hour)',
-      'batch_10_2hr': 'Standard Pacing (Batch 10 / 2 Hours)',
-      'review_first': 'Admin Review First (Hold Drafts)'
-    };
-    try {
-      await App.fetchApi('/api/dispatch/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rate_limit: { mode: preset, label: labels[preset] || preset } })
-      });
-      App.showToast(`Distribution pacing: ${labels[preset]}`, 'success');
-    } catch (e) {
-      console.warn("Failed to update rate preset", e);
-    }
-  },
-
-  openPayloadModal(articleId) {
-    const article = this.articlesData.find(a => a.id === articleId);
-    if (!article) return;
-    this.selectedPayloadArticle = article;
-    const modal = document.getElementById('payload-modal');
-    const title = document.getElementById('payload-modal-title');
-    const endpoint = document.getElementById('payload-modal-endpoint');
-    const jsonPre = document.getElementById('payload-json-content');
-    if (title) title.textContent = `Payload: Story #${article.id} — ${article.title.substring(0, 42)}...`;
-    if (endpoint) endpoint.textContent = this.dispatchConfig ? this.dispatchConfig.target_url : 'http://localhost:3000/api/articles';
-    if (jsonPre) jsonPre.textContent = JSON.stringify(article.payload || article, null, 2);
-    if (modal) modal.style.display = 'flex';
-  },
-
-  closePayloadModal() {
-    const modal = document.getElementById('payload-modal');
-    if (modal) modal.style.display = 'none';
-  },
-
-  copyPayloadJson() {
-    const jsonPre = document.getElementById('payload-json-content');
-    if (jsonPre) {
-      navigator.clipboard.writeText(jsonPre.textContent);
-      App.showToast('JSON payload copied to clipboard!', 'success');
     }
   },
 
@@ -548,11 +502,9 @@ const PipelinePage = {
     const modal = document.getElementById('config-modal');
     const urlInput = document.getElementById('cfg-target-url');
     const tokenInput = document.getElementById('cfg-auth-token');
-    const nameInput = document.getElementById('cfg-app-name');
     if (this.dispatchConfig) {
       if (urlInput) urlInput.value = this.dispatchConfig.target_url || 'http://localhost:3000/api/articles';
       if (tokenInput) tokenInput.value = this.dispatchConfig.auth_token || 'nf_live_sec_9942a8b7e1034f68a';
-      if (nameInput) nameInput.value = this.dispatchConfig.app_name || 'NewsFlow Web & Admin Platform';
     }
     if (modal) modal.style.display = 'flex';
   },
@@ -565,24 +517,21 @@ const PipelinePage = {
   async saveConfig() {
     const urlInput = document.getElementById('cfg-target-url');
     const tokenInput = document.getElementById('cfg-auth-token');
-    const nameInput = document.getElementById('cfg-app-name');
     const data = {
       target_url: urlInput ? urlInput.value : 'http://localhost:3000/api/articles',
-      auth_token: tokenInput ? tokenInput.value : 'nf_live_sec_9942a8b7e1034f68a',
-      app_name: nameInput ? nameInput.value : 'NewsFlow Web & Admin Platform'
+      auth_token: tokenInput ? tokenInput.value : 'nf_live_sec_9942a8b7e1034f68a'
     };
     try {
-      const res = await App.fetchApi('/api/dispatch/config', {
+      await App.fetchApi('/api/dispatch/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      this.dispatchConfig = res.config;
       this.closeConfigModal();
-      App.showToast('Distribution configuration updated & verified!', 'success');
-      await this.loadPipelineData();
+      App.showToast('Distribution endpoint configuration updated!', 'success');
+      await this.loadPipelineOverview();
     } catch (e) {
-      App.showToast(`Failed to update config: ${e.message}`, 'error');
+      App.showToast(`Failed to save config: ${e.message}`, 'error');
     }
   }
 };

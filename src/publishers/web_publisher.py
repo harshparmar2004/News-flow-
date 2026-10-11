@@ -88,10 +88,21 @@ def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
         conn = sqlite3.connect(db_path)
         cur = conn.cursor()
         cat_name = payload.get("category", "Tech & Innovation")
-        cat_slug = re.sub(r"[^a-z0-9]+", "-", cat_name.lower()).strip("-")
+        cat_slug = "tech" if "Tech" in cat_name else re.sub(r"[^a-z0-9]+", "-", cat_name.lower()).strip("-")
         cur.execute("SELECT id FROM Category WHERE slug=? OR name=?", (cat_slug, cat_name))
         row = cur.fetchone()
         now_ms = int(datetime.utcnow().timestamp() * 1000)
+        
+        # Parse authentic publication timestamp if provided
+        pub_ms = now_ms
+        if payload.get("published_at"):
+            try:
+                iso_clean = str(payload["published_at"]).replace("Z", "+00:00")
+                parsed_dt = datetime.fromisoformat(iso_clean)
+                pub_ms = int(parsed_dt.timestamp() * 1000)
+            except Exception:
+                pub_ms = now_ms
+
         if row:
             cat_id = row[0]
         else:
@@ -116,7 +127,7 @@ def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
             VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (art_id, slug, payload["title"], payload.get("summary",""), body,
              payload.get("cover_image_url"), cat_id, payload.get("author","NewsFlow AI"),
-             now_ms, payload.get("status", "draft"), payload.get("rank_score",75), 1 if payload.get("is_featured") else 0,
+             pub_ms, payload.get("status", "draft"), payload.get("rank_score",75), 1 if payload.get("is_featured") else 0,
              max(1, len(body.split())//200), payload.get("source_url"), now_ms, now_ms, 0))
         conn.commit()
         conn.close()
@@ -128,17 +139,26 @@ def _direct_sqlite_fallback(payload: Dict[str, Any], article) -> str:
 
 
 CATEGORY_IMAGE_POOLS = {
+    "Artificial Intelligence": [
+        "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1617791160505-6f008e1e263c?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1516110833967-0b5788f6a9e1?auto=format&fit=crop&w=1600&q=80",
+    ],
+    "Robotics": [
+        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1535378917042-10a22c95931a?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1589254065878-42c9da997008?auto=format&fit=crop&w=1600&q=80",
+    ],
     "AI & Robotics": [
         "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1600&q=80",
         "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1535378917042-10a22c95931a?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1617791160505-6f008e1e263c?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1516110833967-0b5788f6a9e1?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1600&q=80",
     ],
     "Startups & VC": [
         "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1600&q=80",
@@ -192,30 +212,35 @@ def get_fallback_image(cat_name: str, seed: str = "") -> str:
     return pool[idx]
 
 DOMAIN_MAP = {
-    "ai-robotics": "AI & Robotics", "startups-vc": "Startups & VC",
-    "gadgets-hardware": "Gadgets & Hardware", "cybersecurity": "Cybersecurity",
-    "policy-big-tech": "Policy & Big Tech", "tech": "Tech & Innovation",
+    "ai": "Artificial Intelligence",
+    "robotics": "Robotics",
+    "ai-robotics": "Artificial Intelligence",
+    "startups-vc": "Startups & VC",
+    "gadgets-hardware": "Gadgets & Hardware",
+    "cybersecurity": "Cybersecurity",
+    "policy-big-tech": "Policy & Big Tech",
+    "tech": "Tech & Innovation",
 }
 
 
 def _resolve_category(article) -> str:
     import re
-    cat = article.category or "Tech & Innovation"
+    from src.ai.jev_triage import classify_domain_scored
+
+    # 1. If explicit Domain was already stamped by Jev in rank_reason
     if article.rank_reason and "Domain [" in article.rank_reason:
         m = re.search(r"Domain \[([a-z\-]+)\]", article.rank_reason)
-        if m:
-            cat = DOMAIN_MAP.get(m.group(1), cat)
-    c = cat.lower()
-    if "ai" in c or "robot" in c or "llm" in c or "agent" in c:
-        return "AI & Robotics"
-    if "startup" in c or "venture" in c or "vc" in c:
-        return "Startups & VC"
-    if "hardware" in c or "gadget" in c or "chip" in c:
-        return "Gadgets & Hardware"
-    if "cyber" in c or "security" in c or "hack" in c:
-        return "Cybersecurity"
-    if "policy" in c or "big tech" in c or "regulation" in c:
-        return "Policy & Big Tech"
+        if m and m.group(1) in DOMAIN_MAP:
+            return DOMAIN_MAP[m.group(1)]
+
+    # 2. Run high-precision domain triage on headline and content
+    title = (getattr(article, "ai_headline", None) or article.title or "").strip()
+    body_sample = (getattr(article, "final_body", None) or article.body or "")[:600]
+    summary = (getattr(article, "ai_summary", None) or getattr(article, "twitter_text", None) or "")
+    slug = classify_domain_scored(title, summary, body_sample)
+    if slug in DOMAIN_MAP:
+        return DOMAIN_MAP[slug]
+
     return "Tech & Innovation"
 
 
@@ -252,13 +277,20 @@ def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
         if not cover_img:
             cover_img = get_fallback_image(cat_name, title or str(article_id))
 
+        # Preserve authentic publication timestamp from source (preventing timeline batch flooding)
+        pub_dt = getattr(article, "published_at", None) or getattr(article, "scraped_at", None) or datetime.utcnow()
+        if isinstance(pub_dt, datetime):
+            pub_iso = pub_dt.isoformat() + ("Z" if not pub_dt.tzinfo else "")
+        else:
+            pub_iso = str(pub_dt)
+
         payload = {
             "title": title, "summary": summary, "body": body,
             "category": cat_name,
             "source_url": article.url, "author": "NewsFlow AI",
             "status": status, "is_featured": False,
             "cover_image_url": cover_img,
-            "published_at": datetime.utcnow().isoformat() + "Z",
+            "published_at": pub_iso,
         }
 
         res = send_article_to_web(payload)
