@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, ArrowRight, Sparkles } from "lucide-react";
-import { formatTimeAgo } from "@/lib/utils";
+import { formatTimeAgo, getOptimizedImageUrl } from "@/lib/utils";
 
 interface HeroArticleProps {
   article: {
@@ -92,10 +92,13 @@ export function HeroArticle({ article }: HeroArticleProps) {
         <div className="lg:col-span-5 relative w-full h-64 sm:h-80 lg:h-96 rounded-2xl overflow-hidden bg-[#FAF7F0] dark:bg-[#2A2925] border border-[#EBE8DF] dark:border-[#33322E]">
           {article.cover_image_url ? (
             <img
-              src={article.cover_image_url}
+              src={getOptimizedImageUrl(article.cover_image_url, 1200)}
               alt={article.title}
               className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 ease-out"
               loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              referrerPolicy="no-referrer"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-sm font-mono text-[#8E8B82]">

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { formatArticleDate, formatTimeAgo } from "@/lib/utils";
+import { formatArticleDate, formatTimeAgo, getOptimizedImageUrl } from "@/lib/utils";
 import { Clock, ChevronLeft, ChevronRight, Archive as ArchiveIcon, RotateCcw, ArrowRight } from "lucide-react";
 import { LeftSidebar } from "@/components/LeftSidebar";
 import { RightAdsSidebar } from "@/components/RightAdsSidebar";
@@ -175,10 +175,12 @@ export default async function ArchivePage({ searchParams }: PageProps) {
               >
                 {art.cover_image_url ? (
                   <img
-                    src={art.cover_image_url}
+                    src={getOptimizedImageUrl(art.cover_image_url, 480)}
                     alt={art.title}
                     className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
                     loading="lazy"
+                    decoding="async"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#8E8B82] bg-linear-to-br from-[#242320] to-[#171615]">

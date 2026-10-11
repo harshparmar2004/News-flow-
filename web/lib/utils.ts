@@ -43,6 +43,34 @@ export function formatTimeAgo(date: Date | string): string {
   return formatDistanceToNow(d, { addSuffix: true });
 }
 
+/**
+ * Optimizes image URLs from various CDNs to ensure fast, responsive thumbnail delivery.
+ * Automatically downscales oversized desktop/print images (e.g. 1920px FutureCDN)
+ * to lightweight ~30-60KB responsive thumbnails.
+ */
+export function getOptimizedImageUrl(url?: string | null, width = 640): string {
+  if (!url || typeof url !== "string") return "";
+  const trimmed = url.trim();
+  if (!trimmed.startsWith("http")) return trimmed;
+
+  // 1. FutureCDN (TechRadar, Tom's Hardware, PC Gamer, etc.)
+  // Converts heavy desktop images (e.g. -1920-80.jpg) down to fast 650px web thumbnails
+  if (trimmed.includes("cdn.mos.cms.futurecdn.net")) {
+    return trimmed.replace(/-\d+-\d+(\.[a-zA-Z0-9]+)(\?.*)?$/, `-${width}-80$1$2`);
+  }
+
+  // 2. Unsplash: optimize width parameter and format
+  if (trimmed.includes("images.unsplash.com")) {
+    if (trimmed.includes("w=")) {
+      return trimmed.replace(/w=\d+/, `w=${width}`);
+    }
+    const sep = trimmed.includes("?") ? "&" : "?";
+    return `${trimmed}${sep}w=${width}&auto=format&fit=crop&q=80`;
+  }
+
+  return trimmed;
+}
+
 export function formatArticleContent(rawText: string, title?: string): string {
   if (!rawText) return "";
 

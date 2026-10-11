@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { formatTimeAgo } from "@/lib/utils";
+import { formatTimeAgo, getOptimizedImageUrl } from "@/lib/utils";
 import { getThematicCoverImage } from "@/lib/imagePool";
 
 interface ArticleCardProps {
@@ -12,7 +12,7 @@ interface ArticleCardProps {
     title: string;
     summary: string;
     cover_image_url?: string | null;
-    published_at: Date;
+    published_at: Date | string;
     reading_time_minutes: number;
     author?: string | null;
     category: {
@@ -20,16 +20,34 @@ interface ArticleCardProps {
       slug: string;
     };
   };
+  priority?: boolean;
 }
 
-export function ArticleCard({ article }: ArticleCardProps) {
+export function ArticleCard({ article, priority = false }: ArticleCardProps) {
   const fallbackUrl = getThematicCoverImage(article.category?.slug || "tech", article.title);
-  const initialImg = article.cover_image_url && article.cover_image_url.startsWith("http")
+  const rawCover = article.cover_image_url && article.cover_image_url.startsWith("http")
     ? article.cover_image_url
     : fallbackUrl;
+  const initialImg = getOptimizedImageUrl(rawCover, 650);
 
   const [imgSrc, setImgSrc] = useState<string>(initialImg);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  // Sync image source if article changes
+  useEffect(() => {
+    const nextRaw = article.cover_image_url && article.cover_image_url.startsWith("http")
+      ? article.cover_image_url
+      : fallbackUrl;
+    setImgSrc(getOptimizedImageUrl(nextRaw, 650));
+  }, [article.cover_image_url, article.title, article.category?.slug, fallbackUrl]);
+
+  // Handle cached or preloaded images immediately
+  useEffect(() => {
+    if (imgRef.current?.complete && imgRef.current?.naturalWidth > 0) {
+      setIsLoaded(true);
+    }
+  }, [imgSrc]);
 
   return (
     <article className="group flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-300 hover:border-[#C96442]/60 hover:shadow-lg hover:shadow-[#C96442]/5 hover:-translate-y-0.5 active:scale-[0.985] active:translate-y-0 active:border-[#C96442]/40 transform-gpu">
@@ -41,20 +59,29 @@ export function ArticleCard({ article }: ArticleCardProps) {
       >
         {/* Subtle Skeleton Shimmer while loading */}
         {!isLoaded && (
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-200/40 via-neutral-100/60 to-neutral-200/40 dark:from-neutral-800/40 dark:via-neutral-700/60 dark:to-neutral-800/40 animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-r from-neutral-200/40 via-neutral-100/60 to-neutral-200/40 dark:from-neutral-800/40 dark:via-neutral-700/60 dark:to-neutral-800/40 animate-pulse pointer-events-none" />
         )}
         <img
+          ref={(node) => {
+            imgRef.current = node;
+            if (node?.complete && node?.naturalWidth > 0 && !isLoaded) {
+              setIsLoaded(true);
+            }
+          }}
           src={imgSrc}
           alt={article.title}
-          className={`w-full h-full object-cover transition-all duration-500 ease-out group-hover:scale-103 ${
+          className={`w-full h-full object-cover transition-opacity duration-300 ease-out group-hover:scale-103 ${
             isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-102"
           }`}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
           referrerPolicy="no-referrer"
           onLoad={() => setIsLoaded(true)}
           onError={() => {
-            if (imgSrc !== fallbackUrl) {
-              setImgSrc(fallbackUrl);
+            const fb = getOptimizedImageUrl(fallbackUrl, 650);
+            if (imgSrc !== fb) {
+              setImgSrc(fb);
             }
           }}
         />

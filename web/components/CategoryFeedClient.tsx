@@ -151,8 +151,12 @@ export function CategoryFeedClient({ category }: CategoryFeedClientProps) {
               : "grid-cols-1 md:grid-cols-2"
           }`}
         >
-          {sortedArticles.map((article) => (
-            <ArticleCard key={article.id} article={article as any} />
+          {sortedArticles.map((article, idx) => (
+            <ArticleCard
+              key={article.id}
+              article={article as any}
+              priority={idx < 6}
+            />
           ))}
         </div>
 

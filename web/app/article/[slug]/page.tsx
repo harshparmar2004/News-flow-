@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -7,6 +8,7 @@ import {
   formatTimeAgo,
   renderMarkdown,
   safeJsonParse,
+  getOptimizedImageUrl,
   SeoMeta,
 } from "@/lib/utils";
 import { SocialShareBar } from "@/components/SocialShareBar";
@@ -21,12 +23,30 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const article = await prisma.article.findUnique({
+const getArticle = cache(async (slug: string) => {
+  return prisma.article.findUnique({
     where: { slug },
     include: { category: true },
   });
+});
+
+export async function generateStaticParams() {
+  try {
+    const articles = await prisma.article.findMany({
+      where: { status: "published" },
+      orderBy: { published_at: "desc" },
+      take: 25,
+      select: { slug: true },
+    });
+    return articles.map((a) => ({ slug: a.slug }));
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticle(slug);
 
   if (!article) {
     return { title: "Article Not Found | NewsFlow" };
@@ -60,13 +80,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
-
-  const article = await prisma.article.findUnique({
-    where: { slug },
-    include: {
-      category: true,
-    },
-  });
+  const article = await getArticle(slug);
 
   if (!article) {
     notFound();
@@ -191,10 +205,13 @@ export default async function ArticlePage({ params }: PageProps) {
           {article.cover_image_url && (
             <figure className="relative w-full aspect-16/9 rounded-3xl overflow-hidden bg-[#FAF7F0] dark:bg-[#22221F] border border-[#EBE8DF] dark:border-[#33322E] shadow-sm">
               <img
-                src={article.cover_image_url}
+                src={getOptimizedImageUrl(article.cover_image_url, 1200)}
                 alt={article.title}
                 className="w-full h-full object-cover"
                 loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                referrerPolicy="no-referrer"
               />
               <figcaption className="absolute bottom-2 right-3 text-[10px] font-mono px-2 py-0.5 rounded bg-black/60 text-white backdrop-blur-xs">
                 NewsFlow Editorial Imagery

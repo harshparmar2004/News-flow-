@@ -237,13 +237,14 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
               : "grid-cols-1 md:grid-cols-2"
           }`}
         >
-          {filteredArticles.map((art) => (
+          {filteredArticles.map((art, idx) => (
             <ArticleCard
               key={art.id}
               article={{
                 ...art,
                 published_at: new Date(art.published_at),
               }}
+              priority={idx < 6}
             />
           ))}
         </div>
