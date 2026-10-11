@@ -76,6 +76,9 @@ export const viewport: Viewport = {
   ],
 };
 
+import { Suspense } from "react";
+import { TopProgressBar } from "@/components/TopProgressBar";
+
 export default function RootLayout({
   children,
 }: {
@@ -88,6 +91,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-[#FBF9F5] dark:bg-[#181816] text-[#1F1E1D] dark:text-[#F5F2EB] transition-colors duration-200">
+        <Suspense fallback={null}>
+          <TopProgressBar />
+        </Suspense>
         <ThemeProvider>
           <AdPreferencesProvider>
             <Navbar />

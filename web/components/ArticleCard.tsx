@@ -29,20 +29,29 @@ export function ArticleCard({ article }: ArticleCardProps) {
     : fallbackUrl;
 
   const [imgSrc, setImgSrc] = useState<string>(initialImg);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   return (
-    <article className="group flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-200 hover:border-[#C96442]/60 hover:shadow-md hover:shadow-black/5 active:scale-[0.985] active:border-[#C96442]/40">
+    <article className="group flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-300 hover:border-[#C96442]/60 hover:shadow-lg hover:shadow-[#C96442]/5 hover:-translate-y-0.5 active:scale-[0.985] active:translate-y-0 active:border-[#C96442]/40 transform-gpu">
       {/* Cover Image Thumbnail */}
       <Link
         href={`/article/${article.slug}`}
+        prefetch={true}
         className="block relative w-full aspect-16/9 sm:aspect-16/10 max-h-56 sm:max-h-72 overflow-hidden bg-[#FAF7F0] dark:bg-[#252422]"
       >
+        {/* Subtle Skeleton Shimmer while loading */}
+        {!isLoaded && (
+          <div className="absolute inset-0 bg-gradient-to-r from-neutral-200/40 via-neutral-100/60 to-neutral-200/40 dark:from-neutral-800/40 dark:via-neutral-700/60 dark:to-neutral-800/40 animate-pulse" />
+        )}
         <img
           src={imgSrc}
           alt={article.title}
-          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+          className={`w-full h-full object-cover transition-all duration-500 ease-out group-hover:scale-103 ${
+            isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-102"
+          }`}
           loading="lazy"
           referrerPolicy="no-referrer"
+          onLoad={() => setIsLoaded(true)}
           onError={() => {
             if (imgSrc !== fallbackUrl) {
               setImgSrc(fallbackUrl);
