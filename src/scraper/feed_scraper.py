@@ -55,6 +55,12 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
     articles = []
     
     entries = feed.entries[:max_articles]
+    
+    # Fast pre-flight check: query existing hashes in 1 single batch query (0.001s)
+    from src.scraper.dedupe import filter_unscraped_urls, compute_url_hash
+    candidate_links = [e.get('link') for e in entries if e.get('link')]
+    existing_hashes = filter_unscraped_urls(candidate_links)
+
     for entry in entries:
         try:
             url = entry.get('link')
@@ -62,6 +68,12 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
             
             if not url or not title:
                 logger.warning(f"Missing url or title for entry in {name} feed, skipping.")
+                continue
+
+            # Skip immediately if already scraped — saves network download and delay
+            url_h = compute_url_hash(url)
+            if url_h in existing_hashes:
+                logger.debug(f"Pre-flight skip (already stored): {url}")
                 continue
 
             # Parse published date
@@ -133,10 +145,17 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
             except Exception as img_err:
                 logger.debug(f"Image extraction error for {url}: {img_err}")
 
+            # Normalize and structure body with clean paragraph breaks & clean encoding
+            try:
+                from src.publishers.web_publisher import format_article_body_for_web
+                body = format_article_body_for_web(body.strip(), title)
+            except Exception:
+                body = body.strip()
+
             articles.append({
                 'title': title,
                 'url': url,
-                'body': body.strip(),
+                'body': body,
                 'author': author,
                 'published_at': published_at,
                 'source': name,
@@ -149,6 +168,7 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
             logger.error(f"Error scraping entry from {name}: {e}", exc_info=True)
             continue
         finally:
-            time.sleep(delay_seconds)
+            if delay_seconds and delay_seconds > 0:
+                time.sleep(min(delay_seconds, 0.4))
 
     return articles

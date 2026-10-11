@@ -384,6 +384,13 @@ const App = {
       const bodyContent = data.final_body || data.body || '';
       const wordCount = bodyContent.trim() ? bodyContent.trim().split(/\s+/).length : 0;
 
+      let modalImg = data.scraped_image_path || data.scraped_image_url;
+      if (modalImg && (modalImg.includes('\\') || (modalImg.startsWith('/') && !modalImg.startsWith('/images/') && !modalImg.startsWith('/api/')))) {
+        const fname = modalImg.split(/[\\/]/).pop();
+        if (fname) modalImg = `/images/scraped/${fname}`;
+      }
+      const modalFallback = (data.scraped_image_url && data.scraped_image_url !== modalImg) ? data.scraped_image_url : '';
+
       let html = `
         <!-- Info Row -->
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px;">
@@ -400,9 +407,9 @@ const App = {
         </div>
 
         <!-- Editorial Photo -->
-        ${(data.scraped_image_path || data.scraped_image_url) ? `
+        ${modalImg ? `
           <div style="margin-bottom: 16px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); max-height: 220px; text-align: center; background: var(--bg-surface);">
-            <img src="${data.scraped_image_path || data.scraped_image_url}" alt="Photo" style="width: 100%; max-height: 220px; object-fit: cover;" onerror="this.parentElement.style.display='none'">
+            <img src="${modalImg}" alt="Photo" data-fallback="${modalFallback}" style="width: 100%; max-height: 220px; object-fit: cover;" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}else{this.parentElement.style.display='none';}">
           </div>
         ` : ''}
 

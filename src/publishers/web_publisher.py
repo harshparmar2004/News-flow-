@@ -186,14 +186,6 @@ CATEGORY_IMAGE_POOLS = {
         "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80",
         "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1600&q=80",
     ],
-    "Policy & Big Tech": [
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1600&q=80",
-        "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1600&q=80",
-    ],
     "Tech & Innovation": [
         "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80",
         "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1600&q=80",
@@ -218,7 +210,7 @@ DOMAIN_MAP = {
     "startups-vc": "Startups & VC",
     "gadgets-hardware": "Gadgets & Hardware",
     "cybersecurity": "Cybersecurity",
-    "policy-big-tech": "Policy & Big Tech",
+    "policy-big-tech": "Tech & Innovation",
     "tech": "Tech & Innovation",
 }
 
@@ -244,6 +236,70 @@ def _resolve_category(article) -> str:
     return "Tech & Innovation"
 
 
+def format_article_body_for_web(raw_body: str, title: str = "") -> str:
+    """
+    Normalizes raw scraped body text into clean, structured Markdown:
+    - Eliminates unicode replacement artifacts (\ufffd) and corrupt smart quotes.
+    - Ensures authentic paragraph breaks (\n\n) so markdown parses into clean paragraphs.
+    - Strips duplicate headline echoes from the start of the article.
+    - Detects short section headers and formats as ### subheadings.
+    """
+    if not raw_body:
+        return ""
+
+    import re
+
+    # 1. Normalize line endings and strip nulls
+    text = raw_body.replace("\r\n", "\n").replace("\r", "\n").replace("\0", "")
+
+    # 2. Sanitize and normalize corrupted Unicode / Smart Quotes
+    text = re.sub(r"(\w)\ufffd([sStTdD]|re|ve|ll|m)\b", r"\1'\2", text)
+    text = re.sub(r"\ufffd([^\ufffd\n]+)\ufffd", r'"\1"', text)
+    text = text.replace("\ufffd", '"')
+    text = re.sub(r"[\u2018\u2019\u201A\u201B]", "'", text)
+    text = re.sub(r"[\u201C\u201D\u201E\u201F]", '"', text)
+    text = re.sub(r"[\u2013\u2014]", " — ", text)
+    text = text.replace("\u00a0", " ")
+
+    lines = [l.strip() for l in text.split("\n")]
+    lines = [l for l in lines if l]
+
+    if not lines:
+        return ""
+
+    norm_title = re.sub(r"[^a-z0-9]", "", title.lower()) if title else ""
+    formatted_paragraphs = []
+
+    has_markdown_headers = any(re.match(r"^#{1,6}\s", l) for l in lines)
+
+    for i, line in enumerate(lines):
+        norm_line = re.sub(r"[^a-z0-9]", "", line.lower())
+        # Deduplicate title if echoed in first few lines
+        if norm_title and norm_line == norm_title and i < 3:
+            continue
+
+        # Preserve existing markdown blocks
+        if re.match(r"^(#{1,6}\s|>\s|[-*+]\s|\d+\.\s|```)", line):
+            formatted_paragraphs.append(line)
+            continue
+
+        # Detect standalone subheadings if not already markdown
+        if not has_markdown_headers:
+            if (
+                4 <= len(line) <= 75
+                and not line.endswith((".", ",", ";", ":", "?", "!"))
+                and not line.startswith("http")
+                and len(line.split()) <= 9
+                and line[0].isupper()
+            ):
+                formatted_paragraphs.append(f"### {line}")
+                continue
+
+        formatted_paragraphs.append(line)
+
+    return "\n\n".join(formatted_paragraphs)
+
+
 def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
     with get_session() as session:
         article = session.query(Article).filter(Article.id == article_id).first()
@@ -258,9 +314,11 @@ def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
         if not title:
             return {"success": False, "error": "No title"}
 
-        body = (getattr(article, "final_body", None) or article.body or "").strip()
-        if len(body) < 30:
-            body = title
+        raw_body = (getattr(article, "final_body", None) or article.body or "").strip()
+        if len(raw_body) < 30:
+            raw_body = title
+
+        body = format_article_body_for_web(raw_body, title)
 
         summary = (getattr(article, "ai_summary", None) or article.twitter_text
                    or (body[:250] + "..." if len(body) > 250 else body))
@@ -315,7 +373,7 @@ def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
 
 
 def publish_all_scraped(limit: int = None, skip_posted: bool = True, status: str = "draft") -> Dict[str, Any]:
-    """Publish ALL scraped articles line-by-line to NewsFlow Admin & Web."""
+    """Publish ALL scraped articles concurrently to NewsFlow Admin & Web."""
     results = {"published": 0, "failed": 0, "items": []}
     with get_session() as session:
         q = session.query(Article)
@@ -326,20 +384,39 @@ def publish_all_scraped(limit: int = None, skip_posted: bool = True, status: str
             q = q.limit(limit)
         article_ids = [a.id for a in q.all()]
 
-    logger.info(f"Uploading {len(article_ids)} articles to NewsFlow Admin (status={status})...")
-    for aid in article_ids:
+    if not article_ids:
+        return results
+
+    logger.info(f"Uploading {len(article_ids)} articles to NewsFlow Admin concurrently (status={status})...")
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    import threading
+
+    res_lock = threading.Lock()
+    pub_workers = min(5, len(article_ids))
+
+    def _pub_worker(aid):
         try:
             res = publish_to_web(aid, status=status)
-            if res.get("success"):
-                results["published"] += 1
-                results["items"].append({"id": aid, "slug": res.get("slug"),
-                                          "url": res.get("url"), "method": res.get("method"), "status": status})
-                logger.info(f"  OK #{aid} -> {res.get('url')} ({status})")
-            else:
-                results["failed"] += 1
+            return aid, res, None
         except Exception as e:
-            results["failed"] += 1
-            logger.error(f"  ERR #{aid}: {e}")
+            return aid, None, str(e)
+
+    with ThreadPoolExecutor(max_workers=pub_workers) as executor:
+        futures = [executor.submit(_pub_worker, aid) for aid in article_ids]
+        for f in as_completed(futures):
+            aid, res, err = f.result()
+            with res_lock:
+                if res and res.get("success"):
+                    results["published"] += 1
+                    results["items"].append({
+                        "id": aid, "slug": res.get("slug"),
+                        "url": res.get("url"), "method": res.get("method"), "status": status
+                    })
+                    logger.info(f"  OK #{aid} -> {res.get('url')} ({status})")
+                else:
+                    results["failed"] += 1
+                    logger.error(f"  ERR #{aid}: {err or (res.get('error') if res else 'Unknown')}")
+
     return results
 
 

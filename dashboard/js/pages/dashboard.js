@@ -204,10 +204,10 @@ const DashboardPage = {
 
       if (elTotal) elTotal.textContent = `${summary.total || 0} Stories`;
       
-      const photosCount = this.allArticles.filter(a => a.scraped_image_path || a.scraped_image_url).length;
+      const photosCount = (summary.photos !== undefined) ? summary.photos : this.allArticles.filter(a => a.scraped_image_path || a.scraped_image_url).length;
       if (elPhotos) elPhotos.textContent = `${photosCount} Photos`;
 
-      const syncedCount = this.allArticles.filter(a => a.web_posted).length;
+      const syncedCount = (summary.synced !== undefined) ? summary.synced : this.allArticles.filter(a => a.web_posted).length;
       if (elSynced) elSynced.textContent = `${syncedCount} Synced`;
 
       // Update web connection status
@@ -350,7 +350,7 @@ const DashboardPage = {
 
       // Clean label formatting if empty
       if (labels.length === 0) {
-        labels = ['AI & Robotics', 'Tech & Innovation', 'Gadgets & Hardware', 'Startups & VC', 'Policy & Big Tech'];
+        labels = ['AI & Robotics', 'Tech & Innovation', 'Gadgets & Hardware', 'Startups & VC', 'Cybersecurity'];
         dataVals = [182, 83, 18, 12, 12];
       }
     } else {

@@ -136,9 +136,16 @@ const ScrapedPage = {
       const bodySnippet = a.body ? (a.body.length > 180 ? a.body.substring(0, 180) + '...' : a.body) : 'Raw web headline extracted.';
       const formattedTitle = this.formatHeadline(a.title);
 
-      const imageBanner = a.scraped_image_path ? `
+      let rawImg = a.scraped_image_path || a.scraped_image_url;
+      if (rawImg && (rawImg.includes('\\') || (rawImg.startsWith('/') && !rawImg.startsWith('/images/') && !rawImg.startsWith('/api/')))) {
+        const fname = rawImg.split(/[\\/]/).pop();
+        if (fname) rawImg = `/images/scraped/${fname}`;
+      }
+      const rawFallback = (a.scraped_image_url && a.scraped_image_url !== rawImg) ? a.scraped_image_url : '';
+
+      const imageBanner = rawImg ? `
         <div style="width: 100%; height: 145px; border-radius: 10px; overflow: hidden; margin-bottom: 12px; background: #26221F; position: relative;">
-          <img src="${a.scraped_image_path}" alt="Scraped Website Photo" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.style.display='none'">
+          <img src="${rawImg}" alt="Scraped Website Photo" data-fallback="${rawFallback}" style="width: 100%; height: 100%; object-fit: cover;" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}else{this.parentElement.style.display='none';}">
           <span style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px); color: #ffffff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
             <span>📸</span> Website Lead Photo
           </span>

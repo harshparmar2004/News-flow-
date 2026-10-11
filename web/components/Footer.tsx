@@ -58,11 +58,6 @@ export function Footer() {
                   Cybersecurity
                 </Link>
               </li>
-              <li>
-                <Link href="/category/policy-big-tech" className="hover:text-[#C96442] transition-colors">
-                  Policy & Big Tech
-                </Link>
-              </li>
             </ul>
           </div>
 

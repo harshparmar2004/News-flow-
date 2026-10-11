@@ -151,12 +151,27 @@ _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 _DB_PATH = os.path.join(_PROJECT_ROOT, "pipeline.db")
 _DB_URL = f"sqlite:///{_DB_PATH}"
 
-_engine = create_engine(_DB_URL, echo=False)
+_engine = create_engine(
+    _DB_URL,
+    echo=False,
+    connect_args={"check_same_thread": False, "timeout": 30.0},
+    pool_pre_ping=True
+)
 _SessionFactory = sessionmaker(bind=_engine, expire_on_commit=False)
 
 
 def init_db() -> None:
     """Create all tables if they don't already exist and apply automatic column migrations."""
+    # Ensure SQLite WAL mode and concurrency busy timeout
+    try:
+        from sqlalchemy import text
+        with _engine.connect() as conn:
+            conn.execute(text("PRAGMA journal_mode=WAL;"))
+            conn.execute(text("PRAGMA busy_timeout=30000;"))
+            conn.commit()
+    except Exception:
+        pass
+
     Base.metadata.create_all(_engine)
 
     # Auto-migration for SQLite columns added in model updates

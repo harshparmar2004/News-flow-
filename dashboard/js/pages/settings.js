@@ -142,13 +142,12 @@ const SettingsPage = {
             <input type="password" id="input-TYPESAFE_API_KEY" class="filter-select" placeholder="Enter TypeSafe API key (ts_...)" value="ts_demo_secret_key_849204" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 12px; font-size: 0.85rem;" />
 
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; color: var(--text-muted);">
-              <span>JEV automatically triages incoming stories and routes them to 6 target beats:</span>
+              <span>JEV automatically triages incoming stories and routes them to 5 target beats:</span>
               <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                 <span class="badge" style="background: var(--bg-card); border: 1px solid var(--border-color); font-size: 0.7rem; color: var(--text-main);">AI & Robotics</span>
                 <span class="badge" style="background: var(--bg-card); border: 1px solid var(--border-color); font-size: 0.7rem; color: var(--text-main);">Startups & VC</span>
                 <span class="badge" style="background: var(--bg-card); border: 1px solid var(--border-color); font-size: 0.7rem; color: var(--text-main);">Gadgets & Hardware</span>
                 <span class="badge" style="background: var(--bg-card); border: 1px solid var(--border-color); font-size: 0.7rem; color: var(--text-main);">Cybersecurity</span>
-                <span class="badge" style="background: var(--bg-card); border: 1px solid var(--border-color); font-size: 0.7rem; color: var(--text-main);">Policy</span>
                 <span class="badge" style="background: var(--bg-card); border: 1px solid var(--border-color); font-size: 0.7rem; color: var(--text-main);">Tech</span>
               </div>
             </div>

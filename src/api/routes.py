@@ -82,6 +82,11 @@ def get_stats():
         twitter_posted = session.query(func.count(Article.id)).filter(Article.twitter_posted == True).scalar() or 0
         instagram_queued = session.query(func.count(Article.id)).filter(Article.instagram_queued == True).scalar() or 0
         linkedin_queued = session.query(func.count(Article.id)).filter(Article.linkedin_queued == True).scalar() or 0
+        web_posted_count = session.query(func.count(Article.id)).filter(Article.web_posted == True).scalar() or 0
+        photos_count = session.query(func.count(Article.id)).filter(
+            (Article.scraped_image_path.isnot(None) & (Article.scraped_image_path != "")) |
+            (Article.scraped_image_url.isnot(None) & (Article.scraped_image_url != ""))
+        ).scalar() or 0
 
         # Editorial beat categories breakdown
         from src.publishers.web_publisher import _resolve_category
@@ -102,6 +107,9 @@ def get_stats():
             "queued": queued,
             "failed": failed,
             "ranked": ranked_count,
+            "web_posted": web_posted_count,
+            "synced": web_posted_count,
+            "photos": photos_count,
             "monitored_sources": total_monitored_sources,
             "active_scraped_sources": len(sources_breakdown)
         },
@@ -301,8 +309,14 @@ def list_articles(
                 slide_urls.append(f"/api/images/{a.id}.png")
 
             scraped_web_path = None
-            if a.scraped_image_path and os.path.exists(a.scraped_image_path):
-                scraped_web_path = f"/images/scraped/{os.path.basename(a.scraped_image_path)}"
+            if a.scraped_image_path:
+                img_name = os.path.basename(a.scraped_image_path.replace("\\", "/"))
+                if os.path.exists(os.path.join(IMAGES_DIR, "scraped", img_name)) or os.path.exists(a.scraped_image_path):
+                    scraped_web_path = f"/images/scraped/{img_name}"
+                elif a.scraped_image_path.startswith("/images/") or a.scraped_image_path.startswith("http"):
+                    scraped_web_path = a.scraped_image_path
+            if not scraped_web_path and a.scraped_image_url:
+                scraped_web_path = a.scraped_image_url
 
             articles_data.append({
                 "id": a.id,
@@ -357,8 +371,14 @@ def get_article(article_id: int):
             raise HTTPException(status_code=404, detail="Article not found")
 
         scraped_web_path = None
-        if a.scraped_image_path and os.path.exists(a.scraped_image_path):
-            scraped_web_path = f"/images/scraped/{os.path.basename(a.scraped_image_path)}"
+        if a.scraped_image_path:
+            img_name = os.path.basename(a.scraped_image_path.replace("\\", "/"))
+            if os.path.exists(os.path.join(IMAGES_DIR, "scraped", img_name)) or os.path.exists(a.scraped_image_path):
+                scraped_web_path = f"/images/scraped/{img_name}"
+            elif a.scraped_image_path.startswith("/images/") or a.scraped_image_path.startswith("http"):
+                scraped_web_path = a.scraped_image_path
+        if not scraped_web_path and a.scraped_image_url:
+            scraped_web_path = a.scraped_image_url
 
         return {
             "id": a.id,
@@ -1037,8 +1057,14 @@ def get_top_10_ranked_news():
             source_domain = urlparse(a.url or "").netloc.replace("www.", "") if a.url else a.source
 
             scraped_web_path = None
-            if a.scraped_image_path and os.path.exists(a.scraped_image_path):
-                scraped_web_path = f"/images/scraped/{os.path.basename(a.scraped_image_path)}"
+            if a.scraped_image_path:
+                img_name = os.path.basename(a.scraped_image_path.replace("\\", "/"))
+                if os.path.exists(os.path.join(IMAGES_DIR, "scraped", img_name)) or os.path.exists(a.scraped_image_path):
+                    scraped_web_path = f"/images/scraped/{img_name}"
+                elif a.scraped_image_path.startswith("/images/") or a.scraped_image_path.startswith("http"):
+                    scraped_web_path = a.scraped_image_path
+            if not scraped_web_path and a.scraped_image_url:
+                scraped_web_path = a.scraped_image_url
 
             # High-quality structured AI-refined Tech Notes context
             if a.instagram_caption:
@@ -1344,15 +1370,35 @@ def update_settings(settings: Dict[str, str]):
 
 @router.get("/web/status")
 def get_web_integration_status():
-    """Returns status of Direct Web & JEV TypeSafe AI bridge."""
+    """Returns status of Direct Web & Next.js health check, plus JEV TypeSafe AI bridge."""
+    import requests as req
     web_url = os.getenv("NEWSFLOW_WEB_URL", "http://localhost:3000").rstrip("/")
     api_key = os.getenv("NEWSFLOW_WEB_API_KEY", "")
     typesafe_key = os.getenv("TYPESAFE_API_KEY", "")
     auto_pub = os.getenv("AUTO_PUBLISH_TO_WEB", "true").lower() in ("1", "true", "yes")
     default_status = os.getenv("DEFAULT_WEB_STATUS", "draft")
 
+    online = False
+    stats = {}
+    message = ""
+    try:
+        r = req.get(f"{web_url}/api/health", timeout=3)
+        if r.status_code == 200:
+            online = True
+            data = r.json()
+            stats = data.get("stats", {})
+            message = f"NewsFlow Web is online at {web_url}"
+        else:
+            message = f"HTTP {r.status_code}"
+    except Exception as e:
+        message = str(e)
+
     return {
+        "success": True,
+        "online": online,
         "web_url": web_url,
+        "stats": stats,
+        "message": message,
         "api_key_set": bool(api_key and not api_key.startswith("your_")),
         "typesafe_key_set": bool(typesafe_key and not typesafe_key.startswith("your_")),
         "typesafe_masked": _mask_val(typesafe_key) if typesafe_key else "",
@@ -1814,11 +1860,18 @@ def get_dispatch_articles(page: int = 1, limit: int = 15):
 
 @router.post("/scraped/backfill-images")
 @router.post("/images/scrape-all-top10")
+@router.post("/media/backfill-images")
 def backfill_images_endpoint(limit: int = 30):
     """Backfills authentic lead images from source websites for articles lacking images."""
     from src.scraper.image_scraper import backfill_scraped_images
     updated = backfill_scraped_images(limit=limit)
-    return {"success": True, "total_cached": updated, "backfilled_count": updated, "message": f"Successfully cached authentic images for {updated} articles!"}
+    return {
+        "success": True,
+        "total_cached": updated,
+        "backfilled_count": updated,
+        "verified": updated,
+        "message": f"Successfully cached authentic images for {updated} articles!"
+    }
 
 
 @router.post("/dispatch/send/{article_id}")
@@ -1978,26 +2031,6 @@ def dispatch_notes_carousel(slug: str):
 #  NewsFlow Web Publishing Desk — Line-by-Line Article Upload
 # ============================================================
 
-@router.get("/web/status")
-def get_web_status():
-    """Check NewsFlow Web (Next.js) server health + published article count."""
-    import requests as req
-    import os
-    web_url = os.getenv("NEWSFLOW_WEB_URL", "http://localhost:3000").rstrip("/")
-    try:
-        r = req.get(f"{web_url}/api/health", timeout=5)
-        if r.status_code == 200:
-            data = r.json()
-            return {
-                "success": True,
-                "online": True,
-                "web_url": web_url,
-                "stats": data.get("stats", {}),
-                "message": f"NewsFlow Web is online at {web_url}",
-            }
-        return {"success": False, "online": False, "web_url": web_url, "message": f"HTTP {r.status_code}"}
-    except Exception as e:
-        return {"success": False, "online": False, "web_url": web_url, "message": str(e)}
 
 
 @router.post("/web/upload/{article_id}")
@@ -2063,6 +2096,19 @@ def get_web_articles(page: int = 1, limit: int = 50, filter: str = "all"):
             scraped_img = getattr(a, "scraped_image_path", None)
             scraped_url = getattr(a, "scraped_image_url", None)
             ai_headline = getattr(a, "ai_headline", None)
+
+            # Resolve browser-accessible image path
+            photo_web_path = None
+            if scraped_img:
+                img_name = _os.path.basename(scraped_img.replace("\\", "/"))
+                local_scraped_file = _os.path.join(IMAGES_DIR, "scraped", img_name)
+                if _os.path.exists(local_scraped_file) or _os.path.exists(scraped_img):
+                    photo_web_path = f"/images/scraped/{img_name}"
+                elif scraped_img.startswith("/images/") or scraped_img.startswith("http://") or scraped_img.startswith("https://"):
+                    photo_web_path = scraped_img
+            if not photo_web_path and scraped_url:
+                photo_web_path = scraped_url
+
             items.append({
                 "id": a.id,
                 "title": ai_headline or a.title,
@@ -2073,9 +2119,9 @@ def get_web_articles(page: int = 1, limit: int = 50, filter: str = "all"):
                 "scraped_at": a.scraped_at.isoformat() if a.scraped_at else None,
                 "category": a.category,
                 "rank_score": a.rank_score or 75,
-                "scraped_image_path": scraped_img,
+                "scraped_image_path": photo_web_path,
                 "scraped_image_url": scraped_url,
-                "image_url": scraped_img or scraped_url,
+                "image_url": photo_web_path or scraped_url,
                 "web_posted": bool(a.web_posted),
                 "web_slug": web_slug,
                 "web_url": f"{web_url}/article/{web_slug}" if web_slug else None,

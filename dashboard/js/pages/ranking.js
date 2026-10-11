@@ -88,7 +88,6 @@ const RankingPage = {
                 <option value="Tech & Innovation">Tech &amp; Innovation</option>
                 <option value="Gadgets & Hardware">Gadgets &amp; Hardware</option>
                 <option value="Startups & VC">Startups &amp; VC</option>
-                <option value="Policy & Big Tech">Policy &amp; Big Tech</option>
                 <option value="Cybersecurity">Cybersecurity</option>
               </select>
 
@@ -316,7 +315,15 @@ const RankingPage = {
 
     listEl.innerHTML = pageItems.map(art => {
       const isSelected = this.selectedIds.has(art.id);
-      const imgPath = art.scraped_image_path || art.scraped_image_url;
+      // Sanitize and resolve browser image path
+      let imgPath = art.scraped_image_path || art.image_url;
+      if (imgPath && (imgPath.includes('\\') || (imgPath.startsWith('/') && !imgPath.startsWith('/images/') && !imgPath.startsWith('/api/')))) {
+        const fname = imgPath.split(/[\\/]/).pop();
+        if (fname) imgPath = `/images/scraped/${fname}`;
+      }
+      if (!imgPath) imgPath = art.scraped_image_url;
+      const fallbackUrl = (art.scraped_image_url && art.scraped_image_url !== imgPath) ? art.scraped_image_url : '';
+
       const isPublished = art.web_status === 'published';
       const isDraft = art.web_posted && !isPublished;
       const liveUrl = art.web_url || (art.web_slug ? `http://localhost:3000/article/${art.web_slug}` : null);
@@ -336,7 +343,7 @@ const RankingPage = {
       `;
 
       const thumbnailHtml = imgPath ? `
-        <img src="${imgPath}" alt="Thumbnail" style="width: 58px; height: 42px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);" onerror="this.outerHTML='<div style=\\'width:58px;height:42px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--text-dim);\\'>📷</div>'" />
+        <img src="${imgPath}" alt="Thumbnail" data-fallback="${fallbackUrl}" style="width: 58px; height: 42px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}else{this.outerHTML='<div style=\\'width:58px;height:42px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--text-dim);\\'>📷</div>';}" />
       ` : `
         <div style="width: 58px; height: 42px; border-radius: 6px; background: var(--bg-surface); border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--text-dim);" title="No photo">
           📷
@@ -520,7 +527,7 @@ const RankingPage = {
     try {
       App.showToast('Fetching authentic editorial photos from source websites...', 'info');
       const res = await App.fetchApi('/api/media/backfill-images', { method: 'POST' });
-      App.showToast(`Photo scan complete: ${res.verified || 0} photos verified!`, 'success');
+      App.showToast(`Photo scan complete: ${res.verified ?? res.total_cached ?? 0} photos verified!`, 'success');
       await this.loadData();
     } catch (e) {
       App.showToast(`Photo fetch failed: ${e.message}`, 'error');

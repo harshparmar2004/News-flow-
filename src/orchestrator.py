@@ -100,30 +100,33 @@ def get_last_run_sources() -> list[dict[str, Any]]:
 
 
 def stage_scrape(sources: list[dict], max_articles: int | None = None) -> int:
-    """Stage 1: Scrape articles sequentially across 100% of configured sources (from source #1 to #N)."""
+    """Stage 1: Scrape articles concurrently across 100% of configured sources using multi-worker thread pool."""
     global _LAST_RUN_SOURCES
     _LAST_RUN_SOURCES = []
 
+    max_workers = int(os.getenv("PIPELINE_MAX_WORKERS", "8"))
     logger.info("=" * 60)
-    logger.info(f"STAGE 1: SCRAPING ARTICLES ACROSS ALL {len(sources)} SOURCES (100% TRAVERSAL)")
+    logger.info(f"STAGE 1: SCRAPING ARTICLES ACROSS ALL {len(sources)} SOURCES ({max_workers} CONCURRENT WORKERS)")
     logger.info("=" * 60)
 
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    import threading
+
+    lock = threading.Lock()
+    source_results = {}
     total_new = 0
     total_scraped = 0
 
-    for idx, source in enumerate(sources, 1):
+    def _scrape_worker(item):
+        idx, source = item
         if is_abort_requested():
-            logger.warning(f"Stage 1 aborted by user at source {idx}/{len(sources)}.")
-            break
+            return idx, source, [], 0, "aborted", None
 
         name = source.get("name", "Unknown")
         tier = source.get("tier", 1)
-
         source_config = dict(source)
         if max_articles is not None:
             source_config["max_articles"] = min(source.get("max_articles", 5), max_articles)
-
-        logger.info(f"[{idx}/{len(sources)}] Checking source: {name} (Tier {tier})...")
 
         try:
             if tier == 1:
@@ -133,44 +136,51 @@ def stage_scrape(sources: list[dict], max_articles: int | None = None) -> int:
             else:
                 articles = scrape_html(source_config)
 
-            total_scraped += len(articles)
             new_count = 0
             if articles:
-                new_count = dedupe_and_store(articles)
-                total_new += new_count
+                with lock:
+                    new_count = dedupe_and_store(articles)
                 logger.info(f" ✓ [{idx}/{len(sources)}] {name}: {len(articles)} scraped, {new_count} new stored")
             else:
                 logger.info(f" ⚠️ [{idx}/{len(sources)}] {name}: 0 articles extracted")
 
-            _LAST_RUN_SOURCES.append({
-                "order": idx,
-                "name": name,
-                "tier": tier,
-                "url": source.get("url"),
-                "category": source.get("category", "tech"),
-                "scraped": len(articles),
-                "new": new_count,
-                "status": "ok" if articles else "empty",
-                "error": None,
-                "timestamp": datetime.utcnow().isoformat() + "Z"
-            })
+            status = "ok" if articles else "empty"
+            return idx, source, articles, new_count, status, None
 
         except Exception as e:
             logger.error(f" ❌ [{idx}/{len(sources)}] Error scraping {name}: {e}")
-            _LAST_RUN_SOURCES.append({
-                "order": idx,
-                "name": name,
-                "tier": tier,
-                "url": source.get("url"),
-                "category": source.get("category", "tech"),
-                "scraped": 0,
-                "new": 0,
-                "status": "error",
-                "error": str(e),
-                "timestamp": datetime.utcnow().isoformat() + "Z"
-            })
+            return idx, source, [], 0, "error", str(e)
 
-    logger.info(f"Stage 1 complete: Processed {len(sources)} sources | {total_scraped} total items scraped | {total_new} new stored")
+    tasks = [(idx, source) for idx, source in enumerate(sources, 1)]
+    effective_workers = min(max_workers, len(tasks)) if tasks else 1
+
+    with ThreadPoolExecutor(max_workers=effective_workers) as executor:
+        futures = {executor.submit(_scrape_worker, item): item for item in tasks}
+        for future in as_completed(futures):
+            try:
+                idx, source, articles, new_count, status, err = future.result()
+                source_results[idx] = {
+                    "order": idx,
+                    "name": source.get("name", "Unknown"),
+                    "tier": source.get("tier", 1),
+                    "url": source.get("url"),
+                    "category": source.get("category", "tech"),
+                    "scraped": len(articles),
+                    "new": new_count,
+                    "status": status,
+                    "error": err,
+                    "timestamp": datetime.utcnow().isoformat() + "Z"
+                }
+                total_scraped += len(articles)
+                total_new += new_count
+            except Exception as fut_err:
+                logger.error(f"Worker exception: {fut_err}")
+
+    # Preserve sequential order in _LAST_RUN_SOURCES for clean dashboard display
+    for idx in sorted(source_results.keys()):
+        _LAST_RUN_SOURCES.append(source_results[idx])
+
+    logger.info(f"Stage 1 complete: Processed {len(sources)} sources in parallel | {total_scraped} total items scraped | {total_new} new stored")
     return total_new
 
 
@@ -238,9 +248,9 @@ def stage_rewrite(top_n: int | None = 10) -> int:
 
 
 def stage_sync_scraped_images(limit: int | None = None) -> int:
-    """Stage 2: Fetch authentic editorial photos for every article that has none yet (scrape order, no ranking)."""
+    """Stage 2: Fetch authentic editorial photos concurrently for articles missing one."""
     logger.info("=" * 60)
-    logger.info("STAGE 2: AUTHENTIC EDITORIAL PHOTOS FROM SOURCE WEBSITES")
+    logger.info("STAGE 2: AUTHENTIC EDITORIAL PHOTOS (CONCURRENT SYNC)")
     logger.info("=" * 60)
 
     with get_session() as session:
@@ -251,17 +261,22 @@ def stage_sync_scraped_images(limit: int | None = None) -> int:
             q = q.limit(limit)
         article_ids = [a.id for a in q.all()]
 
-    logger.info(f"Fetching authentic photos for {len(article_ids)} articles without a photo...")
-    verified_count = 0
+    if not article_ids:
+        logger.info("All articles already have editorial photos verified.")
+        return 0
 
-    for aid in article_ids:
+    logger.info(f"Fetching authentic photos for {len(article_ids)} articles concurrently...")
+    
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    verified_count = 0
+    img_workers = min(6, len(article_ids))
+
+    def _sync_single_photo(aid):
         if is_abort_requested():
-            logger.warning("Stage 2 image sync aborted by user.")
-            break
+            return aid, False
         try:
             cached_path = scrape_and_cache_article_image(aid)
             if cached_path and os.path.exists(cached_path):
-                verified_count += 1
                 with get_session() as sess:
                     art = sess.query(Article).filter(Article.id == aid).first()
                     if art:
@@ -269,12 +284,21 @@ def stage_sync_scraped_images(limit: int | None = None) -> int:
                             art.image_path = cached_path
                         sess.commit()
                 logger.info(f" ✓ Photo saved for story #{aid}")
+                return aid, True
             else:
-                logger.info(f" ℹ️ Story #{aid}: no editorial photo found on source site.")
+                return aid, False
         except Exception as e:
             logger.error(f"Photo sync failed for article #{aid}: {e}")
+            return aid, False
 
-    logger.info(f"Stage 2 complete: {verified_count}/{len(article_ids)} photos saved")
+    with ThreadPoolExecutor(max_workers=img_workers) as executor:
+        futures = [executor.submit(_sync_single_photo, aid) for aid in article_ids]
+        for f in as_completed(futures):
+            _, success = f.result()
+            if success:
+                verified_count += 1
+
+    logger.info(f"Stage 2 complete: {verified_count}/{len(article_ids)} photos saved concurrently")
     return verified_count
 
 

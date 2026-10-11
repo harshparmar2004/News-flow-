@@ -59,13 +59,6 @@ CATEGORIES_TAXONOMY = {
             r"\b(?:raises \$|raised \$|secures \$|closes \$|valued at \$|raising \$)\b"
         ]
     },
-    "policy-big-tech": {
-        "slug": "policy-big-tech",
-        "name": "Policy & Big Tech",
-        "patterns": [
-            r"\b(?:antitrust|fcc|ftc|sec|doj|lawsuit|sued|sues|suing|judge|court|verdict|monopoly|eu ai act|digital markets act|dma|legislation|congress|senate|banned?|privacy law|regulat(?:ion|ions|or|ors|ory)|subpoena)\b"
-        ]
-    },
     "gadgets-hardware": {
         "slug": "gadgets-hardware",
         "name": "Gadgets & Hardware",

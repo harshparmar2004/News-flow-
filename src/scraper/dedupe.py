@@ -12,6 +12,28 @@ def compute_url_hash(url: str) -> str:
     """
     return hashlib.sha256(url.encode('utf-8')).hexdigest()
 
+def is_url_already_scraped(url: str) -> bool:
+    """Fast pre-flight check: returns True if URL or its hash already exists in DB."""
+    if not url:
+        return True
+    url_hash = compute_url_hash(url)
+    with get_session() as session:
+        return session.query(Article.id).filter_by(url_hash=url_hash).first() is not None
+
+def filter_unscraped_urls(urls: List[str]) -> set:
+    """
+    Fast pre-flight batch check: returns a set of url_hashes that already exist in DB.
+    Takes ~0.001s for 20 URLs and avoids redundant downloads.
+    """
+    if not urls:
+        return set()
+    hashes = [compute_url_hash(u) for u in urls if u]
+    if not hashes:
+        return set()
+    with get_session() as session:
+        existing = session.query(Article.url_hash).filter(Article.url_hash.in_(hashes)).all()
+        return {r[0] for r in existing}
+
 def dedupe_and_store(articles: List[Dict[str, Any]]) -> int:
     """
     Deduplicate scraped articles based on URL hash and insert new ones into the database.

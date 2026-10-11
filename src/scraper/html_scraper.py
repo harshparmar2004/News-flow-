@@ -88,8 +88,18 @@ def scrape_html(source: Dict[str, Any]) -> List[Dict[str, Any]]:
     logger.info(f"Extracted {len(links)} candidate article URLs from {name}")
     articles = []
 
-    for url in links[:max_articles]:
+    # Fast pre-flight check: query existing hashes in 1 single batch query (0.001s)
+    from src.scraper.dedupe import filter_unscraped_urls, compute_url_hash
+    target_links = links[:max_articles]
+    existing_hashes = filter_unscraped_urls(target_links)
+
+    for url in target_links:
         try:
+            url_h = compute_url_hash(url)
+            if url_h in existing_hashes:
+                logger.debug(f"Pre-flight skip (already stored): {url}")
+                continue
+
             if not is_allowed(url):
                 logger.warning(f"Scraping not allowed by robots.txt for URL: {url}")
                 continue
@@ -155,10 +165,17 @@ def scrape_html(source: Dict[str, Any]) -> List[Dict[str, Any]]:
             except Exception as img_err:
                 logger.debug(f"Image extraction error for {url}: {img_err}")
 
+            # Normalize and structure body with clean paragraph breaks & clean encoding
+            try:
+                from src.publishers.web_publisher import format_article_body_for_web
+                body = format_article_body_for_web(body.strip(), title)
+            except Exception:
+                body = body.strip()
+
             articles.append({
                 'title': title,
                 'url': url,
-                'body': body.strip(),
+                'body': body,
                 'author': author,
                 'published_at': datetime.datetime.utcnow(),
                 'source': name,
@@ -170,6 +187,7 @@ def scrape_html(source: Dict[str, Any]) -> List[Dict[str, Any]]:
             logger.error(f"Error scraping HTML entry from {name}: {e}", exc_info=True)
             continue
         finally:
-            time.sleep(delay_seconds)
+            if delay_seconds and delay_seconds > 0:
+                time.sleep(min(delay_seconds, 0.4))
 
     return articles

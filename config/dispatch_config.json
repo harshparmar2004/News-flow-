@@ -19,8 +19,8 @@
     "message": "Connected to NewsFlow Web & Admin Desk (HTTP 200 OK)"
   },
   "stats": {
-    "total_dispatched": 33,
-    "total_images_sent": 23,
+    "total_dispatched": 48,
+    "total_images_sent": 37,
     "total_failed": 1
   },
   "dispatched_articles": {
@@ -1847,6 +1847,336 @@
         "category": "tech",
         "has_photo": true,
         "web_slug": null
+      }
+    },
+    "524": {
+      "article_id": 524,
+      "title": "Cybersecurity - Bloomberg.com",
+      "source": "Bloomberg Tech",
+      "category": "business",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-11T09:18:34.547262",
+      "web_posted": true,
+      "web_slug": "cybersecurity-bloomberg-com",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Cybersecurity - Bloomberg.com",
+        "domain": "Bloomberg Tech",
+        "category": "business",
+        "has_photo": true,
+        "web_slug": "cybersecurity-bloomberg-com"
+      }
+    },
+    "523": {
+      "article_id": 523,
+      "title": "LineageOS 24.0",
+      "source": "Hacker News",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-11T09:18:34.542188",
+      "web_posted": true,
+      "web_slug": "lineageos-24-0",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "LineageOS 24.0",
+        "domain": "Hacker News",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "lineageos-24-0"
+      }
+    },
+    "522": {
+      "article_id": 522,
+      "title": "3rd Yandex Cloud Data Center Was Hit",
+      "source": "Hacker News",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-11T09:18:34.576065",
+      "web_posted": true,
+      "web_slug": "3rd-yandex-cloud-data-center-was-hit",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "3rd Yandex Cloud Data Center Was Hit",
+        "domain": "Hacker News",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "3rd-yandex-cloud-data-center-was-hit"
+      }
+    },
+    "521": {
+      "article_id": 521,
+      "title": "I wish you the best in the Offline",
+      "source": "Hacker News",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-11T09:18:34.528445",
+      "web_posted": true,
+      "web_slug": "i-wish-you-the-best-in-the-offline",
+      "web_status": "draft",
+      "has_authentic_photo": false,
+      "error": null,
+      "payload_summary": {
+        "title": "I wish you the best in the Offline",
+        "domain": "Hacker News",
+        "category": "tech",
+        "has_photo": false,
+        "web_slug": "i-wish-you-the-best-in-the-offline"
+      }
+    },
+    "520": {
+      "article_id": 520,
+      "title": "\u2018Calling an AI agent \u201crogue\u201d is a dangerous way of deflecting blame\u2019: Tenable Field CTO on the implications of AI agent escapes and how they can be regulated",
+      "source": "TechRadar",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-11T09:18:34.560672",
+      "web_posted": true,
+      "web_slug": "calling-an-ai-agent-rogue-is-a-dangerous-way-of-deflecting-blame-tenable-field-c",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "\u2018Calling an AI agent \u201crogue\u201d is a dangerous way of deflecting blame\u2019: Tenable Field CTO on the implications of AI agent escapes and how they can be regulated",
+        "domain": "TechRadar",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "calling-an-ai-agent-rogue-is-a-dangerous-way-of-deflecting-blame-tenable-field-c"
+      }
+    },
+    "519": {
+      "article_id": 519,
+      "title": "Find out if you're part of the crew with this 30-question One Piece quiz",
+      "source": "TechRadar",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-11T09:19:26.527124",
+      "web_posted": true,
+      "web_slug": "find-out-if-youre-part-of-the-crew-with-this-30-question-one-piece-quiz",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Find out if you're part of the crew with this 30-question One Piece quiz",
+        "domain": "TechRadar",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "find-out-if-youre-part-of-the-crew-with-this-30-question-one-piece-quiz"
+      }
+    },
+    "518": {
+      "article_id": 518,
+      "title": "Watch Chicago Marathon 2026: FREE streams and TV channels",
+      "source": "TechRadar",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-11T09:19:26.541799",
+      "web_posted": true,
+      "web_slug": "watch-chicago-marathon-2026-free-streams-and-tv-channels",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Watch Chicago Marathon 2026: FREE streams and TV channels",
+        "domain": "TechRadar",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "watch-chicago-marathon-2026-free-streams-and-tv-channels"
+      }
+    },
+    "517": {
+      "article_id": 517,
+      "title": "Nuclear war and malicious use of AI threaten end of humanity by 2100, says Lancet assessment",
+      "source": "The Guardian Tech",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-11T09:19:26.495591",
+      "web_posted": true,
+      "web_slug": "nuclear-war-and-malicious-use-of-ai-threaten-end-of-humanity-by-2100-says-lancet-assessment",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Nuclear war and malicious use of AI threaten end of humanity by 2100, says Lancet assessment",
+        "domain": "The Guardian Tech",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "nuclear-war-and-malicious-use-of-ai-threaten-end-of-humanity-by-2100-says-lancet-assessment"
+      }
+    },
+    "516": {
+      "article_id": 516,
+      "title": "California\u2019s Tallest and Most Iconic Trees Are Getting Heatstroke",
+      "source": "Wired",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-11T09:19:26.511753",
+      "web_posted": true,
+      "web_slug": "californias-tallest-and-most-iconic-trees-are-getting-heatstroke",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "California\u2019s Tallest and Most Iconic Trees Are Getting Heatstroke",
+        "domain": "Wired",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "californias-tallest-and-most-iconic-trees-are-getting-heatstroke"
+      }
+    },
+    "515": {
+      "article_id": 515,
+      "title": "Google Health 5.10 rolling out for Android, iOS",
+      "source": "9to5Google",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-11T08:11:43.549190",
+      "web_posted": true,
+      "web_slug": "google-health-510-rolling-out-for-android-ios",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Google Health 5.10 rolling out for Android, iOS",
+        "domain": "9to5Google",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "google-health-510-rolling-out-for-android-ios"
+      }
+    },
+    "514": {
+      "article_id": 514,
+      "title": "Free Gemini users now on\u00a0\u2018Auto\u2019 models as app adds thinking levels",
+      "source": "9to5Google",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-11T08:11:43.524557",
+      "web_posted": true,
+      "web_slug": "free-gemini-users-now-on-auto-models-as-app-adds-thinking-levels",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Free Gemini users now on\u00a0\u2018Auto\u2019 models as app adds thinking levels",
+        "domain": "9to5Google",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "free-gemini-users-now-on-auto-models-as-app-adds-thinking-levels"
+      }
+    },
+    "513": {
+      "article_id": 513,
+      "title": "Where Google Wallet state IDs are available on Android",
+      "source": "9to5Google",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-11T08:11:43.609022",
+      "web_posted": true,
+      "web_slug": "where-google-wallet-state-ids-are-available-on-android",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Where Google Wallet state IDs are available on Android",
+        "domain": "9to5Google",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "where-google-wallet-state-ids-are-available-on-android"
+      }
+    },
+    "512": {
+      "article_id": 512,
+      "title": "Samsung has updated these Galaxy devices to Android 17",
+      "source": "9to5Google",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-11T08:11:43.573119",
+      "web_posted": true,
+      "web_slug": "samsung-has-updated-these-galaxy-devices-to-android-17",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Samsung has updated these Galaxy devices to Android 17",
+        "domain": "9to5Google",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "samsung-has-updated-these-galaxy-devices-to-android-17"
+      }
+    },
+    "511": {
+      "article_id": 511,
+      "title": "Googlebook improving \u2018Better Together\u2019 Android sync features, Samsung support rolling out",
+      "source": "9to5Google",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-11T08:11:43.632259",
+      "web_posted": true,
+      "web_slug": "googlebook-improving-better-together-android-sync-features-samsung-support-rolling-out",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Googlebook improving \u2018Better Together\u2019 Android sync features, Samsung support rolling out",
+        "domain": "9to5Google",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "googlebook-improving-better-together-android-sync-features-samsung-support-rolling-out"
+      }
+    },
+    "510": {
+      "article_id": 510,
+      "title": "A wakeup light is my secret weapon against dark and depressing mornings \u2014 here are 9 worth picking up as we head into autumn",
+      "source": "TechRadar",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-11T08:11:43.740258",
+      "web_posted": true,
+      "web_slug": "a-wakeup-light-is-my-secret-weapon-against-dark-and-depressing-mornings-here-are-9-worth-picking-up-as-we-head-into-autumn",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "A wakeup light is my secret weapon against dark and depressing mornings \u2014 here are 9 worth picking up as we head into autumn",
+        "domain": "TechRadar",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "a-wakeup-light-is-my-secret-weapon-against-dark-and-depressing-mornings-here-are-9-worth-picking-up-as-we-head-into-autumn"
       }
     }
   }

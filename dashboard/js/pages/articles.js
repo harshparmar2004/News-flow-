@@ -854,7 +854,13 @@ const ArticlesPage = {
               ${articles.map(a => {
                 const domain = a.source_domain || (a.url ? a.url.split('/')[2] : '');
                 const cleanExcerpt = a.refined_body || '';
-                const imgPath = a.scraped_image_path || a.scraped_image_url || a.image_url;
+                let imgPath = a.scraped_image_path || a.image_url;
+                if (imgPath && (imgPath.includes('\\') || (imgPath.startsWith('/') && !imgPath.startsWith('/images/') && !imgPath.startsWith('/api/')))) {
+                  const fname = imgPath.split(/[\\/]/).pop();
+                  if (fname) imgPath = `/images/scraped/${fname}`;
+                }
+                if (!imgPath) imgPath = a.scraped_image_url;
+                const fallbackUrl = (a.scraped_image_url && a.scraped_image_url !== imgPath) ? a.scraped_image_url : '';
                 
                 const isPublished = a.web_status === 'published';
                 const isDraft = a.web_posted && !isPublished;
@@ -875,7 +881,7 @@ const ArticlesPage = {
                 `;
 
                 const thumbnailHtml = imgPath ? `
-                  <img src="${imgPath}" alt="Photo" style="width: 54px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);" onerror="this.outerHTML='<div style=\\'width:54px;height:38px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:var(--text-dim);\\'>📷</div>'" />
+                  <img src="${imgPath}" alt="Photo" data-fallback="${fallbackUrl}" style="width: 54px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}else{this.outerHTML='<div style=\\'width:54px;height:38px;border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:var(--text-dim);\\'>📷</div>';}" />
                 ` : `
                   <div style="width: 54px; height: 38px; border-radius: 6px; background: var(--bg-surface); border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: var(--text-dim);" title="No photo">
                     📷
@@ -964,7 +970,13 @@ const ArticlesPage = {
         ${articles.map(a => {
           const domain = a.source_domain || (a.url ? a.url.split('/')[2] : '');
           const cleanExcerpt = a.refined_body || '';
-          const imgPath = a.scraped_image_path || a.scraped_image_url || a.image_url;
+          let imgPath = a.scraped_image_path || a.image_url;
+          if (imgPath && (imgPath.includes('\\') || (imgPath.startsWith('/') && !imgPath.startsWith('/images/') && !imgPath.startsWith('/api/')))) {
+            const fname = imgPath.split(/[\\/]/).pop();
+            if (fname) imgPath = `/images/scraped/${fname}`;
+          }
+          if (!imgPath) imgPath = a.scraped_image_url;
+          const fallbackUrl = (a.scraped_image_url && a.scraped_image_url !== imgPath) ? a.scraped_image_url : '';
           const isPublished = a.web_status === 'published';
           const isDraft = a.web_posted && !isPublished;
           const liveUrl = a.web_url || (a.web_slug ? `http://localhost:3000/article/${a.web_slug}` : null);
@@ -1010,7 +1022,7 @@ const ArticlesPage = {
                 <!-- Cover Image Preview -->
                 ${imgPath ? `
                   <div style="margin-bottom: 8px; border-radius: 8px; overflow: hidden; height: 160px; border: 1px solid var(--border-color); position: relative; background: var(--bg-surface);">
-                    <img src="${imgPath}" alt="Editorial Photo" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.style.display='none'">
+                    <img src="${imgPath}" alt="Editorial Photo" data-fallback="${fallbackUrl}" style="width: 100%; height: 100%; object-fit: cover;" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}else{this.parentElement.style.display='none';}">
                   </div>
                 ` : ''}
 
