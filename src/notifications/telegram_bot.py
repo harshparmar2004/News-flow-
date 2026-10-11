@@ -14,6 +14,9 @@ import threading
 import requests
 from typing import Optional, Dict, Any, List
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger("TelegramBot")
 

@@ -1,8 +1,8 @@
 {
-  "target_url": "http://localhost:3000/api/articles",
+  "target_url": "https://news-flow-one.vercel.app/api/articles",
   "app_name": "NewsFlow Web & Admin Desk",
-  "admin_url": "http://localhost:3000/admin",
-  "web_url": "http://localhost:3000",
+  "admin_url": "https://news-flow-one.vercel.app/admin",
+  "web_url": "https://news-flow-one.vercel.app",
   "auth_token": "nf_live_sec_9942a8b7e1034f68a",
   "is_active": true,
   "rate_limit": {
