@@ -68,7 +68,7 @@ export function RightAdsSidebar({ domain = "global" }: RightAdsSidebarProps) {
   }
 
   return (
-    <aside className="w-80 shrink-0 sticky top-14 sm:top-16 self-start max-h-[calc(100vh-3.5rem)] sm:max-h-[calc(100vh-4rem)] border-l border-[#EBE8DF] dark:border-[#282724] bg-[#FBF9F5] dark:bg-[#141413] p-6 hidden xl:flex flex-col gap-6 overflow-y-auto no-scrollbar select-none">
+    <aside className="w-80 shrink-0 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] border-l border-[#EBE8DF] dark:border-[#282724] bg-[#FBF9F5] dark:bg-[#141413] p-6 hidden xl:flex flex-col gap-6 overflow-y-auto no-scrollbar select-none">
       
       {/* 1. TOP SLOT (300x250 Medium Rectangle) */}
       {topAd && topAd.is_active ? (
