@@ -29,7 +29,7 @@ if PROJECT_ROOT not in sys.path:
 from src.db.models import Article, get_session
 
 WEB_URL = os.getenv("NEWSFLOW_WEB_URL", "http://localhost:3000").rstrip("/")
-API_KEY = os.getenv("NEWSFLOW_WEB_API_KEY", "nf_live_sec_9942a8b7e1034f68a")
+API_KEY = os.getenv("NEWSFLOW_WEB_API_KEY") or os.getenv("NEWSFLOW_API_KEY", "nf_live_sec_9942a8b7e1034f68a")
 
 NEWSFLOW_WEB_DIR = os.getenv(
     "NEWSFLOW_WEB_DIR",
