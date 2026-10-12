@@ -88,18 +88,25 @@ def rewrite_article(article_id: int) -> bool:
         # --- 1. GROQ PROVIDER (Llama 3.3 70B) ---
         if provider == "groq" and groq_key:
             try:
-                logger.info(f"Rewriting article {article_id} using Groq API (Llama 3.3 70B)...")
                 url = "https://api.groq.com/openai/v1/chat/completions"
                 headers = {"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"}
-                payload = {
-                    "model": "llama-3.3-70b-versatile",
-                    "messages": [{"role": "user", "content": prompt}],
-                    "response_format": {"type": "json_object"}
-                }
-                resp = requests.post(url, headers=headers, json=payload, timeout=20)
-                if resp.status_code == 200:
-                    content = resp.json()["choices"][0]["message"]["content"]
-                    data = json.loads(content)
+                for g_model in ["openai/gpt-oss-120b", "llama-3.3-70b-versatile", "openai/gpt-oss-20b"]:
+                    try:
+                        logger.info(f"Rewriting article {article_id} using Groq API ({g_model})...")
+                        payload = {
+                            "model": g_model,
+                            "messages": [{"role": "user", "content": prompt}],
+                            "response_format": {"type": "json_object"}
+                        }
+                        resp = requests.post(url, headers=headers, json=payload, timeout=25)
+                        if resp.status_code == 200:
+                            content = resp.json()["choices"][0]["message"]["content"]
+                            data = json.loads(content)
+                            break
+                        else:
+                            logger.warning(f"Groq {g_model} returned HTTP {resp.status_code}: {resp.text[:80]}")
+                    except Exception as me:
+                        logger.warning(f"Groq {g_model} attempt error: {me}")
             except Exception as e:
                 logger.error(f"Groq rewrite failed: {e}")
 

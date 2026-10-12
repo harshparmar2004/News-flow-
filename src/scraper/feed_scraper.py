@@ -27,6 +27,24 @@ def is_allowed(url: str, user_agent: str = 'Mozilla/5.0 (Windows NT 10.0; Win64;
         logger.warning(f"Failed to check robots.txt for {url}: {e}")
         return True
 
+
+def is_scrambled_or_paywalled(text: str) -> bool:
+    """Detect if scraped text contains client-side paywall ciphers or obfuscated gibberish."""
+    if not text:
+        return False
+    import re
+    # Explicit known cipher signatures
+    if re.search(r'\b(?:jjxhkt|ekcbkte|jcojgtbv|fqwmbbuemooku|fmzyptoz|gwqwydcl|uzckrtsgqqtr|znddhrt|djbksuneb|pmdoveevd|amzlzvfer)\b', text, re.I):
+        return True
+    # Frequency check: high ratio of vowel-deficient non-English words
+    words = re.findall(r'\b[a-zA-Z]{5,}\b', text[:1500])
+    if len(words) >= 15:
+        vowel_poor = sum(1 for w in words if sum(1 for c in w.lower() if c in 'aeiou') <= 1)
+        if vowel_poor / len(words) > 0.40:
+            return True
+    return False
+
+
 def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
     """
     Scrape an RSS/Atom feed based on the provided source configuration.
@@ -115,7 +133,12 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
                 except Exception as npe:
                     logger.debug(f"Newspaper3k fallback failed for {url}: {npe}")
 
-            # Fallback to RSS entry content / summary if body is still empty
+            # Check if extracted body was obfuscated by client-side paywall ciphers (e.g. Sifted/Caesar cipher)
+            if body and is_scrambled_or_paywalled(body):
+                logger.warning(f"Paywall/cipher gibberish detected in body for {url}! Discarding and using clean RSS summary.")
+                body = None
+
+            # Fallback to RSS entry content / summary if body is empty or scrambled
             if not body or not body.strip():
                 if hasattr(entry, 'content') and entry.content:
                     body = entry.content[0].get('value', '')
@@ -128,6 +151,11 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
                 if body:
                     from bs4 import BeautifulSoup
                     body = BeautifulSoup(body, 'html.parser').get_text()
+
+            # Double-check fallback body against paywall ciphers
+            if body and is_scrambled_or_paywalled(body):
+                logger.warning(f"Fallback text also contained cipher gibberish for {url}, skipping.")
+                continue
 
             if not body or not body.strip():
                 logger.warning(f"Could not extract body text for {url}, skipping.")
