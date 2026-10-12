@@ -7,7 +7,14 @@ from urllib.parse import urlparse
 import feedparser
 from robotexclusionrulesparser import RobotExclusionRulesParser
 import trafilatura
+import trafilatura.settings
 from newspaper import Article as NewspaperArticle
+
+# Fast download settings: 10s timeout instead of 30s, fast fail on 503 errors
+_TRAF_CONFIG = trafilatura.settings.use_config()
+_TRAF_CONFIG.set("DEFAULT", "download_timeout", "10")
+_TRAF_CONFIG.set("DEFAULT", "sleep_time", "0.5")
+_TRAF_CONFIG.set("DEFAULT", "max_repetitions", "1")
 
 logger = logging.getLogger(__name__)
 
@@ -103,8 +110,8 @@ def scrape_feed(source: Dict[str, Any]) -> List[Dict[str, Any]]:
             body = None
             author = None
             
-            # Fetch with trafilatura
-            downloaded = trafilatura.fetch_url(url)
+            # Fetch with trafilatura (fast timeout)
+            downloaded = trafilatura.fetch_url(url, config=_TRAF_CONFIG)
             if downloaded:
                 extracted = trafilatura.extract(downloaded, output_format="json")
                 if extracted:

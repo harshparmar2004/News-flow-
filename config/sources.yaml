@@ -263,9 +263,9 @@ sources:
   subreddit: venturecapital
   delay_seconds: 1
   max_articles: 5
-- name: Silicon Canals
-  url: https://siliconcanals.com
-  feed_url: https://siliconcanals.com/feed/
+- name: Tech Funding News
+  url: https://techfundingnews.com
+  feed_url: https://techfundingnews.com/feed/
   tier: 1
   category: startups-vc
   subreddit: startups
