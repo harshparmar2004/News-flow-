@@ -157,3 +157,82 @@ export function safeJsonParse<T>(jsonStr: string | null | undefined, fallback: T
     return fallback;
   }
 }
+
+/**
+ * Resolves authentic publisher brand name from source URL or author field.
+ * Maps 50+ major technology sources to human-readable publication brand names.
+ */
+export function getSourceBrand(sourceUrl?: string | null, author?: string | null): string {
+  if (author && author !== "NewsFlow AI" && !author.includes("Research")) {
+    return author;
+  }
+  if (!sourceUrl || typeof sourceUrl !== "string") {
+    return "NewsFlow Wire";
+  }
+
+  try {
+    const host = new URL(sourceUrl).hostname.toLowerCase().replace(/^www\./, "");
+    if (host.includes("theverge")) return "The Verge";
+    if (host.includes("techcrunch")) return "TechCrunch";
+    if (host.includes("arstechnica")) return "Ars Technica";
+    if (host.includes("wired")) return "Wired";
+    if (host.includes("techradar")) return "TechRadar";
+    if (host.includes("engadget")) return "Engadget";
+    if (host.includes("tomshardware")) return "Tom's Hardware";
+    if (host.includes("technologyreview")) return "MIT Tech Review";
+    if (host.includes("reuters")) return "Reuters";
+    if (host.includes("bloomberg")) return "Bloomberg";
+    if (host.includes("bbc")) return "BBC News";
+    if (host.includes("theguardian")) return "The Guardian";
+    if (host.includes("zdnet")) return "ZDNet";
+    if (host.includes("venturebeat")) return "VentureBeat";
+    if (host.includes("cnbc")) return "CNBC";
+    if (host.includes("9to5google")) return "9to5Google";
+    if (host.includes("9to5mac")) return "9to5Mac";
+    if (host.includes("androidcentral")) return "Android Central";
+    if (host.includes("macrumors")) return "MacRumors";
+    if (host.includes("xda-developers")) return "XDA Developers";
+    if (host.includes("pcgamer")) return "PC Gamer";
+    if (host.includes("digitaltrends")) return "Digital Trends";
+    if (host.includes("therobotreport")) return "The Robot Report";
+    if (host.includes("spectrum.ieee")) return "IEEE Spectrum";
+    if (host.includes("robohub")) return "Robohub";
+    if (host.includes("dronedj")) return "DroneDJ";
+    if (host.includes("dronelife")) return "DroneLife";
+    if (host.includes("openai")) return "OpenAI";
+    if (host.includes("anthropic")) return "Anthropic";
+    if (host.includes("nvidia")) return "NVIDIA";
+    if (host.includes("huggingface")) return "Hugging Face";
+    if (host.includes("deepmind")) return "Google DeepMind";
+    if (host.includes("microsoft")) return "Microsoft AI";
+    if (host.includes("mistral")) return "Mistral AI";
+    if (host.includes("meta")) return "Meta AI";
+    if (host.includes("marktechpost")) return "MarkTechPost";
+    if (host.includes("unite.ai")) return "Unite.AI";
+    if (host.includes("towardsai")) return "Towards AI";
+    if (host.includes("bair.berkeley")) return "BAIR";
+    if (host.includes("jack-clark")) return "Import AI";
+    if (host.includes("siliconangle")) return "SiliconANGLE";
+    if (host.includes("sifted")) return "Sifted";
+    if (host.includes("strictlyvc")) return "StrictlyVC";
+    if (host.includes("crunchbase")) return "Crunchbase";
+    if (host.includes("pitchbook")) return "PitchBook";
+    if (host.includes("alleywatch")) return "AlleyWatch";
+    if (host.includes("ycombinator")) return "Y Combinator";
+    if (host.includes("thehackernews")) return "The Hacker News";
+    if (host.includes("bleepingcomputer")) return "BleepingComputer";
+    if (host.includes("krebsonsecurity")) return "Krebs on Security";
+    if (host.includes("darkreading")) return "Dark Reading";
+    if (host.includes("securityweek")) return "SecurityWeek";
+    if (host.includes("cybersecuritydive")) return "Cybersecurity Dive";
+    if (host.includes("schneier")) return "Schneier on Security";
+    if (host.includes("helpnetsecurity")) return "Help Net Security";
+    if (host.includes("theregister")) return "The Register";
+    if (host.includes("cisa.gov")) return "CISA";
+
+    const parts = host.split(".");
+    return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+  } catch {
+    return "NewsFlow Wire";
+  }
+}

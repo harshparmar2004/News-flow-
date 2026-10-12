@@ -24,35 +24,35 @@ const CATEGORY_PATTERNS: Array<{
   {
     key: "cybersecurity",
     patterns: [
-      /\b(?:ransomware|malware|phishing|breach(?:es|ed)?|zero-day|vulnerabilit(?:y|ies)|cve-\d+|cisa|ddos|spyware|trojan|infostealer|cyber(?:attack|security|crime)|data leak|exploit(?:s|ed)?|botnet|dark web|backdoor|patch tuesday|bug bounty)\b/i,
-      /\b(?:cyber threat|threat actor|hacked account|hacked database|hackers breach)\b/i,
+      /\b(?:ransomware|malware|phishing|breach(?:es|ed)?|zero-day|vulnerabilit(?:y|ies)|cve-\d+|cisa|ddos|spyware|trojan|infostealer|cyber(?:attack|security|crime|threat|espionage)|data leak|exploit(?:s|ed)?|botnet|dark web|backdoor|patch tuesday|bug bounty|infosec|credential stuffing|credential leak|threat actor|hacked database|hackers breach)\b/i,
+      /\b(?:cyber threat|threat actor|hacked account|hacked database|hackers breach|security advisory|threat intelligence)\b/i,
       /(?<!hacker\s)\b(?:hackers?|hacked)\b(?!\snews)/i,
     ],
   },
   {
     key: "startups-vc",
     patterns: [
-      /\b(?:funding|seed round|series [a-g]|venture capital|vcs?|valuation|investor|investors|pre-seed|unicorn|angel investor|y combinator|sequoia|a16z|andreessen|acqui(?:re|res|red|sition)|buyout|ipo|merger|venture-backed|bootstrapped startup)\b/i,
-      /\b(?:vc bashing|vc firm|seed funding|series a funding|series b funding)\b/i,
+      /\b(?:funding|seed round|series [a-g]|venture capital|vcs?|valuation|investor|investors|pre-seed|unicorn|angel investor|y combinator|sequoia|a16z|andreessen|acqui(?:re|res|red|sition)|buyout|ipo|merger|venture-backed|bootstrapped startup|early-stage|late-stage|techstars|venture debt|growth equity|term sheet|pitch deck)\b/i,
+      /\b(?:vc bashing|vc firm|seed funding|series a funding|series b funding|fundraising round|backed by investors)\b/i,
       /\b(?:raises \$|raised \$|secures \$|closes \$|valued at \$|raising \$)\b/i,
     ],
   },
   {
     key: "gadgets-hardware",
     patterns: [
-      /\b(?:smartphone|iphone|ipad|pixel (?:fold|\d+)|macbook|laptop|laptops|gpus?|cpus?|nvidia rtx|amd radeon|intel core|qualcomm|snapdragon|tsmc|semiconductor|semiconductors|wafer|silicon|processor|processors|foldable|tablet|smartwatch|smartwatches|galaxy watch|apple watch|headphones|earbuds|oled|monitor|playstation|nintendo|xbox|bios|motherboard|firmware)\b/i,
+      /\b(?:smartphone|iphone|ipad|pixel (?:fold|\d+)|macbook|laptop|laptops|gpus?|cpus?|nvidia rtx|amd radeon|intel core|qualcomm|snapdragon|tsmc|semiconductor|semiconductors|wafer|silicon|processor|processors|foldable|tablet|smartwatch|smartwatches|galaxy watch|apple watch|headphones|earbuds|oled|monitor|playstation|nintendo|xbox|bios|motherboard|firmware|wearable|vr headset|ar glasses|apple vision|meta quest|smart glasses|kindle|handheld|geforce|radeon|core ultra|snapdragon x|m3|m4)\b/i,
     ],
   },
   {
     key: "robotics",
     patterns: [
-      /\b(?:robot|robots|robotics|humanoid|humanoids|bipedal|quadruped|boston dynamics|electric atlas|figure 02|sanctuary ai|phoenix humanoid|unitree|optimus|tesla bot|drone|drones|dji|actuator|actuators|hydraulic|manipulator|dexterous manipulation|autonomous vehicle|self-driving|waymo|zoox|robotaxi|embodied ai|physical intelligence)\b/i,
+      /\b(?:robot|robots|robotic|robotics|roboticist|humanoid|humanoids|bipedal|quadruped|boston dynamics|electric atlas|figure 02|figure ai|sanctuary ai|phoenix humanoid|unitree|optimus|tesla bot|drone|drones|dji|uav|quadcopter|actuator|actuators|hydraulic|manipulator|dexterous manipulation|autonomous vehicle|self-driving|waymo|zoox|robotaxi|embodied ai|physical intelligence|fourier intelligence|cyberdog|delivery robot|automated warehouse|exoskeleton)\b/i,
     ],
   },
   {
     key: "ai",
     patterns: [
-      /\b(?:ai|artificial intelligence|llms?|large language model|openai|chatgpt|gpt-[345]|claude|anthropic|gemini|deepmind|neural network|machine learning|deep learning|diffusion model|transformer|mistral|llama|ollama|grok|reasoning model|r1|agentic|copilot|multimodal|generative ai|devin|pixtral|qwen|sora|rag|prompt)\b/i,
+      /\b(?:ai|artificial intelligence|llms?|large language model|openai|chatgpt|gpt-[345]|claude|anthropic|gemini|deepmind|autonomous agent|neural network|machine learning|deep learning|diffusion model|transformer|mistral|llama|ollama|grok|reasoning model|r1|agentic|copilot|multimodal|generative ai|devin|pixtral|synthetic data|vector db|rag|deepseek|perplexity|cohere|stability ai|runway|sora|genai|superintelligence|agi|foundation model|context window|fine-tuning|reinforcement learning|rlhf)\b/i,
     ],
   },
 ];

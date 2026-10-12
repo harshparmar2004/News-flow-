@@ -59,6 +59,20 @@ export function LeftSidebar({ categories, activeSlug, totalArticles }: LeftSideb
             )}
           </Link>
 
+          {/* Today's News Direct Link */}
+          <Link
+            href="/#todays-news"
+            className="flex items-center justify-between px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all text-[#686660] dark:text-[#A8A59D] hover:bg-[#FAF7F0] dark:hover:bg-[#20201D] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB] group"
+          >
+            <span className="flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
+              <span className="group-hover:text-rose-500 transition-colors">Today&apos;s News</span>
+            </span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold">
+              Live
+            </span>
+          </Link>
+
           {/* Category List */}
           {categories.map((cat) => {
             const isActive = activeSlug === cat.slug || pathname === `/category/${cat.slug}`;

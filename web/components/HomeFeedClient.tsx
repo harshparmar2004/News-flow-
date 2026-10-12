@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronRight, ArrowRight } from "lucide-react";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CategoryDeskBanner } from "@/components/CategoryDeskBanner";
+import { TodaysNewsFeature } from "@/components/TodaysNewsFeature";
 import { useAdPreferences } from "./AdPreferencesContext";
 
 interface ArticleItem {
@@ -13,6 +14,7 @@ interface ArticleItem {
   title: string;
   summary: string;
   cover_image_url?: string | null;
+  source_url?: string | null;
   published_at: Date | string;
   created_at?: Date | string;
   rank_score?: number;
@@ -135,6 +137,9 @@ export function HomeFeedClient({ recentArticles, categorySections }: HomeFeedCli
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
       />
+
+      {/* Dedicated Today's News Feature spotlight */}
+      <TodaysNewsFeature articles={recentArticles as any} />
 
       {/* Section: Recent Intelligence */}
       <section className="space-y-4 pt-2">

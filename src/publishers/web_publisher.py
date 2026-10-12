@@ -243,15 +243,20 @@ def _resolve_category(article) -> str:
     import re
     from src.ai.jev_triage import classify_domain_scored
 
-    # 1. If explicit Domain was already stamped by Jev in rank_reason
+    # 1. Authoritative source desk category from sources.yaml
+    source_cat = (getattr(article, "category", None) or "").strip().lower()
+    if source_cat and source_cat in DOMAIN_MAP and source_cat != "tech":
+        return DOMAIN_MAP[source_cat]
+
+    # 2. If explicit Domain was already stamped by Jev in rank_reason
     if article.rank_reason and "Domain [" in article.rank_reason:
         m = re.search(r"Domain \[([a-z\-]+)\]", article.rank_reason)
-        if m and m.group(1) in DOMAIN_MAP:
+        if m and m.group(1) in DOMAIN_MAP and m.group(1) != "tech":
             return DOMAIN_MAP[m.group(1)]
 
-    # 2. Run high-precision domain triage on headline and content
+    # 3. Run high-precision domain triage on headline and content
     title = (getattr(article, "ai_headline", None) or article.title or "").strip()
-    body_sample = (getattr(article, "final_body", None) or article.body or "")[:600]
+    body_sample = (getattr(article, "final_body", None) or article.body or "")[:800]
     summary = (getattr(article, "ai_summary", None) or getattr(article, "twitter_text", None) or "")
     slug = classify_domain_scored(title, summary, body_sample)
     if slug in DOMAIN_MAP:
@@ -367,10 +372,11 @@ def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
         else:
             pub_iso = str(pub_dt)
 
+        source_brand = getattr(article, "source", None) or "NewsFlow AI"
         payload = {
             "title": title, "summary": summary, "body": body,
             "category": cat_name,
-            "source_url": article.url, "author": "NewsFlow AI",
+            "source_url": article.url, "author": source_brand,
             "status": status, "is_featured": False,
             "cover_image_url": cover_img,
             "published_at": pub_iso,

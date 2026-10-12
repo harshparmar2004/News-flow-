@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { formatTimeAgo, getOptimizedImageUrl } from "@/lib/utils";
+import { formatTimeAgo, getOptimizedImageUrl, getSourceBrand } from "@/lib/utils";
 import { getThematicCoverImage } from "@/lib/imagePool";
 
 interface ArticleCardProps {
@@ -12,6 +12,7 @@ interface ArticleCardProps {
     title: string;
     summary: string;
     cover_image_url?: string | null;
+    source_url?: string | null;
     published_at: Date | string;
     reading_time_minutes: number;
     author?: string | null;
@@ -29,6 +30,7 @@ export function ArticleCard({ article, priority = false }: ArticleCardProps) {
     ? article.cover_image_url
     : fallbackUrl;
   const initialImg = getOptimizedImageUrl(rawCover, 650);
+  const sourceBrand = getSourceBrand(article.source_url, article.author);
 
   const [imgSrc, setImgSrc] = useState<string>(initialImg);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -90,17 +92,24 @@ export function ArticleCard({ article, priority = false }: ArticleCardProps) {
       {/* Card Content Body */}
       <div className="p-3.5 sm:p-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
         <div className="space-y-2">
-          {/* Category & Read Time */}
-          <div className="flex items-center space-x-1.5 text-xs text-[#C96442]">
-            <Link
-              href={`/category/${article.category.slug}`}
-              className="font-medium hover:underline truncate"
-            >
-              {article.category.name}
-            </Link>
-            <span className="text-[#8E8B82] dark:text-[#686660]">•</span>
-            <span className="text-[#8E8B82] dark:text-[#8E8B82] text-[11px] shrink-0">
-              {article.reading_time_minutes}m read
+          {/* Category, Read Time & Source Brand Pill */}
+          <div className="flex items-center justify-between text-xs gap-2">
+            <div className="flex items-center space-x-1.5 text-[#C96442] truncate min-w-0">
+              <Link
+                href={`/category/${article.category.slug}`}
+                className="font-medium hover:underline truncate"
+              >
+                {article.category.name}
+              </Link>
+              <span className="text-[#8E8B82] dark:text-[#686660]">•</span>
+              <span className="text-[#8E8B82] dark:text-[#8E8B82] text-[11px] shrink-0">
+                {article.reading_time_minutes}m read
+              </span>
+            </div>
+
+            {/* Source Brand Badge */}
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium tracking-tight bg-[#FAF7F0] dark:bg-[#252422] border border-[#EBE8DF] dark:border-[#33322E] text-[#1F1E1D] dark:text-[#E2DFD8] shrink-0">
+              {sourceBrand}
             </span>
           </div>
 
@@ -120,15 +129,10 @@ export function ArticleCard({ article, priority = false }: ArticleCardProps) {
         {/* Footer Meta */}
         <div className="pt-3 border-t border-[#EBE8DF]/70 dark:border-[#282724] flex items-center justify-between text-[11px] text-[#8E8B82] dark:text-[#78756E]">
           <span className="flex items-center space-x-1.5 font-medium truncate max-w-[65%]">
-            {article.author?.includes("Research") ? (
-              <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#C96442]/10 text-[#C96442]">
-                <span>Research Agent</span>
-              </span>
-            ) : (
-              <span>{article.author || "NewsFlow AI"}</span>
-            )}
+            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block shrink-0" />
+            <span className="truncate">{sourceBrand}</span>
           </span>
-          <span className="shrink-0">{formatTimeAgo(article.published_at)}</span>
+          <span className="shrink-0 font-mono text-[11px]">{formatTimeAgo(article.published_at)}</span>
         </div>
       </div>
     </article>

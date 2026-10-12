@@ -1,19 +1,483 @@
 sources:
-- name: TechCrunch
-  url: https://techcrunch.com
-  feed_url: https://techcrunch.com/feed/
+- name: OpenAI Blog
+  url: https://openai.com/news
+  feed_url: https://openai.com/news/rss.xml
   tier: 1
-  category: tech
-  subreddit: technology
-  delay_seconds: 2
+  category: ai
+  subreddit: OpenAI
+  delay_seconds: 1
   max_articles: 5
-- name: The Verge
-  url: https://www.theverge.com
-  feed_url: https://www.theverge.com/rss/index.xml
+- name: Anthropic News
+  url: https://www.anthropic.com/news
+  feed_url: https://news.google.com/rss/search?q=site:anthropic.com/news
   tier: 1
-  category: tech
+  category: ai
+  subreddit: ClaudeAI
+  delay_seconds: 1
+  max_articles: 5
+- name: NVIDIA AI Blog
+  url: https://blogs.nvidia.com
+  feed_url: https://blogs.nvidia.com/feed/
+  tier: 1
+  category: ai
+  subreddit: nvidia
+  delay_seconds: 1
+  max_articles: 5
+- name: Hugging Face Blog
+  url: https://huggingface.co/blog
+  feed_url: https://huggingface.co/blog/feed.xml
+  tier: 1
+  category: ai
+  subreddit: MachineLearning
+  delay_seconds: 1
+  max_articles: 5
+- name: Google DeepMind
+  url: https://deepmind.google
+  feed_url: https://news.google.com/rss/search?q=Google+DeepMind+AI+announces+OR+releases
+  tier: 1
+  category: ai
+  subreddit: ArtificialInteligence
+  delay_seconds: 1
+  max_articles: 5
+- name: Microsoft AI
+  url: https://blogs.microsoft.com/ai
+  feed_url: https://blogs.microsoft.com/feed/
+  tier: 1
+  category: ai
+  subreddit: artificial
+  delay_seconds: 1
+  max_articles: 5
+- name: Meta AI Research
+  url: https://ai.meta.com/blog
+  feed_url: https://news.google.com/rss/search?q=site:ai.meta.com/blog
+  tier: 1
+  category: ai
+  subreddit: MachineLearning
+  delay_seconds: 1
+  max_articles: 5
+- name: Mistral & Open AI Labs
+  url: https://mistral.ai
+  feed_url: https://news.google.com/rss/search?q=site:mistral.ai+OR+site:stability.ai
+  tier: 1
+  category: ai
+  subreddit: LocalLLaMA
+  delay_seconds: 1
+  max_articles: 5
+- name: MIT Tech Review AI
+  url: https://www.technologyreview.com/topic/artificial-intelligence/
+  feed_url: https://www.technologyreview.com/topic/artificial-intelligence/feed/
+  tier: 1
+  category: ai
+  subreddit: Futurology
+  delay_seconds: 1
+  max_articles: 5
+- name: TechCrunch AI
+  url: https://techcrunch.com/category/artificial-intelligence/
+  feed_url: https://techcrunch.com/category/artificial-intelligence/feed/
+  tier: 1
+  category: ai
   subreddit: technology
-  delay_seconds: 2
+  delay_seconds: 1
+  max_articles: 5
+- name: The Verge AI
+  url: https://www.theverge.com/ai-artificial-intelligence
+  feed_url: https://www.theverge.com/rss/ai-artificial-intelligence/index.xml
+  tier: 1
+  category: ai
+  subreddit: technology
+  delay_seconds: 1
+  max_articles: 5
+- name: Ars Technica AI
+  url: https://arstechnica.com/tag/ai/
+  feed_url: https://arstechnica.com/tag/ai/feed/
+  tier: 1
+  category: ai
+  subreddit: technology
+  delay_seconds: 1
+  max_articles: 5
+- name: VentureBeat AI
+  url: https://venturebeat.com/category/ai/
+  feed_url: https://venturebeat.com/category/ai/feed/
+  tier: 1
+  category: ai
+  subreddit: artificial
+  delay_seconds: 1
+  max_articles: 5
+- name: MarkTechPost
+  url: https://www.marktechpost.com
+  feed_url: https://www.marktechpost.com/feed/
+  tier: 1
+  category: ai
+  subreddit: MachineLearning
+  delay_seconds: 1
+  max_articles: 5
+- name: Unite.AI
+  url: https://www.unite.ai
+  feed_url: https://www.unite.ai/feed/
+  tier: 1
+  category: ai
+  subreddit: artificial
+  delay_seconds: 1
+  max_articles: 5
+- name: Towards AI
+  url: https://towardsai.net
+  feed_url: https://towardsai.net/feed
+  tier: 1
+  category: ai
+  subreddit: MachineLearning
+  delay_seconds: 1
+  max_articles: 5
+- name: BAIR Blog
+  url: https://bair.berkeley.edu/blog/
+  feed_url: https://bair.berkeley.edu/blog/feed.xml
+  tier: 1
+  category: ai
+  subreddit: MachineLearning
+  delay_seconds: 1
+  max_articles: 5
+- name: Import AI (Jack Clark)
+  url: https://jack-clark.net
+  feed_url: https://jack-clark.net/feed/
+  tier: 1
+  category: ai
+  subreddit: artificial
+  delay_seconds: 1
+  max_articles: 5
+- name: SiliconANGLE AI
+  url: https://siliconangle.com/category/ai/
+  feed_url: https://siliconangle.com/category/ai/feed/
+  tier: 1
+  category: ai
+  subreddit: technology
+  delay_seconds: 1
+  max_articles: 5
+- name: Wired AI
+  url: https://www.wired.com/tag/ai/
+  feed_url: https://www.wired.com/feed/tag/ai/latest/rss
+  tier: 1
+  category: ai
+  subreddit: technology
+  delay_seconds: 1
+  max_articles: 5
+- name: The Robot Report
+  url: https://www.therobotreport.com
+  feed_url: https://www.therobotreport.com/feed/
+  tier: 1
+  category: robotics
+  subreddit: robotics
+  delay_seconds: 1
+  max_articles: 5
+- name: IEEE Spectrum Robotics
+  url: https://spectrum.ieee.org/robotics
+  feed_url: https://spectrum.ieee.org/feeds/topic/robotics.rss
+  tier: 1
+  category: robotics
+  subreddit: robotics
+  delay_seconds: 1
+  max_articles: 5
+- name: Robohub
+  url: https://robohub.org
+  feed_url: https://robohub.org/feed/
+  tier: 1
+  category: robotics
+  subreddit: robotics
+  delay_seconds: 1
+  max_articles: 5
+- name: TechCrunch Robotics
+  url: https://techcrunch.com/category/robotics/
+  feed_url: https://techcrunch.com/category/robotics/feed/
+  tier: 1
+  category: robotics
+  subreddit: robotics
+  delay_seconds: 1
+  max_articles: 5
+- name: China & Global Humanoids
+  url: https://news.google.com
+  feed_url: https://news.google.com/rss/search?q=China+humanoid+robot+OR+Unitree+OR+robotics+breakthrough
+  tier: 1
+  category: robotics
+  subreddit: robotics
+  delay_seconds: 1
+  max_articles: 5
+- name: Humanoids & Physical AI
+  url: https://news.google.com
+  feed_url: https://news.google.com/rss/search?q=humanoid+robot+OR+boston+dynamics+OR+unitree+OR+figure+ai
+  tier: 1
+  category: robotics
+  subreddit: robotics
+  delay_seconds: 1
+  max_articles: 5
+- name: DroneDJ
+  url: https://dronedj.com
+  feed_url: https://dronedj.com/feed/
+  tier: 1
+  category: robotics
+  subreddit: drones
+  delay_seconds: 1
+  max_articles: 5
+- name: DroneLife
+  url: https://dronelife.com
+  feed_url: https://dronelife.com/feed/
+  tier: 1
+  category: robotics
+  subreddit: drones
+  delay_seconds: 1
+  max_articles: 5
+- name: Robotics Business Review
+  url: https://news.google.com
+  feed_url: https://news.google.com/rss/search?q=site:therobotreport.com+OR+site:robotics247.com
+  tier: 1
+  category: robotics
+  subreddit: robotics
+  delay_seconds: 1
+  max_articles: 5
+- name: Automated Logistics & Robots
+  url: https://news.google.com
+  feed_url: https://news.google.com/rss/search?q=industrial+robotics+OR+autonomous+mobile+robots
+  tier: 1
+  category: robotics
+  subreddit: robotics
+  delay_seconds: 1
+  max_articles: 5
+- name: TechCrunch Startups
+  url: https://techcrunch.com/category/startups/
+  feed_url: https://techcrunch.com/category/startups/feed/
+  tier: 1
+  category: startups-vc
+  subreddit: startups
+  delay_seconds: 1
+  max_articles: 5
+- name: TechCrunch Venture
+  url: https://techcrunch.com/category/venture/
+  feed_url: https://techcrunch.com/category/venture/feed/
+  tier: 1
+  category: startups-vc
+  subreddit: venturecapital
+  delay_seconds: 1
+  max_articles: 5
+- name: VentureBeat VC
+  url: https://venturebeat.com/category/business/
+  feed_url: https://venturebeat.com/category/business/feed/
+  tier: 1
+  category: startups-vc
+  subreddit: venturecapital
+  delay_seconds: 1
+  max_articles: 5
+- name: Sifted EU Startups
+  url: https://sifted.eu
+  feed_url: https://sifted.eu/feed
+  tier: 1
+  category: startups-vc
+  subreddit: startups
+  delay_seconds: 1
+  max_articles: 5
+- name: Crunchbase News
+  url: https://news.crunchbase.com
+  feed_url: https://news.crunchbase.com/feed/
+  tier: 1
+  category: startups-vc
+  subreddit: venturecapital
+  delay_seconds: 1
+  max_articles: 5
+- name: SiliconANGLE Cloud & VC
+  url: https://siliconangle.com
+  feed_url: https://siliconangle.com/feed/
+  tier: 1
+  category: startups-vc
+  subreddit: startups
+  delay_seconds: 1
+  max_articles: 5
+- name: PitchBook News
+  url: https://pitchbook.com/news
+  feed_url: https://news.google.com/rss/search?q=site:pitchbook.com/news
+  tier: 1
+  category: startups-vc
+  subreddit: venturecapital
+  delay_seconds: 1
+  max_articles: 5
+- name: AlleyWatch NYC Startups
+  url: https://alleywatch.com
+  feed_url: https://alleywatch.com/feed/
+  tier: 1
+  category: startups-vc
+  subreddit: startups
+  delay_seconds: 1
+  max_articles: 5
+- name: Y Combinator Blog
+  url: https://blog.ycombinator.com
+  feed_url: https://blog.ycombinator.com/feed/
+  tier: 1
+  category: startups-vc
+  subreddit: ycombinator
+  delay_seconds: 1
+  max_articles: 5
+- name: StrictlyVC
+  url: https://strictlyvc.com
+  feed_url: https://news.google.com/rss/search?q=site:strictlyvc.com
+  tier: 1
+  category: startups-vc
+  subreddit: venturecapital
+  delay_seconds: 1
+  max_articles: 5
+- name: Tom's Hardware
+  url: https://www.tomshardware.com
+  feed_url: https://www.tomshardware.com/feeds/all
+  tier: 1
+  category: gadgets-hardware
+  subreddit: hardware
+  delay_seconds: 1
+  max_articles: 5
+- name: 9to5Mac
+  url: https://9to5mac.com
+  feed_url: https://9to5mac.com/feed/
+  tier: 1
+  category: gadgets-hardware
+  subreddit: apple
+  delay_seconds: 1
+  max_articles: 5
+- name: 9to5Google
+  url: https://9to5google.com
+  feed_url: https://9to5google.com/feed/
+  tier: 1
+  category: gadgets-hardware
+  subreddit: google
+  delay_seconds: 1
+  max_articles: 5
+- name: Android Central
+  url: https://www.androidcentral.com
+  feed_url: https://www.androidcentral.com/feeds/all
+  tier: 1
+  category: gadgets-hardware
+  subreddit: Android
+  delay_seconds: 1
+  max_articles: 5
+- name: MacRumors
+  url: https://www.macrumors.com
+  feed_url: https://www.macrumors.com/macrumors.xml
+  tier: 1
+  category: gadgets-hardware
+  subreddit: apple
+  delay_seconds: 1
+  max_articles: 5
+- name: XDA Developers
+  url: https://www.xda-developers.com
+  feed_url: https://www.xda-developers.com/feed/
+  tier: 1
+  category: gadgets-hardware
+  subreddit: hardware
+  delay_seconds: 1
+  max_articles: 5
+- name: PC Gamer Hardware
+  url: https://www.pcgamer.com
+  feed_url: https://www.pcgamer.com/rss/
+  tier: 1
+  category: gadgets-hardware
+  subreddit: buildapc
+  delay_seconds: 1
+  max_articles: 5
+- name: Digital Trends
+  url: https://www.digitaltrends.com
+  feed_url: https://www.digitaltrends.com/computing/feed/
+  tier: 1
+  category: gadgets-hardware
+  subreddit: gadgets
+  delay_seconds: 1
+  max_articles: 5
+- name: Engadget Hardware
+  url: https://www.engadget.com
+  feed_url: https://www.engadget.com/rss.xml
+  tier: 1
+  category: gadgets-hardware
+  subreddit: gadgets
+  delay_seconds: 1
+  max_articles: 5
+- name: SemiAnalysis / Chips
+  url: https://news.google.com
+  feed_url: https://news.google.com/rss/search?q=semiconductor+chips+TSMC+Nvidia+Intel
+  tier: 1
+  category: gadgets-hardware
+  subreddit: hardware
+  delay_seconds: 1
+  max_articles: 5
+- name: The Hacker News
+  url: https://thehackernews.com
+  feed_url: https://feeds.feedburner.com/TheHackersNews
+  tier: 1
+  category: cybersecurity
+  subreddit: netsec
+  delay_seconds: 1
+  max_articles: 5
+- name: BleepingComputer
+  url: https://www.bleepingcomputer.com
+  feed_url: https://www.bleepingcomputer.com/feed/
+  tier: 1
+  category: cybersecurity
+  subreddit: cybersecurity
+  delay_seconds: 1
+  max_articles: 5
+- name: Krebs on Security
+  url: https://krebsonsecurity.com
+  feed_url: https://krebsonsecurity.com/feed/
+  tier: 1
+  category: cybersecurity
+  subreddit: netsec
+  delay_seconds: 1
+  max_articles: 5
+- name: Dark Reading
+  url: https://www.darkreading.com
+  feed_url: https://www.darkreading.com/rss.xml
+  tier: 1
+  category: cybersecurity
+  subreddit: cybersecurity
+  delay_seconds: 1
+  max_articles: 5
+- name: SecurityWeek
+  url: https://www.securityweek.com
+  feed_url: https://feeds.feedburner.com/securityweek
+  tier: 1
+  category: cybersecurity
+  subreddit: netsec
+  delay_seconds: 1
+  max_articles: 5
+- name: Cybersecurity Dive
+  url: https://www.cybersecuritydive.com
+  feed_url: https://www.cybersecuritydive.com/feeds/news/
+  tier: 1
+  category: cybersecurity
+  subreddit: cybersecurity
+  delay_seconds: 1
+  max_articles: 5
+- name: Schneier on Security
+  url: https://www.schneier.com
+  feed_url: https://www.schneier.com/blog/atom.xml
+  tier: 1
+  category: cybersecurity
+  subreddit: crypto
+  delay_seconds: 1
+  max_articles: 5
+- name: Help Net Security
+  url: https://www.helpnetsecurity.com
+  feed_url: https://www.helpnetsecurity.com/feed/
+  tier: 1
+  category: cybersecurity
+  subreddit: netsec
+  delay_seconds: 1
+  max_articles: 5
+- name: The Register Security
+  url: https://www.theregister.com/security
+  feed_url: https://news.google.com/rss/search?q=site:theregister.com/security
+  tier: 1
+  category: cybersecurity
+  subreddit: netsec
+  delay_seconds: 1
+  max_articles: 5
+- name: Wired Security
+  url: https://www.wired.com/category/security/
+  feed_url: https://www.wired.com/feed/category/security/latest/rss
+  tier: 1
+  category: cybersecurity
+  subreddit: netsec
+  delay_seconds: 1
   max_articles: 5
 - name: Ars Technica
   url: https://arstechnica.com
@@ -21,38 +485,22 @@ sources:
   tier: 1
   category: tech
   subreddit: technology
-  delay_seconds: 2
+  delay_seconds: 1
   max_articles: 5
-- name: Wired
+- name: Wired Tech
   url: https://www.wired.com
   feed_url: https://www.wired.com/feed/rss
   tier: 1
   category: tech
   subreddit: technology
-  delay_seconds: 2
+  delay_seconds: 1
   max_articles: 5
-- name: BBC News Tech
+- name: BBC News Technology
   url: https://www.bbc.com/news/technology
   feed_url: https://feeds.bbci.co.uk/news/technology/rss.xml
   tier: 1
   category: tech
   subreddit: technews
-  delay_seconds: 2
-  max_articles: 5
-- name: Reuters Tech
-  url: https://www.reuters.com/technology/
-  feed_url: https://news.google.com/rss/search?q=site:reuters.com/technology
-  tier: 1
-  category: tech
-  subreddit: technews
-  delay_seconds: 2
-  max_articles: 5
-- name: Hacker News
-  url: https://news.ycombinator.com
-  feed_url: https://hnrss.org/frontpage
-  tier: 1
-  category: tech
-  subreddit: programming
   delay_seconds: 1
   max_articles: 5
 - name: MIT Technology Review
@@ -61,23 +509,39 @@ sources:
   tier: 1
   category: tech
   subreddit: Futurology
-  delay_seconds: 2
+  delay_seconds: 1
   max_articles: 5
-- name: The Guardian Tech
-  url: https://www.theguardian.com/technology
-  feed_url: https://www.theguardian.com/uk/technology/rss
+- name: The Verge
+  url: https://www.theverge.com
+  feed_url: https://www.theverge.com/rss/index.xml
   tier: 1
   category: tech
   subreddit: technology
-  delay_seconds: 2
+  delay_seconds: 1
   max_articles: 5
-- name: Engadget
-  url: https://www.engadget.com
-  feed_url: https://www.engadget.com/rss.xml
+- name: Reuters Technology
+  url: https://www.reuters.com/technology/
+  feed_url: https://news.google.com/rss/search?q=site:reuters.com/technology
   tier: 1
   category: tech
-  subreddit: gadgets
-  delay_seconds: 2
+  subreddit: technews
+  delay_seconds: 1
+  max_articles: 5
+- name: Bloomberg Technology
+  url: https://www.bloomberg.com/technology
+  feed_url: https://news.google.com/rss/search?q=site:bloomberg.com/technology
+  tier: 1
+  category: tech
+  subreddit: business
+  delay_seconds: 1
+  max_articles: 5
+- name: CNBC Tech
+  url: https://www.cnbc.com/technology/
+  feed_url: https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=19854910
+  tier: 1
+  category: tech
+  subreddit: business
+  delay_seconds: 1
   max_articles: 5
 - name: ZDNet
   url: https://www.zdnet.com
@@ -85,45 +549,13 @@ sources:
   tier: 1
   category: tech
   subreddit: technology
-  delay_seconds: 2
+  delay_seconds: 1
   max_articles: 5
-- name: VentureBeat
-  url: https://venturebeat.com
-  feed_url: https://news.google.com/rss/search?q=site:venturebeat.com
+- name: The Guardian Tech
+  url: https://www.theguardian.com/technology
+  feed_url: https://www.theguardian.com/uk/technology/rss
   tier: 1
   category: tech
   subreddit: technology
-  delay_seconds: 2
-  max_articles: 5
-- name: CNBC Tech
-  url: https://www.cnbc.com/technology/
-  feed_url: https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=19854910
-  tier: 1
-  category: business
-  subreddit: business
-  delay_seconds: 2
-  max_articles: 5
-- name: TechRadar
-  url: https://www.techradar.com
-  feed_url: https://www.techradar.com/rss
-  tier: 1
-  category: tech
-  subreddit: gadgets
-  delay_seconds: 2
-  max_articles: 5
-- name: 9to5Google
-  url: https://9to5google.com
-  feed_url: https://9to5google.com/feed/
-  tier: 1
-  category: tech
-  subreddit: Android
-  delay_seconds: 2
-  max_articles: 5
-- name: Bloomberg Tech
-  url: https://www.bloomberg.com/technology
-  feed_url: https://news.google.com/rss/search?q=site:bloomberg.com/technology
-  tier: 1
-  category: business
-  subreddit: business
-  delay_seconds: 2
+  delay_seconds: 1
   max_articles: 5
