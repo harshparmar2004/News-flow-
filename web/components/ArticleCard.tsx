@@ -51,12 +51,23 @@ export function ArticleCard({ article, priority = false }: ArticleCardProps) {
     }
   }, [imgSrc]);
 
+  const recordArticleClick = () => {
+    try {
+      sessionStorage.setItem("todays_news_last_clicked_slug", article.slug);
+      sessionStorage.setItem("todays_news_scroll", window.scrollY.toString());
+    } catch (e) {}
+  };
+
   return (
-    <article className="group flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-300 hover:border-[#C96442]/60 hover:shadow-lg hover:shadow-[#C96442]/5 hover:-translate-y-0.5 active:scale-[0.985] active:translate-y-0 active:border-[#C96442]/40 transform-gpu">
+    <article
+      id={`article-card-${article.slug}`}
+      className="group flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-300 hover:border-[#C96442]/60 hover:shadow-lg hover:shadow-[#C96442]/5 hover:-translate-y-0.5 active:scale-[0.985] active:translate-y-0 active:border-[#C96442]/40 transform-gpu scroll-mt-24"
+    >
       {/* Cover Image Thumbnail */}
       <Link
         href={`/article/${article.slug}`}
         prefetch={true}
+        onClick={recordArticleClick}
         className="block relative w-full aspect-16/9 sm:aspect-16/10 max-h-56 sm:max-h-72 overflow-hidden bg-[#FAF7F0] dark:bg-[#252422]"
       >
         {/* Subtle Skeleton Shimmer while loading */}
@@ -115,7 +126,7 @@ export function ArticleCard({ article, priority = false }: ArticleCardProps) {
 
           {/* Headline */}
           <h2 className="font-serif text-base sm:text-lg font-bold leading-snug text-[#1F1E1D] dark:text-[#F5F2EB] group-hover:text-[#C96442] transition-colors line-clamp-2">
-            <Link href={`/article/${article.slug}`}>
+            <Link href={`/article/${article.slug}`} onClick={recordArticleClick}>
               {article.title}
             </Link>
           </h2>

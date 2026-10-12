@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { Clock, ChevronDown, ChevronUp } from "lucide-react";
 import { ArticleCard } from "@/components/ArticleCard";
@@ -31,6 +31,7 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
   const { isAdFree } = useAdPreferences();
   const [selectedBeat, setSelectedBeat] = useState<string>("all");
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
   // 1. Strictly sort articles newest published first
   const sortedArticles = useMemo(() => {
@@ -66,9 +67,83 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
     return sortedArticles.filter((a) => a.category?.slug === selectedBeat);
   }, [sortedArticles, selectedBeat]);
 
+  // 4. Restore user's expansion state and active beat from session storage
+  useEffect(() => {
+    setIsHydrated(true);
+    try {
+      const savedExpanded = sessionStorage.getItem("todays_news_expanded");
+      const savedBeat = sessionStorage.getItem("todays_news_beat");
+
+      if (savedBeat && beatCategories.some((c) => c.slug === savedBeat)) {
+        setSelectedBeat(savedBeat);
+      }
+
+      if (savedExpanded === "true") {
+        setIsExpanded(true);
+      }
+    } catch (e) {}
+  }, [beatCategories]);
+
+  // 5. Restore scroll position / center on last clicked article upon returning from article view
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    try {
+      const lastSlug = sessionStorage.getItem("todays_news_last_clicked_slug");
+      const savedScroll = sessionStorage.getItem("todays_news_scroll");
+
+      if (lastSlug || savedScroll) {
+        const timer = setTimeout(() => {
+          if (lastSlug) {
+            const el = document.getElementById(`article-card-${lastSlug}`);
+            if (el) {
+              el.scrollIntoView({ behavior: "instant", block: "center" });
+              sessionStorage.removeItem("todays_news_last_clicked_slug");
+              sessionStorage.removeItem("todays_news_scroll");
+              return;
+            }
+          }
+          if (savedScroll) {
+            const y = parseInt(savedScroll, 10);
+            if (!isNaN(y) && y > 0) {
+              window.scrollTo({ top: y, behavior: "instant" });
+              sessionStorage.removeItem("todays_news_scroll");
+            }
+          }
+        }, 120);
+
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {}
+  }, [isHydrated, isExpanded, filteredArticles.length]);
+
+  const handleSelectBeat = (slug: string) => {
+    setSelectedBeat(slug);
+    try {
+      sessionStorage.setItem("todays_news_beat", slug);
+    } catch (e) {}
+  };
+
+  const handleExpand = () => {
+    setIsExpanded(true);
+    try {
+      sessionStorage.setItem("todays_news_expanded", "true");
+    } catch (e) {}
+  };
+
+  const handleCollapse = () => {
+    setIsExpanded(false);
+    try {
+      sessionStorage.setItem("todays_news_expanded", "false");
+      sessionStorage.removeItem("todays_news_last_clicked_slug");
+      sessionStorage.removeItem("todays_news_scroll");
+    } catch (e) {}
+    document.getElementById("todays-news")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   if (sortedArticles.length === 0) return null;
 
-  // 4. Initial visible items (6 when ad-free = 2 rows of 3; 4 when ads on = 2 rows of 2)
+  // Initial visible items (6 when ad-free = 2 rows of 3; 4 when ads on = 2 rows of 2)
   const initialCount = isAdFree ? 6 : 4;
   const hasMore = filteredArticles.length > initialCount;
   const displayedArticles = isExpanded ? filteredArticles : filteredArticles.slice(0, initialCount);
@@ -104,9 +179,7 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
         <div className="flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar py-0.5 text-xs font-mono">
           <button
             type="button"
-            onClick={() => {
-              setSelectedBeat("all");
-            }}
+            onClick={() => handleSelectBeat("all")}
             className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-medium transition-all shrink-0 cursor-pointer active:scale-95 ${
               selectedBeat === "all"
                 ? "bg-[#1F1E1D] dark:bg-[#F5F2EB] text-white dark:text-[#1F1E1D] shadow-xs"
@@ -123,9 +196,7 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
               <button
                 key={cat.slug}
                 type="button"
-                onClick={() => {
-                  setSelectedBeat(cat.slug);
-                }}
+                onClick={() => handleSelectBeat(cat.slug)}
                 className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-medium transition-all shrink-0 cursor-pointer active:scale-95 ${
                   isSelected
                     ? "bg-[#C96442] text-white shadow-xs"
@@ -169,7 +240,7 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
           {!isExpanded ? (
             <button
               type="button"
-              onClick={() => setIsExpanded(true)}
+              onClick={handleExpand}
               className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl font-medium bg-white dark:bg-[#252422] hover:bg-[#FAF7F0] dark:hover:bg-[#2E2C29] text-[#1F1E1D] dark:text-[#F5F2EB] border border-[#E6DFD3] dark:border-[#383530] shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
             >
               <span>Show all {filteredArticles.length} stories from today</span>
@@ -181,10 +252,7 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
           ) : (
             <button
               type="button"
-              onClick={() => {
-                setIsExpanded(false);
-                document.getElementById("todays-news")?.scrollIntoView({ behavior: "smooth" });
-              }}
+              onClick={handleCollapse}
               className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl text-[#8E8B82] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB] bg-white/50 dark:bg-[#252422]/50 hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530] transition-colors cursor-pointer"
             >
               <span>Show fewer stories</span>

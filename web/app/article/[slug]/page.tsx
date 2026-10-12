@@ -15,6 +15,7 @@ import { SocialShareBar } from "@/components/SocialShareBar";
 import { JsonLd } from "@/components/JsonLd";
 import { ArticleCard } from "@/components/ArticleCard";
 import { ReadingProgressBar } from "@/components/ReadingProgressBar";
+import { ArticleBackButton } from "@/components/ArticleBackButton";
 import { Clock, ExternalLink, ShieldCheck, ChevronRight, ArrowLeft } from "lucide-react";
 
 export const revalidate = 60;
@@ -134,10 +135,7 @@ export default async function ArticlePage({ params }: PageProps) {
           {/* Breadcrumb Navigation & Return to Feed */}
           <nav className="flex items-center justify-between text-xs text-[#8E8B82] dark:text-[#A8A59D] pb-3 sm:pb-4 border-b border-[#EBE8DF] dark:border-[#33322E]">
             <div className="flex items-center space-x-1.5 sm:space-x-2 truncate mr-2">
-              <Link href="/" className="hover:text-[#C96442] transition-colors flex items-center gap-1 font-medium shrink-0">
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Home</span>
-              </Link>
+              <ArticleBackButton />
               <ChevronRight className="w-3 h-3 text-[#B0ACA2] shrink-0" />
               <Link
                 href={`/category/${article.category.slug}`}
