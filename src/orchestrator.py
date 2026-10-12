@@ -184,34 +184,44 @@ def stage_scrape(sources: list[dict], max_articles: int | None = None) -> int:
     return total_new
 
 
-def stage_rank(max_articles: int | None = None) -> int:
-    """Stage 2: AI Agent News Ranking & Scoring (1-100)."""
+def stage_rank(max_articles: int | None = 60) -> int:
+    """Stage 2: AI Agent News Ranking & Scoring (1-100) using multi-threaded JEV / Groq evaluation."""
     logger.info("=" * 60)
     logger.info("STAGE 2: AI AGENT NEWS RANKING & FILTERING (1-100)")
     logger.info("=" * 60)
 
     from src.ai.ranker import rank_article
+    from concurrent.futures import ThreadPoolExecutor, as_completed
 
     with get_session() as session:
-        articles = session.query(Article).all()
-        article_ids = [a.id for a in articles]
+        q = session.query(Article).order_by(Article.scraped_at.desc())
+        if max_articles is not None:
+            q = q.limit(max_articles)
+        article_ids = [a.id for a in q.all()]
 
-    if max_articles is not None:
-        article_ids = article_ids[:max_articles]
+    if not article_ids:
+        return 0
 
-    logger.info(f"Ranking {len(article_ids)} articles using AI Ranking Prompt...")
+    logger.info(f"Ranking {len(article_ids)} articles using TypeSafe JEV & Groq AI...")
     ranked_count = 0
+    rank_workers = min(8, len(article_ids))
 
-    for aid in article_ids:
+    def _rank_worker(aid):
         if is_abort_requested():
-            logger.warning("Stage 2 AI Ranking aborted by user.")
-            break
-
+            return aid, False
         try:
-            if rank_article(aid):
-                ranked_count += 1
+            ok = rank_article(aid)
+            return aid, ok
         except Exception as e:
             logger.error(f"Failed to rank article #{aid}: {e}")
+            return aid, False
+
+    with ThreadPoolExecutor(max_workers=rank_workers) as executor:
+        futures = [executor.submit(_rank_worker, aid) for aid in article_ids]
+        for f in as_completed(futures):
+            aid, ok = f.result()
+            if ok:
+                ranked_count += 1
 
     logger.info(f"Stage 2 complete: {ranked_count}/{len(article_ids)} articles ranked with scores 1-100")
     return ranked_count
@@ -321,11 +331,17 @@ def run_pipeline(max_articles: int | None = None):
     # Stage 1: Scrape all sources
     new_articles = stage_scrape(sources, max_articles)
 
-    # Stage 2: Authentic photos for articles missing one (prioritizing new items)
+    # Stage 2: AI Agent News Ranking & Filtering (TypeSafe JEV & Groq Llama 3.3)
+    try:
+        stage_rank(max_articles=60)
+    except Exception as rank_ex:
+        logger.warning(f"⚠️ AI Ranking warning: {rank_ex}")
+
+    # Stage 3: Authentic photos for articles missing one (prioritizing new items)
     photo_limit = max_articles or max(12, (new_articles or 0) * 2)
     images = stage_sync_scraped_images(limit=photo_limit)
 
-    # Stage 3: Publish ALL scraped articles line-by-line to NewsFlow Web (no ranking gate)
+    # Stage 4: Publish top-ranked articles line-by-line to NewsFlow Web
     web_published_count = 0
     auto_pub = os.getenv("AUTO_PUBLISH_TO_WEB", "true").strip().lower() in ("1", "true", "yes", "on")
     default_web_status = os.getenv("DEFAULT_WEB_STATUS", "published").strip() or "published"

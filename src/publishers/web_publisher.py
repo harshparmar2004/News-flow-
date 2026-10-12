@@ -415,7 +415,8 @@ def publish_all_scraped(limit: int = None, skip_posted: bool = True, status: str
         q = session.query(Article)
         if skip_posted:
             q = q.filter(Article.web_posted == False)
-        q = q.order_by(Article.scraped_at.desc())
+        # Prioritize highest AI rank score (90-100) first, then freshest scraped
+        q = q.order_by(Article.rank_score.desc(), Article.scraped_at.desc())
         if limit:
             q = q.limit(limit)
         article_ids = [a.id for a in q.all()]
