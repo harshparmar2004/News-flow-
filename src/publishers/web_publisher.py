@@ -365,12 +365,17 @@ def publish_to_web(article_id: int, status: str = "draft") -> Dict[str, Any]:
         else:
             cover_img = optimize_cover_image_url(cover_img)
 
-        # Preserve authentic publication timestamp from source (preventing timeline batch flooding)
-        pub_dt = getattr(article, "published_at", None) or getattr(article, "scraped_at", None) or datetime.utcnow()
+        # Freshness guarantee: Use authentic source date if within the last 24h,
+        # otherwise use current time so the article appears in Today's News and top of feed.
+        now_utc = datetime.utcnow()
+        pub_dt = getattr(article, "published_at", None) or getattr(article, "scraped_at", None) or now_utc
         if isinstance(pub_dt, datetime):
+            age_secs = (now_utc - pub_dt).total_seconds()
+            if age_secs > 86400 or age_secs < -3600:
+                pub_dt = now_utc
             pub_iso = pub_dt.isoformat() + ("Z" if not pub_dt.tzinfo else "")
         else:
-            pub_iso = str(pub_dt)
+            pub_iso = now_utc.isoformat() + "Z"
 
         source_brand = getattr(article, "source", None) or "NewsFlow AI"
         payload = {

@@ -297,13 +297,19 @@ export async function POST(req: NextRequest) {
       slug = `${slug}-${Date.now().toString(36)}`;
     }
 
-    // Preserve authentic source publication timestamp
+    // Preserve authentic source publication timestamp if within 24 hours,
+    // otherwise default to now so newly ingested news appears in Today's News and top of feed.
     const now = new Date();
     let publishedAt = now;
     if (body.published_at) {
       const parsed = new Date(body.published_at);
       if (!isNaN(parsed.getTime())) {
-        publishedAt = parsed;
+        const ageMs = now.getTime() - parsed.getTime();
+        if (ageMs >= 0 && ageMs <= 24 * 60 * 60 * 1000) {
+          publishedAt = parsed;
+        } else {
+          publishedAt = now;
+        }
       }
     }
 

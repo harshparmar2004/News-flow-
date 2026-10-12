@@ -328,12 +328,14 @@ def run_pipeline(max_articles: int | None = None):
     # Stage 3: Publish ALL scraped articles line-by-line to NewsFlow Web (no ranking gate)
     web_published_count = 0
     auto_pub = os.getenv("AUTO_PUBLISH_TO_WEB", "true").strip().lower() in ("1", "true", "yes", "on")
-    default_web_status = os.getenv("DEFAULT_WEB_STATUS", "draft").strip() or "draft"
+    default_web_status = os.getenv("DEFAULT_WEB_STATUS", "published").strip() or "published"
 
     if auto_pub:
         try:
             from src.publishers.web_publisher import publish_all_scraped
-            pub_results = publish_all_scraped(limit=max_articles, skip_posted=True, status=default_web_status)
+            # Publish all freshly scraped unposted articles from this run (default up to 50 or unconstrained)
+            pub_limit = int(os.getenv("MAX_PUBLISH_PER_RUN", "50"))
+            pub_results = publish_all_scraped(limit=pub_limit, skip_posted=True, status=default_web_status)
             web_published_count = pub_results.get("published", 0)
             logger.info(f"🌐 [NewsFlow Web] Uploaded {web_published_count} articles to NewsFlow Admin (status={default_web_status})!")
         except Exception as web_ex:
