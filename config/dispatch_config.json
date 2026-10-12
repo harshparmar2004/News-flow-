@@ -19,8 +19,8 @@
     "message": "Connected to NewsFlow Web & Admin Desk (HTTP 200 OK)"
   },
   "stats": {
-    "total_dispatched": 63,
-    "total_images_sent": 48,
+    "total_dispatched": 76,
+    "total_images_sent": 61,
     "total_failed": 1
   },
   "dispatched_articles": {
@@ -2507,6 +2507,336 @@
         "category": "tech",
         "has_photo": true,
         "web_slug": "apples-smart-home-hub-will-reportedly-be-called-homeview"
+      }
+    },
+    "884": {
+      "article_id": 884,
+      "title": "World Bank jobs council urges 'crisis-era' employment support measures as IMF warns of AI \u2018tsunami\u2019",
+      "source": "CNBC Tech",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-12T12:17:53.836597",
+      "web_posted": true,
+      "web_slug": "world-bank-jobs-council-urges-crisis-era-employment-support-measures-as-imf-warns-of-ai-tsunami",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "World Bank jobs council urges 'crisis-era' employment support measures as IMF warns of AI \u2018tsunami\u2019",
+        "domain": "CNBC Tech",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "world-bank-jobs-council-urges-crisis-era-employment-support-measures-as-imf-warns-of-ai-tsunami"
+      }
+    },
+    "883": {
+      "article_id": 883,
+      "title": "Intel, Broadcom CEOs warn capital crunch could become AI's biggest bottleneck",
+      "source": "CNBC Tech",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-12T12:18:00.891000",
+      "web_posted": true,
+      "web_slug": "intel-broadcom-ceos-warn-capital-crunch-could-become-ais-biggest-bottleneck",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Intel, Broadcom CEOs warn capital crunch could become AI's biggest bottleneck",
+        "domain": "CNBC Tech",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "intel-broadcom-ceos-warn-capital-crunch-could-become-ais-biggest-bottleneck"
+      }
+    },
+    "882": {
+      "article_id": 882,
+      "title": "Inside the mini factory where GM builds its EV future",
+      "source": "The Verge",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-12T12:18:05.921659",
+      "web_posted": true,
+      "web_slug": "inside-the-mini-factory-where-gm-builds-its-ev-future",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Inside the mini factory where GM builds its EV future",
+        "domain": "The Verge",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "inside-the-mini-factory-where-gm-builds-its-ev-future"
+      }
+    },
+    "881": {
+      "article_id": 881,
+      "title": "How Apple can win the smart home",
+      "source": "The Verge",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-12T12:18:06.382412",
+      "web_posted": true,
+      "web_slug": "how-apple-can-win-the-smart-home",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "How Apple can win the smart home",
+        "domain": "The Verge",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "how-apple-can-win-the-smart-home"
+      }
+    },
+    "880": {
+      "article_id": 880,
+      "title": "The ecologist revealing the invisible networks that revive rainforests",
+      "source": "MIT Technology Review",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-12T12:18:05.929100",
+      "web_posted": true,
+      "web_slug": "the-ecologist-revealing-the-invisible-networks-that-revive-rainforests",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "The ecologist revealing the invisible networks that revive rainforests",
+        "domain": "MIT Technology Review",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "the-ecologist-revealing-the-invisible-networks-that-revive-rainforests"
+      }
+    },
+    "879": {
+      "article_id": 879,
+      "title": "Mars may be a hellhole, but the moon is not far behind",
+      "source": "MIT Technology Review",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-12T12:18:15.663399",
+      "web_posted": true,
+      "web_slug": "mars-may-be-a-hellhole-but-the-moon-is-not-far-behind",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Mars may be a hellhole, but the moon is not far behind",
+        "domain": "MIT Technology Review",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "mars-may-be-a-hellhole-but-the-moon-is-not-far-behind"
+      }
+    },
+    "878": {
+      "article_id": 878,
+      "title": "The Download: moon city problems and drone traffic controllers",
+      "source": "MIT Technology Review",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-12T12:18:12.042455",
+      "web_posted": true,
+      "web_slug": "the-download-moon-city-problems-and-drone-traffic-controllers",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "The Download: moon city problems and drone traffic controllers",
+        "domain": "MIT Technology Review",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "the-download-moon-city-problems-and-drone-traffic-controllers"
+      }
+    },
+    "877": {
+      "article_id": 877,
+      "title": "AI minister warns 'likely' UK's cyber defences will be breached",
+      "source": "BBC News Technology",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-12T12:18:01.907388",
+      "web_posted": true,
+      "web_slug": "ai-minister-warns-likely-uks-cyber-defences-will-be-breached",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "AI minister warns 'likely' UK's cyber defences will be breached",
+        "domain": "BBC News Technology",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "ai-minister-warns-likely-uks-cyber-defences-will-be-breached"
+      }
+    },
+    "876": {
+      "article_id": 876,
+      "title": "Far-Right Election Groups Are Now Targeting Nursing Homes",
+      "source": "Wired Tech",
+      "category": "tech",
+      "status": "in_queue",
+      "status_code": 0,
+      "latency_ms": 15,
+      "dispatched_at": null,
+      "web_posted": false,
+      "web_slug": null,
+      "web_status": "pending",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Far-Right Election Groups Are Now Targeting Nursing Homes",
+        "domain": "Wired Tech",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": null
+      }
+    },
+    "875": {
+      "article_id": 875,
+      "title": "A New Anti-Aging Drug Looks to Turn Back the Clock on Skin Age",
+      "source": "Wired Tech",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-12T12:18:16.589864",
+      "web_posted": true,
+      "web_slug": "a-new-anti-aging-drug-looks-to-turn-back-the-clock-on-skin-age",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "A New Anti-Aging Drug Looks to Turn Back the Clock on Skin Age",
+        "domain": "Wired Tech",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "a-new-anti-aging-drug-looks-to-turn-back-the-clock-on-skin-age"
+      }
+    },
+    "874": {
+      "article_id": 874,
+      "title": "AlterMe Review: Fitness Built Around My DNA",
+      "source": "Wired Tech",
+      "category": "tech",
+      "status": "in_queue",
+      "status_code": 0,
+      "latency_ms": 12,
+      "dispatched_at": null,
+      "web_posted": false,
+      "web_slug": null,
+      "web_status": "pending",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "AlterMe Review: Fitness Built Around My DNA",
+        "domain": "Wired Tech",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": null
+      }
+    },
+    "873": {
+      "article_id": 873,
+      "title": "How Apple Puts Indigenous Languages on the iPhone Keyboard",
+      "source": "Wired Tech",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-12T12:18:06.457105",
+      "web_posted": true,
+      "web_slug": "how-apple-puts-indigenous-languages-on-the-iphone-keyboard",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "How Apple Puts Indigenous Languages on the iPhone Keyboard",
+        "domain": "Wired Tech",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "how-apple-puts-indigenous-languages-on-the-iphone-keyboard"
+      }
+    },
+    "872": {
+      "article_id": 872,
+      "title": "Let\u2019s Encrypt TLS certificate lifetimes to drop from 90 to 64 days starting February 2027",
+      "source": "Help Net Security",
+      "category": "cybersecurity",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-12T12:18:13.838456",
+      "web_posted": true,
+      "web_slug": "lets-encrypt-tls-certificate-lifetimes-to-drop-from-90-to-64-days-starting-february-2027",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Let\u2019s Encrypt TLS certificate lifetimes to drop from 90 to 64 days starting February 2027",
+        "domain": "Help Net Security",
+        "category": "cybersecurity",
+        "has_photo": true,
+        "web_slug": "lets-encrypt-tls-certificate-lifetimes-to-drop-from-90-to-64-days-starting-february-2027"
+      }
+    },
+    "871": {
+      "article_id": 871,
+      "title": "Windows PCs missing key updates could lose security fixes in 2027",
+      "source": "Help Net Security",
+      "category": "cybersecurity",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-12T12:18:07.305148",
+      "web_posted": true,
+      "web_slug": "windows-pcs-missing-key-updates-could-lose-security-fixes-in-2027",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Windows PCs missing key updates could lose security fixes in 2027",
+        "domain": "Help Net Security",
+        "category": "cybersecurity",
+        "has_photo": true,
+        "web_slug": "windows-pcs-missing-key-updates-could-lose-security-fixes-in-2027"
+      }
+    },
+    "870": {
+      "article_id": 870,
+      "title": "Hidden implant in Ledger hardware wallets linked to $93M theft",
+      "source": "Help Net Security",
+      "category": "cybersecurity",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-12T12:17:53.617411",
+      "web_posted": true,
+      "web_slug": "hidden-implant-in-ledger-hardware-wallets-linked-to-dollar93m-theft",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Hidden implant in Ledger hardware wallets linked to $93M theft",
+        "domain": "Help Net Security",
+        "category": "cybersecurity",
+        "has_photo": true,
+        "web_slug": "hidden-implant-in-ledger-hardware-wallets-linked-to-dollar93m-theft"
       }
     }
   }

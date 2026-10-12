@@ -23,7 +23,8 @@ export function generateSlug(title: string): string {
     strict: true,
     remove: /[*+~.()'"!:@]/g,
   });
-  return base || `article-${Date.now()}`;
+  const trimmed = base.slice(0, 70).replace(/-+$/, "");
+  return trimmed || `article-${Date.now()}`;
 }
 
 export function calculateReadingTime(text: string): number {
