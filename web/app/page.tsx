@@ -87,7 +87,7 @@ export default async function HomePage() {
       </div>
 
       {/* 2. Middle Main Content: Natural document flow */}
-      <main className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 lg:pb-12">
+      <main className="flex-1 min-w-0 px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-6 pb-24 lg:pb-12">
         <HomeFeedClient
           todaysArticles={finalTodaysArticles}
           recentArticles={recentArticles}

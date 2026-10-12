@@ -102,9 +102,9 @@ export function CategoryFeedClient({ category }: CategoryFeedClientProps) {
   }, [category.articles, activeFilter]);
 
   return (
-    <div className="space-y-6">
-      {/* Breadcrumb Navigation */}
-      <nav className="flex items-center space-x-2 text-xs text-[#8E8B82] dark:text-[#A8A59D]">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Breadcrumb Navigation (Desktop only) */}
+      <nav className="hidden sm:flex items-center space-x-2 text-xs text-[#8E8B82] dark:text-[#A8A59D]">
         <Link href="/" className="hover:text-[#C96442] transition-colors">
           Home
         </Link>

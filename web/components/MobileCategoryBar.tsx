@@ -45,7 +45,7 @@ export function MobileCategoryBar() {
       aria-label="Mobile Category Navigation"
       className="sticky top-14 sm:top-16 z-30 lg:hidden w-full bg-[#FBF9F5]/95 dark:bg-[#181816]/95 backdrop-blur-md border-b border-[#EBE8DF] dark:border-[#282724] transition-colors duration-200"
     >
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar px-3.5 py-2.5">
+      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-3 py-2">
         {CATEGORY_PILLS.map((pill) => {
           const isActive =
             pill.slug === ""
@@ -58,14 +58,14 @@ export function MobileCategoryBar() {
             <Link
               key={pill.href}
               href={pill.href}
-              className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all active:scale-95 ${
+              className={`shrink-0 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all active:scale-95 ${
                 isActive
                   ? "bg-[#C96442] text-white shadow-xs font-semibold"
                   : "bg-white dark:bg-[#201F1D] text-[#686660] dark:text-[#A8A59D] border border-[#EBE8DF] dark:border-[#2C2A26] hover:border-[#C96442]/60 hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB]"
               }`}
             >
               <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-[#C96442]"}`} />
-              <span className="whitespace-nowrap">{pill.name}</span>
+              <span className="whitespace-nowrap">{pill.shortName || pill.name}</span>
             </Link>
           );
         })}

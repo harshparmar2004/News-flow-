@@ -118,9 +118,9 @@ export function HomeFeedClient({ todaysArticles, recentArticles, categorySection
   const displayedRecent = isAdFree ? sortedRecent.slice(0, 6) : sortedRecent.slice(0, 4);
 
   return (
-    <div className="space-y-8">
-      {/* Breadcrumb */}
-      <nav className="flex items-center space-x-2 text-xs text-[#8E8B82] dark:text-[#A8A59D]">
+    <div className="space-y-5 sm:space-y-8">
+      {/* Breadcrumb (Desktop only) */}
+      <nav className="hidden sm:flex items-center space-x-2 text-xs text-[#8E8B82] dark:text-[#A8A59D]">
         <Link href="/" className="hover:text-[#C96442] transition-colors">
           Home
         </Link>
@@ -130,36 +130,66 @@ export function HomeFeedClient({ todaysArticles, recentArticles, categorySection
         </span>
       </nav>
 
-      {/* Enhanced Desk Header Banner with interactive Latest / Top today / Most read controls */}
+      {/* Enhanced Desk Header Banner (Desktop editorial card) */}
       <CategoryDeskBanner
         title="All Intelligence"
         description="Autonomous AI-synthesized news desk aggregating breakthrough stories from 50+ global sources 24/7."
         slug="tech"
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
+        showFilters={false}
       />
 
       {/* Dedicated Today's News Feature spotlight */}
       <TodaysNewsFeature articles={(todaysArticles && todaysArticles.length > 0 ? todaysArticles : recentArticles) as any} />
 
       {/* Section: Recent Intelligence */}
-      <section className="space-y-4 pt-2">
+      <section className="space-y-3 sm:space-y-4 pt-1 sm:pt-2">
         {/* Section Bar - Clean, properly sized, spans width */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-[#EBE8DF] dark:border-[#262522] w-full text-xs font-mono gap-1.5 sm:gap-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-[#EBE8DF] dark:border-[#262522] w-full text-xs font-mono gap-2 sm:gap-0">
           <div className="flex items-center space-x-2">
             <span className="w-2 h-2 rounded-full bg-[#C96442] shrink-0" />
             <h2 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
               Recent Dispatches
             </h2>
-            <span className="text-[10px] sm:text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#C96442]/10 text-[#C96442] ml-1 shrink-0">
-              {activeFilter === "latest" && "Latest First"}
-              {activeFilter === "top" && "Top Today"}
-              {activeFilter === "most_read" && "Most Read"}
-            </span>
           </div>
-          <span className="hidden sm:inline text-[#8E8B82] dark:text-[#78756E]">
-            {isAdFree ? "3-story expanded view" : "2-story view with ads"}
-          </span>
+
+          {/* Segmented Filter Control: Latest | Top today | Most read */}
+          <div className="inline-flex items-center p-0.5 sm:p-1 rounded-xl bg-white dark:bg-[#1E1D1B] border border-[#EBE8DF] dark:border-[#2C2A26] shadow-2xs self-start sm:self-auto text-xs font-mono">
+            <button
+              type="button"
+              onClick={() => setActiveFilter("latest")}
+              className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                activeFilter === "latest"
+                  ? "bg-[#1F1E1D] dark:bg-[#F5F2EB] text-white dark:text-[#1F1E1D] shadow-xs font-semibold"
+                  : "text-[#8E8B82] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB]"
+              }`}
+            >
+              Latest
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilter("top")}
+              className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                activeFilter === "top"
+                  ? "bg-[#1F1E1D] dark:bg-[#F5F2EB] text-white dark:text-[#1F1E1D] shadow-xs font-semibold"
+                  : "text-[#8E8B82] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB]"
+              }`}
+            >
+              Top today
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilter("most_read")}
+              className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                activeFilter === "most_read"
+                  ? "bg-[#1F1E1D] dark:bg-[#F5F2EB] text-white dark:text-[#1F1E1D] shadow-xs font-semibold"
+                  : "text-[#8E8B82] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB]"
+              }`}
+            >
+              Most read
+            </button>
+          </div>
         </div>
 
         {/* Dynamic Grid: 3 news slide boxes when ads off; 2 news boxes next to ads when ads on */}

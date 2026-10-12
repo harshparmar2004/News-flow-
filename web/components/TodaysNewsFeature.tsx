@@ -76,50 +76,45 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
   return (
     <section
       id="todays-news"
-      className="relative rounded-3xl p-4 sm:p-6 bg-gradient-to-br from-[#FAF7F0] via-white to-[#F5EFE6] dark:from-[#1D1C1A] dark:via-[#181715] dark:to-[#22201D] border border-[#E6DFD3] dark:border-[#2F2D29] shadow-xs space-y-4 sm:space-y-5 scroll-mt-20"
+      className="relative rounded-2xl sm:rounded-3xl p-0 sm:p-6 bg-transparent sm:bg-gradient-to-br sm:from-[#FAF7F0] sm:via-white sm:to-[#F5EFE6] sm:dark:from-[#1D1C1A] sm:dark:via-[#181715] sm:dark:to-[#22201D] border-0 sm:border border-[#E6DFD3] dark:border-[#2F2D29] sm:shadow-xs space-y-3 sm:space-y-5 scroll-mt-20"
     >
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E6DFD3] dark:border-[#2B2926] gap-2.5">
-        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-          <span className="relative flex h-2.5 w-2.5">
+      {/* Header Bar - Crisp single row on mobile and desktop */}
+      <div className="flex items-center justify-between pb-2.5 border-b border-[#E6DFD3] dark:border-[#2B2926]">
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2.5 w-2.5 shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
           </span>
-          <div className="flex items-center space-x-2">
-            <h2 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
-              Today&apos;s News Feature
-            </h2>
-          </div>
-          <span className="text-[10px] sm:text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
-            <span>Live Wire</span>
-            <span>•</span>
-            <span className="font-bold">{sortedArticles.length} Stories Today</span>
+          <h2 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
+            Today&apos;s News
+          </h2>
+          <span className="text-[10px] sm:text-[11px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold shrink-0">
+            {sortedArticles.length} Live
           </span>
         </div>
 
-        <div className="flex items-center space-x-2 text-xs font-mono text-[#8E8B82] dark:text-[#8E8B82]">
+        <div className="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-[#8E8B82] dark:text-[#8E8B82] shrink-0">
           <Clock className="w-3.5 h-3.5 text-[#C96442]" />
-          <span>Last 24 Hours • Chronological</span>
+          <span>Last 24h</span>
         </div>
       </div>
 
       {/* Beat Filter Navigation Bar (shows all beats present in today's stories) */}
       {beatCategories.length > 1 && (
-        <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar py-1 text-xs font-mono">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar py-0.5 text-xs font-mono">
           <button
             type="button"
             onClick={() => {
               setSelectedBeat("all");
             }}
-            className={`px-3 py-1.5 rounded-xl font-medium transition-all shrink-0 cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-medium transition-all shrink-0 cursor-pointer active:scale-95 ${
               selectedBeat === "all"
                 ? "bg-[#1F1E1D] dark:bg-[#F5F2EB] text-white dark:text-[#1F1E1D] shadow-xs"
-                : "bg-white/80 dark:bg-[#252422] text-[#686660] dark:text-[#A8A59D] hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530]"
+                : "bg-white dark:bg-[#201F1D] text-[#686660] dark:text-[#A8A59D] hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530]"
             }`}
           >
             <span>All Today</span>
-            <span className="ml-1.5 text-[10px] opacity-75 font-semibold">({sortedArticles.length})</span>
+            <span className="ml-1 text-[10px] opacity-75 font-semibold">({sortedArticles.length})</span>
           </button>
 
           {beatCategories.map((cat) => {
@@ -131,14 +126,14 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
                 onClick={() => {
                   setSelectedBeat(cat.slug);
                 }}
-                className={`px-3 py-1.5 rounded-xl font-medium transition-all shrink-0 cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-medium transition-all shrink-0 cursor-pointer active:scale-95 ${
                   isSelected
                     ? "bg-[#C96442] text-white shadow-xs"
-                    : "bg-white/80 dark:bg-[#252422] text-[#686660] dark:text-[#A8A59D] hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530]"
+                    : "bg-white dark:bg-[#201F1D] text-[#686660] dark:text-[#A8A59D] hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530]"
                 }`}
               >
                 <span>{cat.name}</span>
-                <span className="ml-1.5 text-[10px] opacity-75 font-semibold">({cat.count})</span>
+                <span className="ml-1 text-[10px] opacity-75 font-semibold">({cat.count})</span>
               </button>
             );
           })}
@@ -165,7 +160,7 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
       {/* Expand / Show All Controls */}
       {hasMore && (
         <div className="pt-2 border-t border-[#E6DFD3]/70 dark:border-[#2B2926] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
-          <span className="text-[#8E8B82] dark:text-[#8E8B82]">
+          <span className="text-[#8E8B82] dark:text-[#8E8B82] text-center sm:text-left">
             {isExpanded
               ? `Showing all ${filteredArticles.length} stories published today`
               : `Showing ${displayedArticles.length} of ${filteredArticles.length} stories published today`}
@@ -175,7 +170,7 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
             <button
               type="button"
               onClick={() => setIsExpanded(true)}
-              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl font-medium bg-white dark:bg-[#252422] hover:bg-[#FAF7F0] dark:hover:bg-[#2E2C29] text-[#1F1E1D] dark:text-[#F5F2EB] border border-[#E6DFD3] dark:border-[#383530] shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl font-medium bg-white dark:bg-[#252422] hover:bg-[#FAF7F0] dark:hover:bg-[#2E2C29] text-[#1F1E1D] dark:text-[#F5F2EB] border border-[#E6DFD3] dark:border-[#383530] shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
             >
               <span>Show all {filteredArticles.length} stories from today</span>
               <span className="text-[#C96442] font-semibold">
@@ -190,7 +185,7 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
                 setIsExpanded(false);
                 document.getElementById("todays-news")?.scrollIntoView({ behavior: "smooth" });
               }}
-              className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-[#8E8B82] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB] bg-white/50 dark:bg-[#252422]/50 hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530] transition-colors cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl text-[#8E8B82] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB] bg-white/50 dark:bg-[#252422]/50 hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530] transition-colors cursor-pointer"
             >
               <span>Show fewer stories</span>
               <ChevronUp className="w-3.5 h-3.5" />
