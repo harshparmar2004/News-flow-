@@ -41,5 +41,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_REMOTE_CONTROL: 'false'
           TELEGRAM_NOTIFY_COMPLETION: 'true'
+          AUTO_PUBLISH_TO_WEB: 'true'
+          DEFAULT_WEB_STATUS: 'published'
         run: |
           python run.py --max-articles 5
