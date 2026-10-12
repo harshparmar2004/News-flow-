@@ -6,8 +6,11 @@ import { HomeFeedClient } from "@/components/HomeFeedClient";
 export const revalidate = 30;
 
 export default async function HomePage() {
-  // 1. Fetch total count, categories, and recent articles in parallel
-  const [totalArticles, categories, recentArticles] = await Promise.all([
+  const now = new Date();
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+  // 1. Fetch total count, categories, recent articles, and today's articles in parallel
+  const [totalArticles, categories, recentArticles, todaysArticles] = await Promise.all([
     prisma.article.count({
       where: { status: "published" },
     }),
@@ -22,7 +25,20 @@ export default async function HomePage() {
     prisma.article.findMany({
       where: { status: "published" },
       orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
-      take: 9,
+      take: 12,
+      include: {
+        category: {
+          select: { name: true, slug: true },
+        },
+      },
+    }),
+    // Query ALL articles published in the last 24 hours (strictly newest published first)
+    prisma.article.findMany({
+      where: {
+        status: "published",
+        published_at: { gte: twentyFourHoursAgo },
+      },
+      orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
       include: {
         category: {
           select: { name: true, slug: true },
@@ -30,6 +46,9 @@ export default async function HomePage() {
       },
     }),
   ]);
+
+  // Ensure Today's News always has items to show (fallback to recent dispatches if fewer than 3)
+  const finalTodaysArticles = todaysArticles.length >= 3 ? todaysArticles : recentArticles;
 
   // 4. Fetch articles for each category news desk (ordered by published_at desc, created_at desc)
   const categorySections = await Promise.all(
@@ -63,12 +82,14 @@ export default async function HomePage() {
         <LeftSidebar
           categories={categories}
           totalArticles={totalArticles}
+          todaysCount={todaysArticles.length}
         />
       </div>
 
       {/* 2. Middle Main Content: Natural document flow */}
       <main className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 lg:pb-12">
         <HomeFeedClient
+          todaysArticles={finalTodaysArticles}
           recentArticles={recentArticles}
           categorySections={categorySections}
         />

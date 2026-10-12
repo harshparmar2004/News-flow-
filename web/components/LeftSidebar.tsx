@@ -18,9 +18,10 @@ interface LeftSidebarProps {
   categories: CategoryWithCount[];
   activeSlug?: string;
   totalArticles?: number;
+  todaysCount?: number;
 }
 
-export function LeftSidebar({ categories, activeSlug, totalArticles }: LeftSidebarProps) {
+export function LeftSidebar({ categories, activeSlug, totalArticles, todaysCount }: LeftSidebarProps) {
   const pathname = usePathname();
   const { isAdFree, toggleAdFree } = useAdPreferences();
 
@@ -68,8 +69,15 @@ export function LeftSidebar({ categories, activeSlug, totalArticles }: LeftSideb
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
               <span className="group-hover:text-rose-500 transition-colors">Today&apos;s News</span>
             </span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold">
-              Live
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
+              {todaysCount && todaysCount > 0 ? (
+                <>
+                  <span className="font-bold">{todaysCount}</span>
+                  <span>Live</span>
+                </>
+              ) : (
+                <span>Live</span>
+              )}
             </span>
           </Link>
 

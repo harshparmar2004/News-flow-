@@ -37,6 +37,7 @@ interface CategorySection {
 }
 
 interface HomeFeedClientProps {
+  todaysArticles?: ArticleItem[];
   recentArticles: ArticleItem[];
   categorySections: CategorySection[];
 }
@@ -103,7 +104,7 @@ function sortArticlesList(list: ArticleItem[], filter: "latest" | "top" | "most_
   return items;
 }
 
-export function HomeFeedClient({ recentArticles, categorySections }: HomeFeedClientProps) {
+export function HomeFeedClient({ todaysArticles, recentArticles, categorySections }: HomeFeedClientProps) {
   const { isAdFree } = useAdPreferences();
   const [activeFilter, setActiveFilter] = useState<"latest" | "top" | "most_read">("latest");
 
@@ -139,7 +140,7 @@ export function HomeFeedClient({ recentArticles, categorySections }: HomeFeedCli
       />
 
       {/* Dedicated Today's News Feature spotlight */}
-      <TodaysNewsFeature articles={recentArticles as any} />
+      <TodaysNewsFeature articles={(todaysArticles && todaysArticles.length > 0 ? todaysArticles : recentArticles) as any} />
 
       {/* Section: Recent Intelligence */}
       <section className="space-y-4 pt-2">
