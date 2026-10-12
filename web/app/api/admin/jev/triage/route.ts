@@ -34,13 +34,14 @@ export async function POST(req: NextRequest) {
 
     // Call live TypeSafe Jev API
     try {
-      const response = await fetch("https://api.typesafe.ai/v1/system_one", {
+      const response = await fetch("https://api.typesafe.ai/v1/systemone", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey.trim()}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          model: "jev-latest",
           state: { title, summary: summary || "", source },
           questions: {
             is_high_signal: {
@@ -62,9 +63,16 @@ export async function POST(req: NextRequest) {
             },
             impact_score: {
               type: "score",
-              instructions: "Rate journalistic significance on a scale from 1.0 to 10.0",
+              instructions: "Rate journalistic significance from 1 to 5",
               min_value: 1,
-              max_value: 10
+              max_value: 5,
+              criteria: [
+                "Routine update or promotional PR",
+                "Standard consumer product release",
+                "Notable technology development",
+                "Major high-impact breakthrough",
+                "Historic landmark milestone"
+              ]
             },
             is_breaking: {
               type: "noul",
@@ -72,18 +80,20 @@ export async function POST(req: NextRequest) {
             }
           }
         }),
-        signal: AbortSignal.timeout(6000),
+        signal: AbortSignal.timeout(8000),
       });
 
       const latencyMs = Math.round(performance.now() - startTime);
 
       if (response.ok) {
         const data = await response.json();
-        const impact = data.scores?.impact_score?.score ?? 7.5;
-        const isSignal = data.nouls?.is_high_signal?.value ?? true;
-        const confidence = data.nouls?.is_high_signal?.probability ?? 0.92;
-        const chosenDomain = data.choices?.domain?.choice ?? "tech";
-        const isBreaking = data.nouls?.is_breaking?.value ?? false;
+        const answers = data.answers || {};
+        const rawScore = answers.impact_score?.score ?? 2.5;
+        const impact = Math.min(10.0, Math.max(1.0, Math.round(((rawScore / 4.0) * 8.0 + 2.0) * 10) / 10));
+        const isSignal = (answers.is_high_signal?.noul ?? 0.5) >= 0.25;
+        const confidence = answers.domain?.confidence ?? 0.95;
+        const chosenDomain = answers.domain?.choice ?? "tech";
+        const isBreaking = (answers.is_breaking?.noul ?? 0.0) >= 0.5;
 
         return NextResponse.json({
           success: true,
@@ -95,7 +105,7 @@ export async function POST(req: NextRequest) {
             is_high_signal: isSignal,
             confidence: Number(confidence.toFixed(2)),
             is_breaking: isBreaking,
-            recommendation: isSignal && impact >= 6.5 ? "RECOMMENDED_PUBLISH" : "DISCARD_LOW_SIGNAL",
+            recommendation: isSignal && impact >= 5.0 ? "RECOMMENDED_PUBLISH" : "DISCARD_LOW_SIGNAL",
           }
         });
       }

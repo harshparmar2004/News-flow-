@@ -19,8 +19,8 @@
     "message": "Connected to NewsFlow Web & Admin Desk (HTTP 200 OK)"
   },
   "stats": {
-    "total_dispatched": 48,
-    "total_images_sent": 37,
+    "total_dispatched": 63,
+    "total_images_sent": 48,
     "total_failed": 1
   },
   "dispatched_articles": {
@@ -2177,6 +2177,336 @@
         "category": "tech",
         "has_photo": true,
         "web_slug": "a-wakeup-light-is-my-secret-weapon-against-dark-and-depressing-mornings-here-are-9-worth-picking-up-as-we-head-into-autumn"
+      }
+    },
+    "561": {
+      "article_id": 561,
+      "title": "How to watch The Party on ITVX (it's free)",
+      "source": "TechRadar",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-11T17:36:28.111871",
+      "web_posted": true,
+      "web_slug": "how-to-watch-the-party-on-itvx-its-free",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "How to watch The Party on ITVX (it's free)",
+        "domain": "TechRadar",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "how-to-watch-the-party-on-itvx-its-free"
+      }
+    },
+    "560": {
+      "article_id": 560,
+      "title": "\u201cUnleashing the power of the team is our mission\u201d: Atlassian AI heads tell us why context and collaboration will be the key to unlocking business success",
+      "source": "TechRadar",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-11T17:36:27.937302",
+      "web_posted": true,
+      "web_slug": "unleashing-the-power-of-the-team-is-our-mission-atlassian-ai-heads-tell-us-why-context-and-collaboration-will-be-the-key-to-unlocking-business-success",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "\u201cUnleashing the power of the team is our mission\u201d: Atlassian AI heads tell us why context and collaboration will be the key to unlocking business success",
+        "domain": "TechRadar",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "unleashing-the-power-of-the-team-is-our-mission-atlassian-ai-heads-tell-us-why-context-and-collaboration-will-be-the-key-to-unlocking-business-success"
+      }
+    },
+    "559": {
+      "article_id": 559,
+      "title": "Samsung Galaxy Z Flip 8 vs Galaxy Z Flip 7: which flip foldable is best?",
+      "source": "TechRadar",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-11T17:36:26.721842",
+      "web_posted": true,
+      "web_slug": "samsung-galaxy-z-flip-8-vs-galaxy-z-flip-7-which-flip-foldable-is-best",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Samsung Galaxy Z Flip 8 vs Galaxy Z Flip 7: which flip foldable is best?",
+        "domain": "TechRadar",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "samsung-galaxy-z-flip-8-vs-galaxy-z-flip-7-which-flip-foldable-is-best"
+      }
+    },
+    "558": {
+      "article_id": 558,
+      "title": "How to watch Time season 3 online for free \u2013 stream David Tennant prison drama from anywhere",
+      "source": "TechRadar",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-11T17:36:28.020239",
+      "web_posted": true,
+      "web_slug": "how-to-watch-time-season-3-online-for-free-stream-david-tennant-prison-drama-from-anywhere",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "How to watch Time season 3 online for free \u2013 stream David Tennant prison drama from anywhere",
+        "domain": "TechRadar",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "how-to-watch-time-season-3-online-for-free-stream-david-tennant-prison-drama-from-anywhere"
+      }
+    },
+    "557": {
+      "article_id": 557,
+      "title": "Experian NeuroID Recognized as Best Authentication Innovation in 2026 Fraud & AML Impact Awards - VentureBeat",
+      "source": "VentureBeat",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-11T17:36:24.809809",
+      "web_posted": true,
+      "web_slug": "experian-neuroid-recognized-as-best-authentication-innovation-in-2026-fraud-aml-",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Experian NeuroID Recognized as Best Authentication Innovation in 2026 Fraud & AML Impact Awards - VentureBeat",
+        "domain": "VentureBeat",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "experian-neuroid-recognized-as-best-authentication-innovation-in-2026-fraud-aml-"
+      }
+    },
+    "556": {
+      "article_id": 556,
+      "title": "Antibody Designed by Spanish Biopharma Oncomatryx Shows That Attacking the Tumor Environment Also Kills Cancer Cells - VentureBeat",
+      "source": "VentureBeat",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-11T17:36:24.203513",
+      "web_posted": true,
+      "web_slug": "antibody-designed-by-spanish-biopharma-oncomatryx-shows-that-attacking-the-tumor",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Antibody Designed by Spanish Biopharma Oncomatryx Shows That Attacking the Tumor Environment Also Kills Cancer Cells - VentureBeat",
+        "domain": "VentureBeat",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "antibody-designed-by-spanish-biopharma-oncomatryx-shows-that-attacking-the-tumor"
+      }
+    },
+    "555": {
+      "article_id": 555,
+      "title": "AI\u2019s quiet safety gatekeepers are stepping into the spotlight",
+      "source": "CNBC Tech",
+      "category": "business",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-11T17:36:30.747276",
+      "web_posted": true,
+      "web_slug": "ais-quiet-safety-gatekeepers-are-stepping-into-the-spotlight",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "AI\u2019s quiet safety gatekeepers are stepping into the spotlight",
+        "domain": "CNBC Tech",
+        "category": "business",
+        "has_photo": true,
+        "web_slug": "ais-quiet-safety-gatekeepers-are-stepping-into-the-spotlight"
+      }
+    },
+    "554": {
+      "article_id": 554,
+      "title": "Documents add to evidence in climate deception case against ExxonMobil",
+      "source": "Hacker News",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-11T17:36:30.712636",
+      "web_posted": true,
+      "web_slug": "documents-add-to-evidence-in-climate-deception-case-against-exxonmobil",
+      "web_status": "draft",
+      "has_authentic_photo": false,
+      "error": null,
+      "payload_summary": {
+        "title": "Documents add to evidence in climate deception case against ExxonMobil",
+        "domain": "Hacker News",
+        "category": "tech",
+        "has_photo": false,
+        "web_slug": "documents-add-to-evidence-in-climate-deception-case-against-exxonmobil"
+      }
+    },
+    "553": {
+      "article_id": 553,
+      "title": "I'm sorry, but you still have to think",
+      "source": "Hacker News",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-11T17:36:33.529070",
+      "web_posted": true,
+      "web_slug": "im-sorry-but-you-still-have-to-think",
+      "web_status": "draft",
+      "has_authentic_photo": false,
+      "error": null,
+      "payload_summary": {
+        "title": "I'm sorry, but you still have to think",
+        "domain": "Hacker News",
+        "category": "tech",
+        "has_photo": false,
+        "web_slug": "im-sorry-but-you-still-have-to-think"
+      }
+    },
+    "552": {
+      "article_id": 552,
+      "title": "How I reverse engineered a commercial spatial audio effect",
+      "source": "Hacker News",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-11T17:36:29.197494",
+      "web_posted": true,
+      "web_slug": "how-i-reverse-engineered-a-commercial-spatial-audio-effect",
+      "web_status": "draft",
+      "has_authentic_photo": false,
+      "error": null,
+      "payload_summary": {
+        "title": "How I reverse engineered a commercial spatial audio effect",
+        "domain": "Hacker News",
+        "category": "tech",
+        "has_photo": false,
+        "web_slug": "how-i-reverse-engineered-a-commercial-spatial-audio-effect"
+      }
+    },
+    "551": {
+      "article_id": 551,
+      "title": "How to Build Wealth as a Career Person",
+      "source": "Hacker News",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-11T17:36:30.487460",
+      "web_posted": true,
+      "web_slug": "how-to-build-wealth-as-a-career-person",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "How to Build Wealth as a Career Person",
+        "domain": "Hacker News",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "how-to-build-wealth-as-a-career-person"
+      }
+    },
+    "550": {
+      "article_id": 550,
+      "title": "The hidden features every Waze user should know about",
+      "source": "Engadget",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-11T17:36:33.351446",
+      "web_posted": true,
+      "web_slug": "the-hidden-features-every-waze-user-should-know-about",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "The hidden features every Waze user should know about",
+        "domain": "Engadget",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "the-hidden-features-every-waze-user-should-know-about"
+      }
+    },
+    "549": {
+      "article_id": 549,
+      "title": "Here's how long your Google Pixel phone will get software updates",
+      "source": "Engadget",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-11T17:36:33.112110",
+      "web_posted": true,
+      "web_slug": "heres-how-long-your-google-pixel-phone-will-get-software-updates",
+      "web_status": "draft",
+      "has_authentic_photo": false,
+      "error": null,
+      "payload_summary": {
+        "title": "Here's how long your Google Pixel phone will get software updates",
+        "domain": "Engadget",
+        "category": "tech",
+        "has_photo": false,
+        "web_slug": "heres-how-long-your-google-pixel-phone-will-get-software-updates"
+      }
+    },
+    "548": {
+      "article_id": 548,
+      "title": "Apple Home's new AI summaries for security cameras cost more than you'd think",
+      "source": "Engadget",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-11T17:36:31.562411",
+      "web_posted": true,
+      "web_slug": "apple-homes-new-ai-summaries-for-security-cameras-cost-more-than-youd-think",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Apple Home's new AI summaries for security cameras cost more than you'd think",
+        "domain": "Engadget",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "apple-homes-new-ai-summaries-for-security-cameras-cost-more-than-youd-think"
+      }
+    },
+    "547": {
+      "article_id": 547,
+      "title": "Apple's smart home hub will reportedly be called HomeView",
+      "source": "Engadget",
+      "category": "tech",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-11T17:36:36.724627",
+      "web_posted": true,
+      "web_slug": "apples-smart-home-hub-will-reportedly-be-called-homeview",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Apple's smart home hub will reportedly be called HomeView",
+        "domain": "Engadget",
+        "category": "tech",
+        "has_photo": true,
+        "web_slug": "apples-smart-home-hub-will-reportedly-be-called-homeview"
       }
     }
   }

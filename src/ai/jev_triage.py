@@ -149,12 +149,13 @@ def evaluate_with_jev(title: str, summary: str = "", source: str = "Live Feed") 
         }
 
     try:
-        url = "https://api.typesafe.ai/v1/system_one"
+        url = "https://api.typesafe.ai/v1/systemone"
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
         payload = {
+            "model": "jev-latest",
             "state": {
                 "title": title[:300],
                 "summary": summary[:800] if summary else "",
@@ -172,9 +173,16 @@ def evaluate_with_jev(title: str, summary: str = "", source: str = "Live Feed") 
                 },
                 "impact_score": {
                     "type": "score",
-                    "instructions": "Rate news significance and urgency on a scale from 1.0 to 10.0",
-                    "min_value": 1.0,
-                    "max_value": 10.0
+                    "instructions": "Rate news significance and urgency from 1 to 5",
+                    "min_value": 1,
+                    "max_value": 5,
+                    "criteria": [
+                        "Routine update, minor patch, or promotional PR",
+                        "Standard consumer product release or incremental spec bump",
+                        "Notable technology development or important ecosystem update",
+                        "Major high-impact breakthrough or major industry disruption",
+                        "Historic landmark technological milestone"
+                    ]
                 },
                 "is_breaking": {
                     "type": "noul",
@@ -183,27 +191,43 @@ def evaluate_with_jev(title: str, summary: str = "", source: str = "Live Feed") 
             }
         }
 
-        resp = requests.post(url, headers=headers, json=payload, timeout=6)
+        resp = requests.post(url, headers=headers, json=payload, timeout=8)
         latency_ms = int((time.time() - start_time) * 1000)
 
         if resp.status_code == 200:
             data = resp.json()
-            impact = float(data.get("scores", {}).get("impact_score", {}).get("score", 7.5))
-            chosen_domain = data.get("choices", {}).get("domain", {}).get("choice", "tech")
-            is_signal = bool(data.get("nouls", {}).get("is_high_signal", {}).get("value", True))
-            confidence = float(data.get("nouls", {}).get("is_high_signal", {}).get("probability", 0.92))
-            is_breaking = bool(data.get("nouls", {}).get("is_breaking", {}).get("value", False))
+            answers = data.get("answers", {})
+
+            # Domain evaluation
+            domain_choice = answers.get("domain", {}).get("choice", domain)
+            domain_conf = float(answers.get("domain", {}).get("confidence", 0.95))
+
+            # Impact score (0-4 scale mapped to 2.0 - 10.0)
+            impact_obj = answers.get("impact_score", {})
+            raw_score = float(impact_obj.get("score", 2.5))
+            impact = min(10.0, max(1.0, round((raw_score / 4.0) * 8.0 + 2.0, 1)))
+
+            # High-signal evaluation
+            high_signal_obj = answers.get("is_high_signal", {})
+            signal_noul = float(high_signal_obj.get("noul", 0.5))
+            is_signal = signal_noul >= 0.25
+            confidence = round(float(high_signal_obj.get("confidence", domain_conf)), 2)
+
+            # Breaking news evaluation
+            breaking_obj = answers.get("is_breaking", {})
+            breaking_noul = float(breaking_obj.get("noul", 0.0))
+            is_breaking = breaking_noul >= 0.5
 
             return {
                 "success": True,
                 "latency_ms": latency_ms,
-                "domain": chosen_domain,
-                "impact_score": round(impact, 1),
+                "domain": domain_choice,
+                "impact_score": impact,
                 "rank_score": int(round(impact * 10)),
                 "is_high_signal": is_signal,
-                "confidence": round(confidence, 2),
+                "confidence": confidence,
                 "is_breaking": is_breaking,
-                "recommendation": "RECOMMENDED_PUBLISH" if (is_signal and impact >= 6.5) else "DISCARD_LOW_SIGNAL",
+                "recommendation": "RECOMMENDED_PUBLISH" if (is_signal and impact >= 5.0) else "DISCARD_LOW_SIGNAL",
                 "source": source
             }
 

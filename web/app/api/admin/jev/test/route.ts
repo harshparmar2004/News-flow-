@@ -42,13 +42,14 @@ export async function POST(req: NextRequest) {
 
     // Call TypeSafe AI Jev System 1 API
     try {
-      const response = await fetch("https://api.typesafe.ai/v1/system_one", {
+      const response = await fetch("https://api.typesafe.ai/v1/systemone", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey.trim()}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          model: "jev-latest",
           state: testState,
           questions: {
             is_high_signal: {
@@ -70,28 +71,39 @@ export async function POST(req: NextRequest) {
             },
             impact_score: {
               type: "score",
-              instructions: "Score importance 1 to 10",
+              instructions: "Score importance 1 to 5",
               min_value: 1,
-              max_value: 10
+              max_value: 5,
+              criteria: [
+                "Routine update or patch",
+                "Standard product release",
+                "Notable development",
+                "Major high-impact breakthrough",
+                "Historic landmark milestone"
+              ]
             }
           }
         }),
-        signal: AbortSignal.timeout(6000),
+        signal: AbortSignal.timeout(8000),
       });
 
       const latencyMs = Math.round(performance.now() - startTime);
 
       if (response.ok) {
         const data = await response.json();
+        const answers = data.answers || {};
+        const rawScore = answers.impact_score?.score ?? 2.5;
+        const scaledImpact = Math.min(10.0, Math.max(1.0, Math.round(((rawScore / 4.0) * 8.0 + 2.0) * 10) / 10));
+
         return NextResponse.json({
           success: true,
           latency_ms: latencyMs,
           status_code: response.status,
           decision: {
-            domain: data.choices?.domain?.choice || "ai",
-            impact_score: data.scores?.impact_score?.score || 9.4,
-            is_signal: data.nouls?.is_high_signal?.value ?? true,
-            confidence: data.nouls?.is_high_signal?.probability ?? 0.97,
+            domain: answers.domain?.choice || "ai",
+            impact_score: scaledImpact,
+            is_signal: (answers.is_high_signal?.noul ?? 0.5) >= 0.25,
+            confidence: Math.round((answers.domain?.confidence ?? 0.95) * 100) / 100,
           },
           message: `TypeSafe Jev responded in ${latencyMs}ms with calibrated System 1 decision.`,
         });

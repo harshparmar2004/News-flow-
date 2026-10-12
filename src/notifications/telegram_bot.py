@@ -300,7 +300,7 @@ def handle_telegram_command(command: str, args: List[str], from_user: Dict[str, 
             f"• <b>Completed Cycles:</b> {cycles}\n"
             f"• <b>Next Scheduled Run:</b> <code>{next_str}</code>\n"
             f"• <b>Current Operation:</b> {status['current_status']}\n\n"
-            "<i>Once started, the agent scrapes all 16 sources and publishes to NewsFlow Web non-stop.</i>"
+            "<i>Once started, the agent scrapes all 70 sources and publishes to NewsFlow Web non-stop.</i>"
         )
 
         if is_act:
@@ -337,7 +337,7 @@ def handle_telegram_command(command: str, args: List[str], from_user: Dict[str, 
         t.start()
         send_message(
             "🚀 <b>Pipeline Started!</b>\n\n"
-            "Research Agent is scraping 16 sources sequentially, caching authentic photos, and uploading stories to NewsFlow Web live.\n\n"
+            "Research Agent is scraping 70 sources sequentially across 6 news desks, caching authentic photos, and uploading stories to NewsFlow Web live.\n\n"
             "<i>I will send you an executive digest when complete.</i>",
             chat_id=chat_id
         )
