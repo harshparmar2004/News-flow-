@@ -1,159 +1,257 @@
-# 📰 NewsFlow — News Auto-Pipeline & Dashboard
+# 📰 NewsFlow — Autonomous AI News Pipeline & Agent Cockpit
 
-**Fully automated news aggregation, Gemini AI social media rewriting, thumbnail generation, multi-platform publishing, and professional dark-mode Web Dashboard.**
+[![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?style=for-the-badge&logo=python)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
+[![Groq 120B](https://img.shields.io/badge/Groq-120B_GPT--OSS-F05032?style=for-the-badge&logo=groq)](https://groq.com)
+[![Gemini 2.5](https://img.shields.io/badge/Google_Gemini-2.5_Flash-4285F4?style=for-the-badge&logo=google)](https://aistudio.google.com)
+[![TypeSafe JEV](https://img.shields.io/badge/TypeSafe_JEV-System_1-6366F1?style=for-the-badge)](https://typesafe.ai)
+[![Telegram Bot](https://img.shields.io/badge/Telegram_Bot-@Newsflow__ai__agent__bot-26A5E4?style=for-the-badge&logo=telegram)](https://t.me/Newsflow_ai_agent_bot)
+[![PostgreSQL](https://img.shields.io/badge/Neon-PostgreSQL-00E599?style=for-the-badge&logo=postgresql)](https://neon.tech)
 
-Scrapes news articles from 18+ sources → rewrites them with Gemini AI for 4 platforms → generates thumbnail images → posts to Reddit and Twitter live, queues Instagram and LinkedIn for manual posting, with full management via a high-performance web dashboard.
+**NewsFlow Autonomous Pipeline** is an end-to-end autonomous intelligence engine that scrapes, triages, synthesizes, and publishes technology journalism 24/7. It aggregates breaking news from **50+ global frontier sources**, validates content using **TypeSafe JEV System 1**, rewrites stories with **Groq 120B** and **Gemini 2.5**, and publishes seamlessly to the live Next.js web application, social networks, and a remote Telegram agent.
+
+🌐 **Live Newsroom**: [news-flow-one.vercel.app](https://news-flow-one.vercel.app)  
+🖥️ **Local Control Cockpit**: `http://localhost:8000` (FastAPI Dashboard)  
+🤖 **Telegram Agent Bot**: `@Newsflow_ai_agent_bot`
 
 ---
 
-## 🎨 Web Dashboard Preview
+## 🏛️ Autonomous Pipeline Architecture
 
-Launch the web console to monitor stats, inspect social media rewrites, view generated thumbnails, manage local queues, view live terminal logs, and trigger pipeline runs with 1 click!
+```mermaid
+flowchart TD
+    subgraph Ingestion [1. Multi-Beat Ingestion]
+        S1[50+ Global RSS Feeds] --> SC[Feed & HTML Scraper]
+        S2[Trafilatura & Newspaper4k] --> SC
+        SC --> DEDUP{SHA-256 Deduplication}
+        DEDUP -->|Already Seen| SKIP[Discard]
+        DEDUP -->|New Story| SHIELD[Anti-Paywall & Cipher Shield]
+    end
 
-```bash
-python dashboard.py
-# Open: http://localhost:8000
+    subgraph Intelligence [2. AI Synthesis & Triage]
+        SHIELD --> LLM[Groq 120B / Gemini 2.5 Rewriter]
+        LLM --> JEV{TypeSafe JEV System 1}
+        JEV -->|Fails Criteria| LOG[Reject & Log]
+        JEV -->|Passes Criteria| READY[Verified Markdown Article]
+    end
+
+    subgraph Distribution [3. Multi-Destination Dispatch]
+        READY --> WEB[Next.js Production API /api/articles]
+        READY --> NEON[(Neon Serverless PostgreSQL)]
+        READY --> TG[Telegram Bot @Newsflow_ai_agent_bot]
+        READY --> REDDIT[Reddit Subreddit Communities]
+        READY --> TWITTER[Twitter / X Threads]
+        READY --> QUEUE[Instagram & LinkedIn Image Queues]
+    end
 ```
 
 ---
 
-## ✨ Key Features
+## ✨ Key Features & Capabilities
 
-- **Professional UI/UX Dashboard**: Dark mode glassmorphism theme built with FastAPI, Inter font, Lucide icons & Chart.js
-- **Multi-tier scraping**: RSS/Atom feeds (fast, free) + ScrapeGraphAI for JS-heavy sites
-- **AI-powered rewriting**: Gemini 2.5 Flash generates platform-optimized text
-- **Thumbnail generation**: Gemini creates eye-catching images per article
-- **Multi-platform publishing**:
-  - ✅ **Reddit** — live posting with images
-  - ✅ **Twitter/X** — live text-only tweets
-  - 📁 **Instagram** — local queue for manual posting
-  - 📁 **LinkedIn** — local queue for manual posting
-- **Deduplication**: SHA-256 URL hashing prevents duplicate articles
-- **robots.txt compliance**: Respects site crawling rules
-- **SQLite database**: Tracks every article through the pipeline
-- **$0 monthly cost**: All APIs on free tiers
+### 1. 📡 50+ Global Frontier Sources Across 7 Beats
+Aggregates continuous dispatches across 7 specialized industry news desks:
+* **Artificial Intelligence**: OpenAI, DeepMind, Anthropic, Hugging Face, MIT Tech Review AI.
+* **Robotics & Automation**: IEEE Spectrum, The Robot Report, Boston Dynamics dispatches.
+* **Startups & Venture Capital**: TechCrunch, Silicon Canals, Sifted EU, Y Combinator News.
+* **Gadgets & Hardware**: The Verge, Ars Technica, 9to5Mac, AnandTech, Tom's Hardware.
+* **Cybersecurity**: Dark Reading, Bleeping Computer, Krebs on Security, The Hacker News.
+* **Policy & Big Tech**: Reuters Tech, Politico Tech, Platformer.
+* **General Tech & Innovation**: Wired, Engadget, VentureBeat.
+
+### 2. 🛡️ Anti-Paywall & Cipher Detection Shield
+* **Heuristic Obfuscation Detection**: Automatically identifies client-side paywall ROT/cipher scrambled text injected by subscription outlets.
+* **Automatic Fallback**: Safely discards scrambled DOM bodies and falls back to clean, high-signal RSS summary dispatches, preventing corrupt text from ever reaching readers.
+
+### 3. 🧠 Multi-LLM Journalistic Synthesis
+* **Groq 120B (`openai/gpt-oss-120b`)**: Sub-second, high-throughput journalistic restructuring with structured markdown headings, executive takeaways, and industry quotes.
+* **Llama 3.3 70B Versatile**: Automatic failover model ensuring 100% uptime even during upstream provider rate limits.
+* **Google Gemini 2.5 Flash**: Multi-platform social copy generation and thematic cover prompt synthesis.
+
+### 4. 🔬 TypeSafe JEV System 1 AI Triage
+* Integrated with TypeSafe's System 1 API (`https://api.typesafe.ai/v1/systemone` using model `jev-latest`).
+* Automatically evaluates incoming stories against strict editorial quality criteria:
+  * Verifiable factual grounding & original source attribution.
+  * Absence of clickbait, promotional spam, or promotional press releases.
+  * Structural integrity and clean English grammar.
+
+### 5. 💻 Local FastAPI Dashboard (`dashboard.py`)
+* High-performance, dark-mode glassmorphic control center running locally at **`http://localhost:8000`**.
+* **Live Telemetry**: Real-time counters for processed stories, pending queues, and active scrapers.
+* **Source Health Monitor**: Visual status indicators for all 50+ configured RSS and HTML endpoints.
+* **Interactive Triggers**: 1-click buttons to run pipeline cycles, clear caches, or inspect article queues.
+* **Terminal Streamer**: Live WebSocket log streaming directly inside the browser.
+
+### 6. 📱 Interactive Telegram AI Agent Bot (`@Newsflow_ai_agent_bot`)
+* Dedicated remote command center for mobile administrators.
+* Supported commands:
+  * `/start` — Agent greeting & cockpit status summary.
+  * `/status` — Live count of articles scraped, published, and pending.
+  * `/health` — Diagnostics check for database, APIs, and model endpoints.
+  * `/scrape` — Triggers an immediate crawler run.
+  * `/post` — Broadcasts latest breaking story summary.
 
 ---
 
 ## 🚀 Setup & Launch Guide
 
-### 1. Clone & activate virtual environment
+### 1. Prerequisites
+* Python 3.10, 3.11, or 3.12
+* Git
+* Free API keys for Google Gemini, Groq, and TypeSafe
+
+### 2. Installation
 
 ```bash
-cd news-auto-pipeline
+# Clone the repository
+git clone https://github.com/harshparmar2004/News-flow-.git
+cd News-flow-
+
+# Create and activate Python virtual environment
 python -m venv venv
 venv\Scripts\activate        # Windows
 # source venv/bin/activate   # macOS/Linux
-```
 
-### 2. Install dependencies
-
-```bash
+# Install Python dependencies
 pip install -r requirements.txt
 playwright install chromium
 ```
 
-### 3. Configure API keys
+### 3. Environment Variables Configuration
+
+Copy `.env.example` to `.env`:
 
 ```bash
 copy .env.example .env       # Windows
 # cp .env.example .env       # macOS/Linux
 ```
 
-Edit `.env` and fill in your keys:
+Configure your `.env` parameters:
 
-| Key | Where to get it | Required? |
-|-----|----------------|-----------|
-| `GOOGLE_API_KEY` | [Google AI Studio](https://aistudio.google.com/apikey) | **Yes** |
-| `REDDIT_CLIENT_ID` | [Reddit Apps](https://www.reddit.com/prefs/apps) — "script" type | Optional |
-| `REDDIT_CLIENT_SECRET` | Same as above | Optional |
-| `REDDIT_USERNAME` | Your Reddit username | Optional |
-| `REDDIT_PASSWORD` | Your Reddit password | Optional |
-| `TWITTER_API_KEY` | [Twitter Developer Portal](https://developer.twitter.com/) | Optional |
-| `TWITTER_API_SECRET` | Same as above | Optional |
-| `TWITTER_ACCESS_TOKEN` | Same as above | Optional |
-| `TWITTER_ACCESS_SECRET` | Same as above | Optional |
+```env
+# ==========================================
+# 1. CORE AI SYNTHESIS ENGINES
+# ==========================================
+GOOGLE_API_KEY="AIzaSy..."                        # Google AI Studio
+GROQ_API_KEY="gsk_..."                           # Groq Cloud API Key
+TYPESAFE_API_KEY="apikey_21037fca013..."         # TypeSafe JEV System 1 Key
 
-> **Note**: Only `GOOGLE_API_KEY` is required. If Reddit/Twitter keys are missing, those platforms are simply skipped.
+# ==========================================
+# 2. DESTINATION WEB APPLICATION
+# ==========================================
+NEWSFLOW_WEB_URL="https://news-flow-one.vercel.app"  # Or http://localhost:3000
+NEWSFLOW_API_KEY="nf_live_sec_..."                   # Matches Web .env
+
+# ==========================================
+# 3. DATABASE (POSTGRESQL & SQLITE)
+# ==========================================
+DATABASE_URL="postgresql://user:pass@ep-sample.neon.tech/neondb?sslmode=require"
+
+# ==========================================
+# 4. TELEGRAM BOT AGENT (OPTIONAL)
+# ==========================================
+TELEGRAM_BOT_TOKEN="8083818988:AAFx..."          # From @BotFather
+TELEGRAM_CHAT_ID="your_telegram_chat_id"
+
+# ==========================================
+# 5. SOCIAL MEDIA INTEGRATIONS (OPTIONAL)
+# ==========================================
+REDDIT_CLIENT_ID=""
+REDDIT_CLIENT_SECRET=""
+REDDIT_USERNAME=""
+REDDIT_PASSWORD=""
+REDDIT_SUBREDDIT="technews"
+
+TWITTER_API_KEY=""
+TWITTER_API_SECRET=""
+TWITTER_ACCESS_TOKEN=""
+TWITTER_ACCESS_SECRET=""
+```
 
 ---
 
-### 4. Running the Dashboard or CLI
+## 🏃 Running the Pipeline
 
-#### Launch Web Dashboard UI:
+### Mode A: Launch the Web Dashboard (Recommended)
 ```bash
 python dashboard.py
 ```
-Open **`http://localhost:8000`** in your browser.
+Open **`http://localhost:8000`** in your browser to inspect live stats, monitor crawler health, and manage queues.
 
-#### Run CLI Pipeline:
+### Mode B: Run Continuous 24/7 Autonomous Daemon
 ```bash
-python run.py                     # Full run
-python run.py --max-articles 2    # Test run
+python run_247_pipeline.py
+```
+Runs continuously in the background, executing scheduled cycles with automatic backoff, rate limiting, and log rotation (`logs/pipeline_247.log`).
+
+### Mode C: Launch Telegram Agent Bot
+```bash
+python telegram_bot.py
+```
+Starts polling for commands from `@Newsflow_ai_agent_bot`.
+
+### Mode D: Single CLI Run (For Testing)
+```bash
+# Full test cycle across all feeds
+python run.py
+
+# Quick cycle limited to 5 articles
+python run.py --max-articles 5
 ```
 
 ---
 
-## 📁 Project Structure
+## 📂 Directory Structure
 
 ```
 news-auto-pipeline/
-├── dashboard.py              # FastAPI Web Dashboard server
+├── dashboard.py                  # FastAPI Dashboard web server
+├── run_247_pipeline.py           # 24/7 continuous autonomous runner
+├── telegram_bot.py               # Interactive Telegram Bot agent
+├── run.py                        # CLI manual execution entry point
 ├── config/
-│   └── sources.yaml          # 18 news sources (15 Tier 1, 3 Tier 2)
-├── dashboard/
-│   ├── index.html            # SPA UI Shell
-│   ├── css/styles.css        # Glassmorphism dark mode CSS
-│   └── js/
-│       ├── app.js            # Core router & API client
-│       └── pages/
-│           ├── dashboard.js  # Stats & Chart.js graphs
-│           ├── articles.js   # Searchable articles browser
-│           ├── sources.js    # Sources grid
-│           ├── queue.js      # Instagram & LinkedIn queue manager
-│           └── logs.js       # Live log viewer
+│   └── sources.yaml              # 50+ news sources and beat configurations
+├── dashboard/                    # Glassmorphism dark-mode SPA frontend
+│   ├── index.html                # Dashboard shell
+│   ├── css/styles.css            # Custom CSS styles
+│   └── js/                       # Modular dashboard scripts
 ├── src/
-│   ├── api/
-│   │   └── routes.py         # FastAPI REST endpoints
 │   ├── scraper/
-│   │   ├── feed_scraper.py   # Tier 1: RSS + trafilatura + newspaper3k
-│   │   ├── html_scraper.py   # Tier 1: Direct HTML scraping
-│   │   ├── ai_scraper.py     # Tier 2: ScrapeGraphAI + Gemini
-│   │   └── dedupe.py         # URL deduplication + DB insertion
+│   │   ├── feed_scraper.py       # RSS parser + anti-paywall cipher detector
+│   │   ├── html_scraper.py       # Full-body article extractor
+│   │   └── dedupe.py             # SHA-256 URL hashing & SQLite tracking
 │   ├── ai/
-│   │   ├── rewriter.py       # Gemini 2.5 Flash — 4-platform rewrite
-│   │   └── image_gen.py      # Gemini 2.0 Flash — thumbnail generation
+│   │   ├── rewriter.py           # Groq 120B / Gemini 2.5 synthesis engine
+│   │   ├── jev_triage.py         # TypeSafe JEV System 1 triage validator
+│   │   └── image_gen.py          # Multimodal thumbnail prompt generator
 │   ├── publishers/
-│   │   ├── reddit_publisher.py    # Live posting via praw
-│   │   ├── twitter_publisher.py   # Live text-only posting via tweepy
-│   │   ├── instagram_publisher.py # Local queue (JSON + image)
-│   │   └── linkedin_publisher.py  # Local queue (JSON + image)
-│   ├── db/
-│   │   └── models.py         # SQLAlchemy ORM (Article model)
-│   └── orchestrator.py       # Pipeline coordinator
-├── queue/
-│   ├── instagram/            # Queued Instagram posts
-│   └── linkedin/             # Queued LinkedIn posts
-├── images/                   # Generated thumbnails
-├── logs/
-│   └── pipeline.log          # Detailed debug log
-├── .env.example              # API key template
-├── requirements.txt
-└── run.py                    # CLI entry point
+│   │   ├── web_publisher.py      # Next.js REST API publisher (/api/articles)
+│   │   ├── reddit_publisher.py   # Reddit PRAW publisher
+│   │   ├── twitter_publisher.py  # Tweepy Twitter/X publisher
+│   │   └── queue_publisher.py    # Local queue generator for Instagram/LinkedIn
+│   └── orchestrator.py           # Master pipeline coordinator
+├── logs/                         # Rolling operational debug logs
+├── requirements.txt              # Python dependencies
+└── .env.example                  # Environment configuration template
 ```
 
 ---
 
-## 💰 Cost
+## 💰 Operational Cost Analysis
 
-| Component | Cost |
-|-----------|------|
-| Gemini API (text + image) | **$0** (free tier) |
-| Reddit API | **$0** (free for scripts) |
-| Twitter API | **$0** (free tier, text-only) |
-| Web Dashboard UI | **$0** (local server) |
-| **Total** | **$0/month** |
+| Component | Provider | Tier / Strategy | Monthly Cost |
+|---|---|---|---|
+| **Web Ingestion & Feeds** | RSS / Open Feeds | Direct HTTP scraping | **$0.00** |
+| **Journalistic Rewriting** | Groq (`gpt-oss-120b`) | Free Developer Tier | **$0.00** |
+| **Multimodal Synthesis** | Google AI Studio | Gemini 2.5 Free Tier | **$0.00** |
+| **AI Quality Triage** | TypeSafe JEV System 1 | Free Developer Plan | **$0.00** |
+| **Frontend Hosting** | Vercel Edge Network | Hobby Tier | **$0.00** |
+| **Database** | Neon Serverless Postgres | Free Tier (0.5 GB) | **$0.00** |
+| **Remote Agent Bot** | Telegram Bot API | Free | **$0.00** |
+| **Total Cost** | — | — | **$0.00 / month** |
 
-## 📜 License
+---
 
-MIT
+## 📄 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
