@@ -10,7 +10,8 @@ import {
   Smartphone, 
   ShieldAlert, 
   Scale, 
-  Layers 
+  Layers,
+  Radio
 } from "lucide-react";
 
 interface CategoryPill {
@@ -23,6 +24,7 @@ interface CategoryPill {
 
 const CATEGORY_PILLS: CategoryPill[] = [
   { name: "All Intelligence", shortName: "All", href: "/", slug: "", icon: Sparkles },
+  { name: "Today's Wire", shortName: "Today", href: "/today", slug: "today", icon: Radio },
   { name: "AI", href: "/category/ai", slug: "ai", icon: Cpu },
   { name: "Robotics", href: "/category/robotics", slug: "robotics", icon: Bot },
   { name: "Startups & VC", shortName: "Startups", href: "/category/startups-vc", slug: "startups-vc", icon: TrendingUp },
@@ -50,6 +52,8 @@ export function MobileCategoryBar() {
           const isActive =
             pill.slug === ""
               ? pathname === "/"
+              : pill.slug === "today"
+              ? pathname === "/today"
               : pathname === pill.href || pathname?.startsWith(`/category/${pill.slug}`);
 
           const Icon = pill.icon;

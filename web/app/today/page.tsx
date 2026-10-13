@@ -54,25 +54,27 @@ export default async function TodaysNewsPage() {
   ]);
 
   return (
-    <div className="flex justify-center min-h-screen">
-      <div className="w-full max-w-[1536px] flex flex-col lg:flex-row gap-0 lg:gap-8 px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6">
-        {/* Left Sticky Navigation Drawer */}
+    <div className="w-full flex min-h-screen bg-[#FAF7F0] dark:bg-[#121211]">
+      {/* 1. Left Sidebar: Sticky alongside feed on Desktop */}
+      <div className="hidden lg:block shrink-0">
         <LeftSidebar
           categories={categories}
           activeSlug="today"
           totalArticles={totalArticles}
           todaysCount={todaysArticles.length}
         />
+      </div>
 
-        {/* Central Dedicated Live Wire Feed */}
-        <main className="flex-1 min-w-0 max-w-full lg:max-w-4xl xl:max-w-5xl py-2">
-          <TodaysFeedClient
-            articles={todaysArticles}
-            totalPublishedCount={totalArticles}
-          />
-        </main>
+      {/* 2. Middle Main Content: Natural document flow */}
+      <main className="flex-1 min-w-0 px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-6 pb-24 lg:pb-12">
+        <TodaysFeedClient
+          articles={todaysArticles}
+          totalPublishedCount={totalArticles}
+        />
+      </main>
 
-        {/* Right Sticky Ads & Sponsored Intelligence Sidebar */}
+      {/* 3. Right Sidebar: Future Ad Slots (Desktop only) */}
+      <div className="hidden xl:block shrink-0">
         <RightAdsSidebar />
       </div>
     </div>

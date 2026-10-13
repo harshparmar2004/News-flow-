@@ -113,23 +113,23 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
         </nav>
 
         {/* Compact, Organized Search Panel Header */}
-        <div className="rounded-2xl border border-[#EBE8DF] dark:border-[#2C2A26] bg-white dark:bg-[#1C1B19] p-4 sm:p-5 space-y-4 shadow-xs">
+        <div className="rounded-xl sm:rounded-2xl border border-[#EBE8DF] dark:border-[#2C2A26] bg-white dark:bg-[#1C1B19] p-3 sm:p-5 space-y-3 sm:space-y-4 shadow-xs">
           {/* Top Row: Title, Live Count & Reset Action */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center space-x-3.5 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-[#FAF7F0] dark:bg-[#252422] border border-[#EBE8DF] dark:border-[#2E2C28] flex items-center justify-center text-[#C96442] shadow-2xs shrink-0">
-                <Search className="w-5 h-5" />
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center space-x-2.5 sm:space-x-3.5 min-w-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-[#FAF7F0] dark:bg-[#252422] border border-[#EBE8DF] dark:border-[#2E2C28] flex items-center justify-center text-[#C96442] shadow-2xs shrink-0">
+                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center space-x-2.5">
-                  <h1 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
-                    Intelligence Search
+                <div className="flex items-center space-x-2">
+                  <h1 className="font-serif text-lg sm:text-2xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
+                    Search Archive
                   </h1>
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-[#252422] text-[#8E8B82] border border-[#EBE8DF] dark:border-[#2E2C28]">
+                  <span className="text-[10px] sm:text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-[#252422] text-[#8E8B82] border border-[#EBE8DF] dark:border-[#2E2C28] shrink-0">
                     {filteredArticles.length} indexed
                   </span>
                 </div>
-                <p className="text-xs text-[#8E8B82] dark:text-[#78756E] font-mono mt-0.5 truncate">
+                <p className="hidden sm:block text-xs text-[#8E8B82] dark:text-[#78756E] font-mono mt-0.5 truncate">
                   Real-time full-text indexing across titles, summaries, and editorial desks
                 </p>
               </div>
@@ -138,17 +138,17 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
             {hasActiveFilters && (
               <button
                 onClick={handleResetFilters}
-                className="self-start sm:self-center inline-flex items-center space-x-1.5 text-xs font-mono text-[#C96442] hover:text-[#b85535] px-2.5 py-1 rounded-lg bg-[#C96442]/5 hover:bg-[#C96442]/10 transition-colors cursor-pointer"
+                className="inline-flex items-center space-x-1 text-[11px] sm:text-xs font-mono text-[#C96442] hover:text-[#b85535] px-2 sm:px-2.5 py-1 rounded-lg bg-[#C96442]/5 hover:bg-[#C96442]/10 transition-colors cursor-pointer shrink-0"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>Reset filters</span>
+                <span>Reset</span>
               </button>
             )}
           </div>
 
           {/* Sleek, Tactile Search Input */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E8B82]" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8B82] pointer-events-none" />
             <input
               ref={inputRef}
               type="search"
@@ -156,10 +156,10 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
               enterKeyHint="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search keywords, topics, or models (e.g. Claude, reasoning, robotics, M5)..."
-              className="w-full pl-10 pr-20 py-2.5 sm:py-3 rounded-xl border border-[#EBE8DF] dark:border-[#2E2C28] bg-[#FAF7F0] dark:bg-[#141413] text-sm text-[#1F1E1D] dark:text-[#F5F2EB] placeholder-[#8E8B82] focus:outline-hidden focus:border-[#C96442] focus:ring-1 focus:ring-[#C96442] transition-all"
+              placeholder="Search topics, AI models, companies..."
+              className="w-full h-10 sm:h-11 pl-9.5 pr-10 rounded-lg sm:rounded-xl border border-[#EBE8DF] dark:border-[#2E2C28] bg-[#FAF7F0] dark:bg-[#141413] text-xs sm:text-sm text-[#1F1E1D] dark:text-[#F5F2EB] placeholder-[#8E8B82] focus:outline-hidden focus:border-[#C96442] focus:ring-1 focus:ring-[#C96442]/30 transition-all shadow-2xs"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1.5">
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center space-x-1.5">
               {query ? (
                 <button
                   onClick={() => {
@@ -183,7 +183,7 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5 pb-0.5">
             <button
               onClick={() => setSelectedCategory("all")}
-              className={`text-xs px-3 py-1 rounded-lg font-medium shrink-0 transition-all cursor-pointer ${
+              className={`text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 rounded-lg font-medium shrink-0 transition-all cursor-pointer ${
                 selectedCategory === "all"
                   ? "bg-[#C96442] text-white shadow-2xs font-semibold"
                   : "border border-[#EBE8DF] dark:border-[#2A2925] bg-[#FAF7F0] dark:bg-[#201F1D] text-[#686660] dark:text-[#A8A59D] hover:border-[#C96442]/60 hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB]"
@@ -191,14 +191,14 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
             >
               All Categories
               {totalArticles !== undefined && (
-                <span className="text-[10px] opacity-75 font-mono ml-1.5">({totalArticles})</span>
+                <span className="text-[10px] opacity-75 font-mono ml-1">({totalArticles})</span>
               )}
             </button>
             {categories.map((c) => (
               <button
                 key={c.id}
                 onClick={() => setSelectedCategory(c.slug)}
-                className={`text-xs px-3 py-1 rounded-lg font-medium shrink-0 transition-all cursor-pointer ${
+                className={`text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 rounded-lg font-medium shrink-0 transition-all cursor-pointer ${
                   selectedCategory === c.slug
                     ? "bg-[#C96442] text-white shadow-2xs font-semibold"
                     : "border border-[#EBE8DF] dark:border-[#2A2925] bg-[#FAF7F0] dark:bg-[#201F1D] text-[#686660] dark:text-[#A8A59D] hover:border-[#C96442]/60 hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB]"
@@ -206,7 +206,7 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
               >
                 {c.name}
                 {c._count?.articles !== undefined && (
-                  <span className="text-[10px] opacity-75 font-mono ml-1.5">
+                  <span className="text-[10px] opacity-75 font-mono ml-1">
                     ({c._count.articles})
                   </span>
                 )}
@@ -231,7 +231,7 @@ export function SearchClient({ initialArticles, categories, totalArticles }: Pro
 
         {/* Dynamic Results Grid (3 in ad-free vs 2 in standard with ads) */}
         <div
-          className={`grid gap-6 transition-all duration-200 w-full ${
+          className={`grid gap-3.5 sm:gap-6 transition-all duration-200 w-full ${
             isAdFree
               ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
               : "grid-cols-1 md:grid-cols-2"
