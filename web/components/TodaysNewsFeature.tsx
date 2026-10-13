@@ -160,17 +160,28 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
           </span>
-          <h2 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
-            Today&apos;s News
-          </h2>
-          <span className="text-[10px] sm:text-[11px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold shrink-0">
-            {sortedArticles.length} Live Stories
-          </span>
+          <Link href="/today" className="group flex items-center gap-2 hover:opacity-90">
+            <h2 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB] group-hover:text-rose-600 transition-colors">
+              Today&apos;s News
+            </h2>
+            <span className="text-[10px] sm:text-[11px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold shrink-0">
+              {sortedArticles.length} Live Stories
+            </span>
+          </Link>
         </div>
 
-        <div className="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-[#8E8B82] dark:text-[#8E8B82] shrink-0">
-          <Clock className="w-3.5 h-3.5 text-[#C96442]" />
-          <span>Last 24h</span>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/today"
+            className="hidden sm:inline-flex items-center gap-1 text-xs font-mono font-semibold text-rose-600 hover:text-rose-700 dark:text-rose-400 transition-colors"
+          >
+            <span>Full Wire ({sortedArticles.length})</span>
+            <span>&rarr;</span>
+          </Link>
+          <div className="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-[#8E8B82] dark:text-[#8E8B82] shrink-0">
+            <Clock className="w-3.5 h-3.5 text-[#C96442]" />
+            <span>Last 24h</span>
+          </div>
         </div>
       </div>
 
@@ -237,28 +248,37 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
               : `Showing ${displayedArticles.length} of ${filteredArticles.length} stories published today`}
           </span>
 
-          {!isExpanded ? (
-            <button
-              type="button"
-              onClick={handleExpand}
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl font-medium bg-white dark:bg-[#252422] hover:bg-[#FAF7F0] dark:hover:bg-[#2E2C29] text-[#1F1E1D] dark:text-[#F5F2EB] border border-[#E6DFD3] dark:border-[#383530] shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+            {!isExpanded ? (
+              <button
+                type="button"
+                onClick={handleExpand}
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl font-medium bg-white dark:bg-[#252422] hover:bg-[#FAF7F0] dark:hover:bg-[#2E2C29] text-[#1F1E1D] dark:text-[#F5F2EB] border border-[#E6DFD3] dark:border-[#383530] shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+              >
+                <span>Expand here</span>
+                <span className="text-[#C96442] font-semibold">
+                  (+{filteredArticles.length - initialCount} more)
+                </span>
+                <ChevronDown className="w-4 h-4 text-[#C96442]" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleCollapse}
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl text-[#8E8B82] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB] bg-white/50 dark:bg-[#252422]/50 hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530] transition-colors cursor-pointer"
+              >
+                <span>Show fewer stories</span>
+                <ChevronUp className="w-3.5 h-3.5" />
+              </button>
+            )}
+
+            <Link
+              href="/today"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-4 py-2.5 rounded-xl font-medium bg-[#1F1E1D] dark:bg-[#F5F2EB] text-white dark:text-[#1F1E1D] shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99]"
             >
-              <span>Show all {filteredArticles.length} stories from today</span>
-              <span className="text-[#C96442] font-semibold">
-                (+{filteredArticles.length - initialCount} more)
-              </span>
-              <ChevronDown className="w-4 h-4 text-[#C96442]" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleCollapse}
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl text-[#8E8B82] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB] bg-white/50 dark:bg-[#252422]/50 hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530] transition-colors cursor-pointer"
-            >
-              <span>Show fewer stories</span>
-              <ChevronUp className="w-3.5 h-3.5" />
-            </button>
-          )}
+              <span>Full Live Wire Page &rarr;</span>
+            </Link>
+          </div>
         </div>
       )}
     </section>

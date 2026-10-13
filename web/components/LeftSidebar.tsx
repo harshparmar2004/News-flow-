@@ -62,8 +62,12 @@ export function LeftSidebar({ categories, activeSlug, totalArticles, todaysCount
 
           {/* Today's News Direct Link */}
           <Link
-            href="/#todays-news"
-            className="flex items-center justify-between px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all text-[#686660] dark:text-[#A8A59D] hover:bg-[#FAF7F0] dark:hover:bg-[#20201D] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB] group"
+            href="/today"
+            className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all group ${
+              pathname === "/today" || activeSlug === "today"
+                ? "bg-[#FBEBE8] dark:bg-[#2C1F1B] text-[#C96442] font-semibold shadow-xs"
+                : "text-[#686660] dark:text-[#A8A59D] hover:bg-[#FAF7F0] dark:hover:bg-[#20201D] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB]"
+            }`}
           >
             <span className="flex items-center space-x-2">
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />

@@ -132,6 +132,23 @@ export function MobileDesksDrawer({ isOpen, onClose }: MobileDesksDrawerProps) {
               Active Desks
             </h3>
 
+            {/* Today's Live Wire */}
+            <Link
+              href="/today"
+              onClick={onClose}
+              className={`flex items-center justify-between p-3 rounded-xl text-sm font-medium transition-all ${
+                pathname === "/today"
+                  ? "bg-[#FBEBE8] dark:bg-[#2C1F1B] text-[#C96442] font-semibold"
+                  : "bg-white dark:bg-[#201F1D] text-[#1F1E1D] dark:text-[#F5F2EB] border border-[#EBE8DF]/60 dark:border-[#2A2925]"
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <Radio className="w-4 h-4 text-rose-500 animate-pulse" />
+                <span>Today&apos;s Live Wire</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-[#8E8B82]" />
+            </Link>
+
             {/* All Intelligence */}
             <Link
               href="/"

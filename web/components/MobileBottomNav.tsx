@@ -64,18 +64,21 @@ export function MobileBottomNav({ onOpenDesks }: MobileBottomNavProps) {
 
         {/* 2. Today's Wire (with live pulse dot) */}
         <Link
-          href="/#todays-news"
-          onClick={handleTodayClick}
-          className="flex flex-col items-center justify-center flex-1 h-full py-1 text-[11px] font-medium text-[#8E8B82] dark:text-[#A8A59D] hover:text-[#C96442] dark:hover:text-[#C96442] transition-all active:scale-95"
+          href="/today"
+          className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-[11px] font-medium transition-all active:scale-95 ${
+            pathname === "/today"
+              ? "text-[#C96442] font-semibold"
+              : "text-[#8E8B82] dark:text-[#A8A59D] hover:text-[#C96442]"
+          }`}
         >
           <div className="relative">
-            <Radio className="w-5 h-5 mb-0.5 stroke-2 text-[#C96442]" />
+            <Radio className={`w-5 h-5 mb-0.5 ${pathname === "/today" ? "stroke-[2.5]" : "stroke-2"} text-[#C96442]`} />
             <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
             </span>
           </div>
-          <span className="text-[#1F1E1D] dark:text-[#F5F2EB] font-medium">Today</span>
+          <span className={pathname === "/today" ? "text-[#C96442] font-semibold" : "text-[#1F1E1D] dark:text-[#F5F2EB] font-medium"}>Today</span>
         </Link>
 
         {/* 3. News Desks (Opens Drawer) */}
