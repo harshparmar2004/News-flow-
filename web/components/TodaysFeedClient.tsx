@@ -123,7 +123,7 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
   const hasMore = visibleLimit < sortedArticles.length;
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-4 sm:space-y-5">
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center space-x-2 text-xs text-[#8E8B82] dark:text-[#A8A59D]">
         <Link href="/" className="hover:text-[#C96442] transition-colors">
@@ -135,41 +135,41 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
         </span>
       </nav>
 
-      {/* Hero Live Wire Editorial Banner */}
-      <div className="relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 bg-gradient-to-br from-[#FAF7F0] via-white to-[#F5EFE6] dark:from-[#1D1C1A] dark:via-[#181715] dark:to-[#22201D] border border-[#E6DFD3] dark:border-[#2F2D29] shadow-xs space-y-3 sm:space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 pb-2.5 sm:pb-3 border-b border-[#E6DFD3] dark:border-[#2B2926]">
+      {/* Hero Live Wire Editorial Banner (Compact & Sleek) */}
+      <div className="relative rounded-xl sm:rounded-2xl p-3 sm:px-5 sm:py-3.5 bg-gradient-to-br from-[#FAF7F0] via-white to-[#F5EFE6] dark:from-[#1D1C1A] dark:via-[#181715] dark:to-[#22201D] border border-[#E6DFD3] dark:border-[#2F2D29] shadow-2xs space-y-2 sm:space-y-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 pb-2 border-b border-[#E6DFD3] dark:border-[#2B2926]">
           <div className="flex items-center gap-2">
-            <span className="relative flex h-2.5 w-2.5 shrink-0">
+            <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
             </span>
-            <h1 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
+            <h1 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
               Today&apos;s News Wire
             </h1>
-            <span className="text-[10px] sm:text-xs font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold shrink-0">
+            <span className="text-[10px] sm:text-[11px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold shrink-0">
               {articles.length} Stories Today
             </span>
           </div>
 
-          <div className="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-[#8E8B82] dark:text-[#A8A59D]">
-            <Clock className="w-3.5 h-3.5 text-[#C96442]" />
-            <span>24h Rolling Edition &bull; Continuous 24/7 Updates</span>
+          <div className="flex items-center space-x-1.5 text-[11px] font-mono text-[#8E8B82] dark:text-[#A8A59D]">
+            <Clock className="w-3 h-3 text-[#C96442]" />
+            <span>24h Rolling Edition &bull; Live Updates</span>
           </div>
         </div>
 
-        <p className="text-xs sm:text-sm text-[#686660] dark:text-[#A8A59D] max-w-3xl leading-relaxed">
-          Every breakthrough, research announcement, VC deal, and market shift scraped, ranked, and published by our autonomous AI agents today. Older articles remain archived inside their respective topic desks.
+        <p className="text-xs text-[#686660] dark:text-[#A8A59D] max-w-3xl leading-relaxed">
+          Autonomous intelligence coverage of today&apos;s breakthroughs, model releases, and market shifts.
         </p>
 
         {/* Beat Category Filter Pills */}
-        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pt-0.5 text-xs font-mono">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5 text-xs font-mono">
           <button
             type="button"
             onClick={() => {
               setSelectedBeat("all");
               setVisibleLimit(24);
             }}
-            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-medium transition-all shrink-0 cursor-pointer active:scale-95 text-[11px] sm:text-xs ${
+            className={`px-2.5 py-1 rounded-lg font-medium transition-all shrink-0 cursor-pointer active:scale-95 text-[11px] ${
               selectedBeat === "all"
                 ? "bg-[#1F1E1D] dark:bg-[#F5F2EB] text-white dark:text-[#1F1E1D] shadow-xs"
                 : "bg-white dark:bg-[#201F1D] text-[#686660] dark:text-[#A8A59D] hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530]"
@@ -189,9 +189,9 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
                   setSelectedBeat(cat.slug);
                   setVisibleLimit(24);
                 }}
-                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-medium transition-all shrink-0 cursor-pointer active:scale-95 text-[11px] sm:text-xs ${
+                className={`px-2.5 py-1 rounded-lg font-medium transition-all shrink-0 cursor-pointer active:scale-95 text-[11px] ${
                   isSelected
-                    ? "bg-[#C96442] text-white shadow-xs"
+                    ? "bg-[#C96442] text-white shadow-xs font-semibold"
                     : "bg-white dark:bg-[#201F1D] text-[#686660] dark:text-[#A8A59D] hover:bg-white dark:hover:bg-[#2E2C29] border border-[#E6DFD3] dark:border-[#383530]"
                 }`}
               >
