@@ -44,13 +44,17 @@ const RankingPage = {
               </button>
 
               <div style="display: flex; gap: 2px; background: var(--bg-surface); padding: 2px; border-radius: 8px; border: 1px solid var(--border-color);">
-                <a href="http://localhost:3000/admin" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.76rem; border: none; background: transparent; text-decoration: none; display: flex; align-items: center; gap: 4px; color: var(--text-main);" title="Open NewsFlow Admin Cockpit">
+                <a href="https://news-flow-one.vercel.app/admin" target="_blank" id="ranking-admin-link" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.76rem; border: none; background: transparent; text-decoration: none; display: flex; align-items: center; gap: 4px; color: var(--text-main);" title="Open NewsFlow Admin Cockpit">
                   <i data-lucide="shield-check" style="width: 13px; height: 13px; color: #10B981;"></i> Admin ↗
                 </a>
-                <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.76rem; border: none; background: transparent; text-decoration: none; display: flex; align-items: center; gap: 4px; color: var(--text-main);" title="Open Public Website">
+                <a href="https://news-flow-one.vercel.app" target="_blank" id="ranking-web-link" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.76rem; border: none; background: transparent; text-decoration: none; display: flex; align-items: center; gap: 4px; color: var(--text-main);" title="Open Public Website">
                   <i data-lucide="globe" style="width: 13px; height: 13px; color: #4F46E5;"></i> Web ↗
                 </a>
               </div>
+
+              <button class="btn btn-secondary" onclick="RankingPage.syncCloud()" id="ranking-sync-cloud-btn" style="padding: 6px 11px; font-size: 0.76rem; display: flex; align-items: center; gap: 4px; border-color: #10B981; color: #059669;" title="Sync latest articles published in Cloud (Neon DB) into local table">
+                <i data-lucide="cloud-download" style="width: 13px; height: 13px; color: #10B981;"></i> Sync Cloud
+              </button>
 
               <button class="btn btn-secondary" onclick="RankingPage.triggerBackfill()" id="fetch-photos-btn" style="padding: 6px 11px; font-size: 0.76rem; display: flex; align-items: center; gap: 4px;" title="Scrape and cache authentic editorial photos for stories missing photos">
                 <i data-lucide="camera" style="width: 13px; height: 13px;"></i> Photos
@@ -155,17 +159,23 @@ const RankingPage = {
 
   async checkWebStatus() {
     const badge = document.getElementById('web-status-badge');
+    const adminLink = document.getElementById('ranking-admin-link');
+    const webLink = document.getElementById('ranking-web-link');
     try {
       const res = await App.fetchApi('/api/web/status');
       this.webStatus = res;
+      const targetUrl = res.web_url || 'https://news-flow-one.vercel.app';
+      if (adminLink) adminLink.href = `${targetUrl}/admin`;
+      if (webLink) webLink.href = targetUrl;
+
       if (badge) {
         if (res.online) {
-          badge.innerHTML = `<span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10B981; margin-right:4px;"></span> Online (${res.stats?.articles || 0} on :3000)`;
+          badge.innerHTML = `<span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10B981; margin-right:4px;"></span> Online (${res.stats?.articles || 0} in Neon DB)`;
           badge.style.background = 'rgba(16,185,129,0.1)';
           badge.style.color = '#059669';
           badge.style.borderColor = 'rgba(16,185,129,0.25)';
         } else {
-          badge.innerHTML = `⚠️ Website Offline (localhost:3000)`;
+          badge.innerHTML = `⚠️ Website Offline`;
           badge.style.background = 'rgba(198,40,40,0.1)';
           badge.style.color = 'var(--status-failed)';
           badge.style.borderColor = 'rgba(198,40,40,0.25)';
@@ -176,6 +186,32 @@ const RankingPage = {
         badge.innerHTML = `⚠️ Website Unreachable`;
         badge.style.background = 'rgba(198,40,40,0.1)';
         badge.style.color = 'var(--status-failed)';
+      }
+    }
+  },
+
+  async syncCloud() {
+    const btn = document.getElementById('ranking-sync-cloud-btn');
+    if (btn) {
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin" style="width:12px; height:12px;"></i> Syncing...';
+      btn.disabled = true;
+    }
+    App.showToast('Pulling published stories from Cloud Neon DB...', 'info');
+    try {
+      const res = await App.fetchApi('/api/cloud/sync', { method: 'POST' });
+      if (res && res.success) {
+        App.showToast(`Synced ${res.synced} new articles into local desk!`, 'success');
+      } else {
+        App.showToast(`Sync complete: ${res?.error || 'All stories up to date'}`, 'info');
+      }
+      await this.loadData();
+    } catch (e) {
+      App.showToast(`Sync error: ${e.message}`, 'error');
+    } finally {
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="cloud-download" style="width: 13px; height: 13px; color: #10B981;"></i> Sync Cloud';
+        btn.disabled = false;
+        if (window.lucide) window.lucide.createIcons();
       }
     }
   },

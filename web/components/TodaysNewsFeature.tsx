@@ -143,8 +143,8 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
 
   if (sortedArticles.length === 0) return null;
 
-  // Initial visible items (6 when ad-free = 2 rows of 3; 4 when ads on = 2 rows of 2)
-  const initialCount = isAdFree ? 6 : 4;
+  // Initial visible items (12 when ad-free = 4 rows of 3; 8 when ads on = 4 rows of 2)
+  const initialCount = isAdFree ? 12 : 8;
   const hasMore = filteredArticles.length > initialCount;
   const displayedArticles = isExpanded ? filteredArticles : filteredArticles.slice(0, initialCount);
 
@@ -164,7 +164,7 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
             Today&apos;s News
           </h2>
           <span className="text-[10px] sm:text-[11px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold shrink-0">
-            {sortedArticles.length} Live
+            {sortedArticles.length} Live Stories
           </span>
         </div>
 

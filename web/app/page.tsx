@@ -25,7 +25,7 @@ export default async function HomePage() {
     prisma.article.findMany({
       where: { status: "published" },
       orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
-      take: 12,
+      take: 24,
       include: {
         category: {
           select: { name: true, slug: true },

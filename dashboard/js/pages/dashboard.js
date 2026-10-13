@@ -24,26 +24,29 @@ const DashboardPage = {
             <div>
               <div style="display: flex; align-items: center; gap: 8px;">
                 <h4 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin: 0;">
-                  NewsFlow Web &amp; Admin Platform (:3000)
+                  NewsFlow Cloud Intelligence Platform
                 </h4>
                 <span id="dash-web-status-badge" class="badge" style="background: rgba(16, 185, 129, 0.12); color: #059669; font-weight: 700; font-size: 0.72rem;">
-                  ● Connected (200 OK)
+                  ● Live Cloud (Neon DB)
                 </span>
               </div>
-              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 0 0;">
-                Connected endpoint: <code style="color: #4F46E5; font-weight: 600;">http://localhost:3000/api/articles</code> &bull; Line-by-line editorial publishing
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 0 0;" id="dash-web-url-text">
+                Live URL: <a href="https://news-flow-one.vercel.app" target="_blank" id="dash-live-link" style="color: #4F46E5; font-weight: 600; text-decoration: none;">https://news-flow-one.vercel.app</a> &bull; 24/7 GitHub Actions Automation
               </p>
             </div>
           </div>
 
           <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <button class="btn btn-primary btn-glow" onclick="DashboardPage.triggerPipelineRun()" id="dash-run-pipeline-btn" style="display: flex; align-items: center; gap: 6px; padding: 7px 15px; font-size: 0.82rem; font-weight: 700;">
-              <i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Pipeline
+              <i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Local
+            </button>
+            <button class="btn btn-secondary" onclick="DashboardPage.syncCloud()" id="dash-sync-cloud-btn" style="display: flex; align-items: center; gap: 6px; padding: 7px 13px; font-size: 0.82rem; font-weight: 700; border-color: #10B981; color: #059669;" title="Fetch latest articles published by GitHub Actions into local database">
+              <i data-lucide="cloud-download" style="width: 14px; height: 14px; color: #10B981;"></i> Sync Cloud
             </button>
             <a href="#ranking" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; font-size: 0.82rem; text-decoration: none;">
               <i data-lucide="newspaper" style="width: 14px; height: 14px; color: #4F46E5;"></i> News Desk &rarr;
             </a>
-            <a href="http://localhost:3000/admin" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; font-size: 0.82rem; text-decoration: none;">
+            <a href="https://news-flow-one.vercel.app/admin" target="_blank" id="dash-admin-link" rel="noopener noreferrer" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; font-size: 0.82rem; text-decoration: none;">
               <i data-lucide="shield-check" style="width: 14px; height: 14px; color: #059669;"></i> Admin Desk ↗
             </a>
             <button class="btn btn-secondary" onclick="DashboardPage.loadData()" style="display: flex; align-items: center; gap: 6px; padding: 7px 12px; font-size: 0.82rem;">
@@ -214,8 +217,23 @@ const DashboardPage = {
       try {
         const webRes = await App.fetchApi('/api/web/status');
         const badge = document.getElementById('dash-web-status-badge');
+        const liveLink = document.getElementById('dash-live-link');
+        const adminLink = document.getElementById('dash-admin-link');
+        const targetUrl = webRes.web_url || 'https://news-flow-one.vercel.app';
+
+        if (liveLink) {
+          liveLink.href = targetUrl;
+          liveLink.textContent = targetUrl;
+        }
+        if (adminLink) {
+          adminLink.href = `${targetUrl}/admin`;
+        }
+
         if (badge && webRes.online) {
-          badge.innerHTML = `● Online (${webRes.stats?.articles || 0} articles on :3000)`;
+          const cloudTotal = webRes.stats?.articles || summary.cloud_articles || 985;
+          badge.innerHTML = `● Live Cloud: ${cloudTotal} Articles (Neon DB)`;
+          badge.style.background = 'rgba(16, 185, 129, 0.12)';
+          badge.style.color = '#059669';
         }
       } catch (e) {}
 
@@ -515,6 +533,32 @@ const DashboardPage = {
     } finally {
       if (btn) {
         btn.innerHTML = '<i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Pipeline';
+        btn.disabled = false;
+        if (window.lucide) window.lucide.createIcons();
+      }
+    }
+  },
+
+  async syncCloud() {
+    const btn = document.getElementById('dash-sync-cloud-btn');
+    if (btn) {
+      btn.innerHTML = '<i data-lucide="loader-2" class="spin" style="width:13px; height:13px;"></i> Syncing...';
+      btn.disabled = true;
+    }
+    App.showToast('Connecting to Neon PostgreSQL Cloud DB...', 'info');
+    try {
+      const res = await App.fetchApi('/api/cloud/sync', { method: 'POST' });
+      if (res && res.success) {
+        App.showToast(`Synced ${res.synced} new cloud articles into local SQLite!`, 'success');
+      } else {
+        App.showToast(`Sync notice: ${res?.error || 'Database already in sync'}`, 'info');
+      }
+      await this.loadData();
+    } catch (e) {
+      App.showToast(`Sync failed: ${e.message}`, 'error');
+    } finally {
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="cloud-download" style="width: 14px; height: 14px; color: #10B981;"></i> Sync Cloud';
         btn.disabled = false;
         if (window.lucide) window.lucide.createIcons();
       }

@@ -113,9 +113,9 @@ export function HomeFeedClient({ todaysArticles, recentArticles, categorySection
     return sortArticlesList(recentArticles, activeFilter);
   }, [recentArticles, activeFilter]);
 
-  // In Ad-Free mode (ads off), display 3 news slide boxes per row (6 recent = 2 rows of 3)
-  // When ads are on, display 2 news boxes per row alongside the right ads sidebar
-  const displayedRecent = isAdFree ? sortedRecent.slice(0, 6) : sortedRecent.slice(0, 4);
+  // In Ad-Free mode (ads off), display 3 news slide boxes per row (12 recent = 4 rows of 3)
+  // When ads are on, display 2 news boxes per row alongside the right ads sidebar (8 recent = 4 rows of 2)
+  const displayedRecent = isAdFree ? sortedRecent.slice(0, 12) : sortedRecent.slice(0, 8);
 
   return (
     <div className="space-y-5 sm:space-y-8">

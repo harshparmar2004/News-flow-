@@ -98,6 +98,17 @@ def get_stats():
         src_rows = session.query(Article.source, func.count(Article.id)).group_by(Article.source).all()
         sources_breakdown = {src or "Unknown": cnt for src, cnt in src_rows}
 
+    # Query live cloud deployment status
+    web_url = os.getenv("NEWSFLOW_WEB_URL", "https://news-flow-one.vercel.app").rstrip("/")
+    cloud_articles_count = None
+    try:
+        import requests as req
+        r = req.get(f"{web_url}/api/health", timeout=2.5)
+        if r.status_code == 200:
+            cloud_articles_count = r.json().get("stats", {}).get("articles")
+    except Exception:
+        pass
+
     return {
         "summary": {
             "total": total,
@@ -111,7 +122,9 @@ def get_stats():
             "synced": web_posted_count,
             "photos": photos_count,
             "monitored_sources": total_monitored_sources,
-            "active_scraped_sources": len(sources_breakdown)
+            "active_scraped_sources": len(sources_breakdown),
+            "cloud_articles": cloud_articles_count if cloud_articles_count is not None else published,
+            "cloud_url": web_url,
         },
         "platforms": {
             "reddit": reddit_posted,
@@ -1449,6 +1462,63 @@ def test_web_connection():
             "message": f"Connection failed: {str(e)}",
             "jev_ready": bool(typesafe_key)
         }
+
+
+@router.post("/cloud/sync")
+def sync_from_cloud():
+    """Syncs articles published in the cloud (Neon PostgreSQL) into the local SQLite database."""
+    import hashlib
+    neon_url = "postgresql://neondb_owner:npg_Ue6LxCyW1GVu@ep-cool-art-b3k783d3-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
+    try:
+        from sqlalchemy import create_engine, text
+        engine = create_engine(neon_url)
+
+        with engine.connect() as conn:
+            cloud_articles = conn.execute(text('SELECT title, slug, body, summary, cover_image_url, source_url, status, published_at, created_at FROM "Article" ORDER BY created_at DESC LIMIT 300')).fetchall()
+
+        synced_count = 0
+        with get_session() as session:
+            existing_slugs = set(s[0] for s in session.query(Article.web_slug).filter(Article.web_slug.isnot(None)).all())
+            existing_urls = set(u[0] for u in session.query(Article.url).all())
+
+            for row in cloud_articles:
+                title, slug, body, summary, cover_image_url, source_url, status, pub_at, created_at = row
+                url = source_url or f"https://news-flow-one.vercel.app/article/{slug}"
+                url_hash = hashlib.sha256(url.encode()).hexdigest()
+
+                if slug in existing_slugs or url in existing_urls:
+                    continue
+
+                art = Article(
+                    url_hash=url_hash,
+                    source="Cloud Scraper",
+                    url=url,
+                    title=title or "Untitled",
+                    body=body or summary or "",
+                    author="NewsFlow AI",
+                    published_at=pub_at or created_at,
+                    scraped_at=created_at or datetime.utcnow(),
+                    scraped_image_url=cover_image_url,
+                    status="published" if status == "published" else "ready",
+                    rank_score=85,
+                    web_posted=True,
+                    web_slug=slug,
+                    web_status=status,
+                    web_published_at=pub_at or created_at
+                )
+                session.add(art)
+                synced_count += 1
+                existing_slugs.add(slug)
+                existing_urls.add(url)
+
+            if synced_count > 0:
+                session.commit()
+
+        return {"success": True, "synced": synced_count, "total_cloud": len(cloud_articles)}
+    except Exception as e:
+        logger.error(f"Cloud sync error: {e}")
+        return {"success": False, "error": str(e), "synced": 0}
+
 
 
 @router.get("/web/crawlers")

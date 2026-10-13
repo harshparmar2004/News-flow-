@@ -19,8 +19,8 @@
     "message": "Connected to NewsFlow Web & Admin Desk (HTTP 200 OK)"
   },
   "stats": {
-    "total_dispatched": 76,
-    "total_images_sent": 61,
+    "total_dispatched": 91,
+    "total_images_sent": 76,
     "total_failed": 1
   },
   "dispatched_articles": {
@@ -2837,6 +2837,336 @@
         "category": "cybersecurity",
         "has_photo": true,
         "web_slug": "hidden-implant-in-ledger-hardware-wallets-linked-to-dollar93m-theft"
+      }
+    },
+    "885": {
+      "article_id": 885,
+      "title": "You Can Now Set Up Your iPhone Duo Pre-Order - Do It Before Friday",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-12T16:16:49",
+      "web_posted": true,
+      "web_slug": "you-can-now-set-up-your-iphone-duo-pre-order-do-it-before-friday",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "You Can Now Set Up Your iPhone Duo Pre-Order - Do It Before Friday",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "you-can-now-set-up-your-iphone-duo-pre-order-do-it-before-friday"
+      }
+    },
+    "886": {
+      "article_id": 886,
+      "title": "Apple 'Welcome Home' Launch: Everything to Expect Tomorrow",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-12T17:17:12",
+      "web_posted": true,
+      "web_slug": "apple-welcome-home-launch-everything-to-expect-tomorrow",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Apple 'Welcome Home' Launch: Everything to Expect Tomorrow",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "apple-welcome-home-launch-everything-to-expect-tomorrow"
+      }
+    },
+    "887": {
+      "article_id": 887,
+      "title": "Does Blizzard's revival of its classic games signal a return of the 'old Blizzard?'",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-12T19:15:15",
+      "web_posted": true,
+      "web_slug": "does-blizzards-revival-of-its-classic-games-signal-a-return-of-the-old-blizzard",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Does Blizzard's revival of its classic games signal a return of the 'old Blizzard?'",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "does-blizzards-revival-of-its-classic-games-signal-a-return-of-the-old-blizzard"
+      }
+    },
+    "888": {
+      "article_id": 888,
+      "title": "'Our humble goal is to survive the AI revolution' says Epic Games CEO, as its Star Wars and Marvel crossover pivots to 'AI first' development",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-12T22:55:00",
+      "web_posted": true,
+      "web_slug": "our-humble-goal-is-to-survive-the-ai-revolution-says-epic-games-ceo-as-its-star-wars-and-marvel-crossover-pivots-to-ai-first-development",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "'Our humble goal is to survive the AI revolution' says Epic Games CEO, as its Star Wars and Marvel crossover pivots to 'AI first' development",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "our-humble-goal-is-to-survive-the-ai-revolution-says-epic-games-ceo-as-its-star-wars-and-marvel-crossover-pivots-to-ai-first-development"
+      }
+    },
+    "889": {
+      "article_id": 889,
+      "title": "Why alts are part of World of Warcraft: Forever's core progression plans",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-12T18:30:38",
+      "web_posted": true,
+      "web_slug": "why-alts-are-part-of-world-of-warcraft-forevers-core-progression-plans",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Why alts are part of World of Warcraft: Forever's core progression plans",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "why-alts-are-part-of-world-of-warcraft-forevers-core-progression-plans"
+      }
+    },
+    "890": {
+      "article_id": 890,
+      "title": "Windows 11's Dev Drive isn't just for developers, and I moved my game library onto one",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-13T00:00:17",
+      "web_posted": true,
+      "web_slug": "windows-11s-dev-drive-isnt-just-for-developers-and-i-moved-my-game-library-onto-one",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Windows 11's Dev Drive isn't just for developers, and I moved my game library onto one",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "windows-11s-dev-drive-isnt-just-for-developers-and-i-moved-my-game-library-onto-one"
+      }
+    },
+    "891": {
+      "article_id": 891,
+      "title": "Don't buy a cheap Android phone without these non-negotiable features",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-13T00:30:00",
+      "web_posted": true,
+      "web_slug": "dont-buy-a-cheap-android-phone-without-these-non-negotiable-features",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Don't buy a cheap Android phone without these non-negotiable features",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "dont-buy-a-cheap-android-phone-without-these-non-negotiable-features"
+      }
+    },
+    "892": {
+      "article_id": 892,
+      "title": "CISA calls on Citrix NetScaler customers to patch as new flaws disclosed",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-12T15:27:12",
+      "web_posted": true,
+      "web_slug": "cisa-calls-on-citrix-netscaler-customers-to-patch-as-new-flaws-disclosed",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "CISA calls on Citrix NetScaler customers to patch as new flaws disclosed",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "cisa-calls-on-citrix-netscaler-customers-to-patch-as-new-flaws-disclosed"
+      }
+    },
+    "893": {
+      "article_id": 893,
+      "title": "Ahold Delhaize experiencing cybersecurity issue",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-12T20:00:00",
+      "web_posted": true,
+      "web_slug": "ahold-delhaize-experiencing-cybersecurity-issue",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Ahold Delhaize experiencing cybersecurity issue",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "ahold-delhaize-experiencing-cybersecurity-issue"
+      }
+    },
+    "894": {
+      "article_id": 894,
+      "title": "I stopped fighting with wireless Android Auto and discovered wired was better all along",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-12T22:00:18",
+      "web_posted": true,
+      "web_slug": "i-stopped-fighting-with-wireless-android-auto-and-discovered-wired-was-better-all-along",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "I stopped fighting with wireless Android Auto and discovered wired was better all along",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "i-stopped-fighting-with-wireless-android-auto-and-discovered-wired-was-better-all-along"
+      }
+    },
+    "895": {
+      "article_id": 895,
+      "title": "Beastly 14-inch MacBook Pro with M5 Pro chip and 2TB storage gets a steep $600 price drop",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 12,
+      "dispatched_at": "2026-10-12T23:41:52",
+      "web_posted": true,
+      "web_slug": "beastly-14-inch-macbook-pro-with-m5-pro-chip-and-2tb-storage-gets-a-steep-dollar600-price-drop",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "Beastly 14-inch MacBook Pro with M5 Pro chip and 2TB storage gets a steep $600 price drop",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "beastly-14-inch-macbook-pro-with-m5-pro-chip-and-2tb-storage-gets-a-steep-dollar600-price-drop"
+      }
+    },
+    "896": {
+      "article_id": 896,
+      "title": "I don't know what Rick and Morty's about but I have turned GTA 5 into its perfect replica",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 13,
+      "dispatched_at": "2026-10-12T17:00:00",
+      "web_posted": true,
+      "web_slug": "i-dont-know-what-rick-and-mortys-about-but-i-have-turned-gta-5-into-its-perfect-replica",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "I don't know what Rick and Morty's about but I have turned GTA 5 into its perfect replica",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "i-dont-know-what-rick-and-mortys-about-but-i-have-turned-gta-5-into-its-perfect-replica"
+      }
+    },
+    "897": {
+      "article_id": 897,
+      "title": "How to get an Emperor Modulator in Arc Raiders",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 14,
+      "dispatched_at": "2026-10-12T17:13:57",
+      "web_posted": true,
+      "web_slug": "how-to-get-an-emperor-modulator-in-arc-raiders",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "How to get an Emperor Modulator in Arc Raiders",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "how-to-get-an-emperor-modulator-in-arc-raiders"
+      }
+    },
+    "898": {
+      "article_id": 898,
+      "title": "How to use Google Gemini to automate tasks",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 15,
+      "dispatched_at": "2026-10-12T22:30:00",
+      "web_posted": true,
+      "web_slug": "how-to-use-google-gemini-to-automate-tasks",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "How to use Google Gemini to automate tasks",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "how-to-use-google-gemini-to-automate-tasks"
+      }
+    },
+    "899": {
+      "article_id": 899,
+      "title": "How to turn your old hard drives into a RAID array",
+      "source": "Cloud Scraper",
+      "category": "Tech & Innovation",
+      "status": "delivered",
+      "status_code": 200,
+      "latency_ms": 16,
+      "dispatched_at": "2026-10-12T23:00:00",
+      "web_posted": true,
+      "web_slug": "how-to-turn-your-old-hard-drives-into-a-raid-array",
+      "web_status": "draft",
+      "has_authentic_photo": true,
+      "error": null,
+      "payload_summary": {
+        "title": "How to turn your old hard drives into a RAID array",
+        "domain": "Cloud Scraper",
+        "category": "Tech & Innovation",
+        "has_photo": true,
+        "web_slug": "how-to-turn-your-old-hard-drives-into-a-raid-array"
       }
     }
   }
