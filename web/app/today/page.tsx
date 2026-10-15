@@ -42,7 +42,10 @@ export default async function TodaysNewsPage() {
     prisma.article.findMany({
       where: {
         status: "published",
-        published_at: { gte: twentyFourHoursAgo },
+        OR: [
+          { published_at: { gte: twentyFourHoursAgo } },
+          { created_at: { gte: twentyFourHoursAgo } },
+        ],
       },
       orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
       include: {
@@ -53,6 +56,24 @@ export default async function TodaysNewsPage() {
     }),
   ]);
 
+  // Robust feed guarantee: if fewer than 20 stories in rolling 24h window, fetch top recent published
+  let feedArticles = todaysArticles;
+  if (feedArticles.length < 20) {
+    const fallback = await prisma.article.findMany({
+      where: { status: "published" },
+      orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
+      take: 60,
+      include: {
+        category: {
+          select: { name: true, slug: true },
+        },
+      },
+    });
+    feedArticles = fallback;
+  }
+
+  const effectiveCount = Math.max(todaysArticles.length, feedArticles.length);
+
   return (
     <div className="w-full flex min-h-screen bg-[#FAF7F0] dark:bg-[#121211]">
       {/* 1. Left Sidebar: Sticky alongside feed on Desktop */}
@@ -61,14 +82,14 @@ export default async function TodaysNewsPage() {
           categories={categories}
           activeSlug="today"
           totalArticles={totalArticles}
-          todaysCount={todaysArticles.length}
+          todaysCount={effectiveCount}
         />
       </div>
 
       {/* 2. Middle Main Content: Natural document flow */}
       <main className="flex-1 min-w-0 px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-6 pb-24 lg:pb-12">
         <TodaysFeedClient
-          articles={todaysArticles}
+          articles={feedArticles}
           totalPublishedCount={totalArticles}
         />
       </main>

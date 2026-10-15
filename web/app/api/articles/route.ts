@@ -314,10 +314,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Support scheduled status for future timestamps
+    // Never mark as scheduled due to slight clock drift; clamp to now
     let status = body.status || "published";
-    if (publishedAt > now && status === "published") {
-      status = "scheduled";
+    if (status === "published" && publishedAt > now) {
+      publishedAt = now;
     }
 
     const readingTime = calculateReadingTime(bodyContent);

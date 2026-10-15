@@ -33,15 +33,19 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
-  // 1. Strictly sort articles newest published first
+  // 1. Strictly sort articles newest published/created first
   const sortedArticles = useMemo(() => {
     return [...articles].sort((a, b) => {
-      const timeA = new Date(a.published_at).getTime();
-      const timeB = new Date(b.published_at).getTime();
+      const timeA = Math.max(
+        new Date(a.published_at).getTime(),
+        a.created_at ? new Date(a.created_at).getTime() : 0
+      );
+      const timeB = Math.max(
+        new Date(b.published_at).getTime(),
+        b.created_at ? new Date(b.created_at).getTime() : 0
+      );
       if (timeB !== timeA) return timeB - timeA;
-      const createdA = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const createdB = b.created_at ? new Date(b.created_at).getTime() : 0;
-      return createdB - createdA;
+      return (b.id || "").localeCompare(a.id || "");
     });
   }, [articles]);
 
@@ -143,8 +147,8 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
 
   if (sortedArticles.length === 0) return null;
 
-  // Initial visible items (12 when ad-free = 4 rows of 3; 8 when ads on = 4 rows of 2)
-  const initialCount = isAdFree ? 12 : 8;
+  // Initial visible items: show generous initial grid (24 when ad-free = 8 rows of 3; 16 when ads on = 8 rows of 2)
+  const initialCount = isAdFree ? 24 : 16;
   const hasMore = filteredArticles.length > initialCount;
   const displayedArticles = isExpanded ? filteredArticles : filteredArticles.slice(0, initialCount);
 

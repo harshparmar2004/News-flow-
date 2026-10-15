@@ -81,12 +81,16 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
 
     if (activeFilter === "latest") {
       return list.sort((a, b) => {
-        const timeA = new Date(a.published_at).getTime();
-        const timeB = new Date(b.published_at).getTime();
+        const timeA = Math.max(
+          new Date(a.published_at).getTime(),
+          a.created_at ? new Date(a.created_at).getTime() : 0
+        );
+        const timeB = Math.max(
+          new Date(b.published_at).getTime(),
+          b.created_at ? new Date(b.created_at).getTime() : 0
+        );
         if (timeB !== timeA) return timeB - timeA;
-        const createdA = a.created_at ? new Date(a.created_at).getTime() : 0;
-        const createdB = b.created_at ? new Date(b.created_at).getTime() : 0;
-        return createdB - createdA;
+        return (b.id || "").localeCompare(a.id || "");
       });
     }
 

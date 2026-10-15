@@ -25,18 +25,21 @@ export default async function HomePage() {
     prisma.article.findMany({
       where: { status: "published" },
       orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
-      take: 24,
+      take: 60,
       include: {
         category: {
           select: { name: true, slug: true },
         },
       },
     }),
-    // Query ALL articles published in the last 24 hours (strictly newest published first)
+    // Query ALL articles published or created in the last 24 hours (strictly newest published first)
     prisma.article.findMany({
       where: {
         status: "published",
-        published_at: { gte: twentyFourHoursAgo },
+        OR: [
+          { published_at: { gte: twentyFourHoursAgo } },
+          { created_at: { gte: twentyFourHoursAgo } },
+        ],
       },
       orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
       include: {
@@ -47,8 +50,8 @@ export default async function HomePage() {
     }),
   ]);
 
-  // Ensure Today's News always has items to show (fallback to recent dispatches if fewer than 3)
-  const finalTodaysArticles = todaysArticles.length >= 3 ? todaysArticles : recentArticles;
+  // Ensure Today's News always has plenty of items to show (fallback to recent dispatches if fewer than 15)
+  const finalTodaysArticles = todaysArticles.length >= 15 ? todaysArticles : recentArticles;
 
   // 4. Fetch articles for each category news desk (ordered by published_at desc, created_at desc)
   const categorySections = await Promise.all(
@@ -82,7 +85,7 @@ export default async function HomePage() {
         <LeftSidebar
           categories={categories}
           totalArticles={totalArticles}
-          todaysCount={todaysArticles.length}
+          todaysCount={Math.max(todaysArticles.length, finalTodaysArticles.length)}
         />
       </div>
 

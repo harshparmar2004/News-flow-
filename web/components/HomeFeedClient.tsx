@@ -49,14 +49,17 @@ function sortArticlesList(list: ArticleItem[], filter: "latest" | "top" | "most_
   const items = [...list];
 
   if (filter === "latest") {
-    // 1. LATEST: Strictly newest published at the top, then newest created
+    // 1. LATEST: Strictly newest published or created at the top
     return items.sort((a, b) => {
-      const timeA = new Date(a.published_at).getTime();
-      const timeB = new Date(b.published_at).getTime();
+      const timeA = Math.max(
+        new Date(a.published_at).getTime(),
+        a.created_at ? new Date(a.created_at).getTime() : 0
+      );
+      const timeB = Math.max(
+        new Date(b.published_at).getTime(),
+        b.created_at ? new Date(b.created_at).getTime() : 0
+      );
       if (timeB !== timeA) return timeB - timeA;
-      const createdA = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const createdB = b.created_at ? new Date(b.created_at).getTime() : 0;
-      if (createdB !== createdA) return createdB - createdA;
       return (b.id || "").localeCompare(a.id || "");
     });
   }
@@ -113,9 +116,12 @@ export function HomeFeedClient({ todaysArticles, recentArticles, categorySection
     return sortArticlesList(recentArticles, activeFilter);
   }, [recentArticles, activeFilter]);
 
-  // In Ad-Free mode (ads off), display 3 news slide boxes per row (12 recent = 4 rows of 3)
-  // When ads are on, display 2 news boxes per row alongside the right ads sidebar (8 recent = 4 rows of 2)
-  const displayedRecent = isAdFree ? sortedRecent.slice(0, 12) : sortedRecent.slice(0, 8);
+  // In Ad-Free mode (ads off), display 24 recent news boxes (8 rows of 3)
+  // When ads are on, display 16 recent news boxes (8 rows of 2)
+  const initialRecentCount = isAdFree ? 24 : 16;
+  const [visibleRecentCount, setVisibleRecentCount] = useState<number>(initialRecentCount);
+  const displayedRecent = sortedRecent.slice(0, visibleRecentCount);
+  const hasMoreRecent = visibleRecentCount < sortedRecent.length;
 
   return (
     <div className="space-y-5 sm:space-y-8">
@@ -208,6 +214,17 @@ export function HomeFeedClient({ todaysArticles, recentArticles, categorySection
             />
           ))}
         </div>
+        {hasMoreRecent && (
+          <div className="pt-3 text-center">
+            <button
+              type="button"
+              onClick={() => setVisibleRecentCount(sortedRecent.length)}
+              className="px-5 py-2.5 rounded-xl text-xs font-mono font-medium bg-white dark:bg-[#201F1D] hover:bg-[#FAF7F0] dark:hover:bg-[#2E2C29] text-[#1F1E1D] dark:text-[#F5F2EB] border border-[#E6DFD3] dark:border-[#383530] shadow-xs transition-all cursor-pointer"
+            >
+              Show All {sortedRecent.length} Recent Dispatches &rarr;
+            </button>
+          </div>
+        )}
 
         {recentArticles.length === 0 && (
           <div className="text-center py-16 p-8 rounded-3xl border border-dashed border-[#EBE8DF] dark:border-[#2C2A26] bg-white dark:bg-[#1A1917] w-full">
