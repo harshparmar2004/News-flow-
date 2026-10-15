@@ -1,0 +1,269 @@
+# College Engineering & Research Portal — 16 Academic Disciplines Sources Configuration
+# Structured for twice-daily ingestion (08:00 AM IST & 05:00 PM IST)
+# Curated from IEEE, ACM, ASME, ASCE, Nature, BioRxiv, arXiv, and leading industry publications.
+
+sources:
+  # =========================================================================
+  # 1. Computer Science & Engineering (CSE)
+  # =========================================================================
+  - name: "ACM TechNews"
+    feed_url: "https://cacm.acm.org/feed/"
+    category: "cse"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "USENIX Computing Systems"
+    feed_url: "https://www.usenix.org/feed/all.xml"
+    category: "cse"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "Hacker News Frontier"
+    feed_url: "https://news.ycombinator.com/rss"
+    category: "cse"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 2. Artificial Intelligence & Data Science (AI & DS)
+  # =========================================================================
+  - name: "arXiv Computer Science & AI"
+    feed_url: "https://rss.arxiv.org/rss/cs.AI"
+    category: "aids"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "OpenAI Research"
+    feed_url: "https://openai.com/news/rss.xml"
+    category: "aids"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "Hugging Face Daily Papers"
+    feed_url: "https://huggingface.co/blog/feed.xml"
+    category: "aids"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 3. Information Technology (IT) & Cybersecurity
+  # =========================================================================
+  - name: "The Hacker News Infosec"
+    feed_url: "https://feeds.feedburner.com/TheHackersNews"
+    category: "it"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "BleepingComputer Enterprise"
+    feed_url: "https://www.bleepingcomputer.com/feed/"
+    category: "it"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 4. Electronics & Communication Engineering (ECE)
+  # =========================================================================
+  - name: "IEEE Spectrum ECE"
+    feed_url: "https://spectrum.ieee.org/feeds/topic/telecom.rss"
+    category: "ece"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "EE Times Semiconductors & VLSI"
+    feed_url: "https://www.eetimes.com/feed/"
+    category: "ece"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 5. Electrical Engineering (EE)
+  # =========================================================================
+  - name: "IEEE Power & Energy"
+    feed_url: "https://spectrum.ieee.org/feeds/topic/energy.rss"
+    category: "ee"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "CleanTechnica Power Grid"
+    feed_url: "https://cleantechnica.com/feed/"
+    category: "ee"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 6. Mechanical Engineering (ME)
+  # =========================================================================
+  - name: "ASME Engineering News"
+    feed_url: "https://news.google.com/rss/search?q=site:asme.org+OR+mechanical+engineering+breakthrough"
+    category: "me"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "ScienceDaily Mechanical Engineering"
+    feed_url: "https://www.sciencedaily.com/rss/matter_energy/engineering.xml"
+    category: "me"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 7. Robotics & Mechatronics
+  # =========================================================================
+  - name: "The Robot Report"
+    feed_url: "https://www.therobotreport.com/feed/"
+    category: "robotics"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "IEEE Spectrum Robotics"
+    feed_url: "https://spectrum.ieee.org/feeds/topic/robotics.rss"
+    category: "robotics"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 8. Civil & Structural Engineering
+  # =========================================================================
+  - name: "ASCE Civil Engineering Source"
+    feed_url: "https://news.google.com/rss/search?q=site:asce.org+civil+engineering+infrastructure"
+    category: "civil"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "Engineering News-Record (ENR)"
+    feed_url: "https://www.enr.com/rss/articles"
+    category: "civil"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 9. Biotechnology Engineering
+  # =========================================================================
+  - name: "Nature Biotechnology Research"
+    feed_url: "https://news.google.com/rss/search?q=site:nature.com+biotechnology+CRISPR+synthetic+biology"
+    category: "biotech"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "BioRxiv Genomics & Bioengineering"
+    feed_url: "https://connect.biorxiv.org/biorxiv_xml.php?subject=bioengineering"
+    category: "biotech"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 10. Biomedical Engineering (BME)
+  # =========================================================================
+  - name: "Medgadget Medical Technology"
+    feed_url: "https://www.medgadget.com/feed"
+    category: "biomedical"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "IEEE Biomedical Engineering"
+    feed_url: "https://news.google.com/rss/search?q=IEEE+biomedical+engineering+implants+prosthetics"
+    category: "biomedical"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 11. Chemical Engineering
+  # =========================================================================
+  - name: "Chemical Engineering Progress (AIChE)"
+    feed_url: "https://news.google.com/rss/search?q=site:aiche.org+chemical+engineering+catalysis"
+    category: "chem"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "Chemistry World Industrial"
+    feed_url: "https://www.chemistryworld.com/rss"
+    category: "chem"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 12. Aerospace Engineering
+  # =========================================================================
+  - name: "SpaceNews Frontier"
+    feed_url: "https://spacenews.com/feed/"
+    category: "aerospace"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "NASA Technology Briefs"
+    feed_url: "https://www.nasa.gov/news-release/feed/"
+    category: "aerospace"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 13. Materials Science & Metallurgy
+  # =========================================================================
+  - name: "ScienceDaily Materials Science"
+    feed_url: "https://www.sciencedaily.com/rss/matter_energy/materials_science.xml"
+    category: "materials"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 14. Automobile & EV Engineering
+  # =========================================================================
+  - name: "Green Car Congress EV Tech"
+    feed_url: "https://www.greencarcongress.com/rss.xml"
+    category: "ev-auto"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  - name: "Electrek Powertrains & Storage"
+    feed_url: "https://electrek.co/feed/"
+    category: "ev-auto"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 15. Environmental Engineering
+  # =========================================================================
+  - name: "Environmental Protection Magazine"
+    feed_url: "https://eponline.com/rss-feeds/all-articles.aspx"
+    category: "environmental"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
+
+  # =========================================================================
+  # 16. Industrial & Production Engineering
+  # =========================================================================
+  - name: "IndustryWeek Smart Manufacturing"
+    feed_url: "https://www.industryweek.com/rss.xml"
+    category: "industrial"
+    tier: 1
+    delay_seconds: 1
+    max_articles: 2
