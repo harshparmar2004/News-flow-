@@ -56,28 +56,29 @@ CATEGORIES_TAXONOMY = {
         "patterns": [
             r"\b(?:funding|seed round|series [a-g]|venture capital|vcs?|valuation|investor|investors|pre-seed|unicorn|angel investor|y combinator|sequoia|a16z|andreessen|acqui(?:re|res|red|sition)|buyout|ipo|merger|venture-backed|bootstrapped startup|early-stage|late-stage|techstars|venture debt|growth equity|term sheet|pitch deck)\b",
             r"\b(?:vc bashing|vc firm|seed funding|series a funding|series b funding|fundraising round|backed by investors)\b",
-            r"\b(?:raises \$|raised \$|secures \$|closes \$|valued at \$|raising \$)\b"
+            r"\b(?:raises \$|raised \$|secures \$|closes \$|valued at \$|raising \$)\b",
+            r"\b(?:raises?|raised|secures?|secured|closes?|closed)\s+(?:[\$€£]|[\d\.]+\s*(?:million|billion|mn|bn))\b"
         ]
     },
     "gadgets-hardware": {
         "slug": "gadgets-hardware",
         "name": "Gadgets & Hardware",
         "patterns": [
-            r"\b(?:smartphone|iphone|ipad|pixel (?:fold|\d+)|macbook|laptop|laptops|gpus?|cpus?|nvidia rtx|amd radeon|intel core|qualcomm|snapdragon|tsmc|semiconductor|semiconductors|wafer|silicon|processor|processors|foldable|tablet|smartwatch|smartwatches|galaxy watch|apple watch|headphones|earbuds|oled|monitor|playstation|nintendo|xbox|bios|motherboard|firmware|wearable|vr headset|ar glasses|apple vision|meta quest|smart glasses|kindle|handheld|geforce|radeon|core ultra|snapdragon x|m3|m4)\b"
+            r"\b(?:smartphone|iphone|ipad|pixel (?:fold|\d+)|macbook|laptop|laptops|gpus?|cpus?|nvidia rtx|amd radeon|intel core|qualcomm|snapdragon|tsmc|semiconductor|semiconductors|wafer|silicon|processor|processors|foldable|tablet|smartwatch|smartwatches|galaxy watch|apple watch|headphones|earbuds|oled|monitor|playstation|nintendo|xbox|bios|motherboard|firmware|wearable|vr headset|ar glasses|apple vision|meta quest|smart glasses|kindle|handheld|geforce|radeon|core ultra|snapdragon x|m3|m4|ssd|nvme|ram|ddr\d)\b"
         ]
     },
     "robotics": {
         "slug": "robotics",
         "name": "Robotics",
         "patterns": [
-            r"\b(?:robot|robots|robotic|robotics|roboticist|humanoid|humanoids|bipedal|quadruped|boston dynamics|electric atlas|figure 02|figure ai|sanctuary ai|phoenix humanoid|unitree|optimus|tesla bot|drone|drones|dji|uav|quadcopter|actuator|actuators|hydraulic|manipulator|dexterous manipulation|autonomous vehicle|self-driving|waymo|zoox|robotaxi|embodied ai|physical intelligence|fourier intelligence|cyberdog|delivery robot|automated warehouse|exoskeleton)\b"
+            r"\b(?:robot|robots|robotic|robotics|roboticist|humanoid|humanoids|bipedal|quadruped|quadrupeds|boston dynamics|electric atlas|figure 02|figure ai|sanctuary ai|phoenix humanoid|unitree|optimus|tesla bot|drone|drones|dji|uav|quadcopter|actuator|actuators|hydraulic|manipulator|dexterous manipulation|autonomous vehicle|self-driving|waymo|zoox|robotaxi|embodied ai|physical intelligence|fourier intelligence|cyberdog|delivery robot|automated warehouse|exoskeleton|cobot|cobots|agv|amr)\b"
         ]
     },
     "ai": {
         "slug": "ai",
         "name": "Artificial Intelligence",
         "patterns": [
-            r"\b(?:ai|artificial intelligence|llms?|large language model|openai|chatgpt|gpt-[345]|claude|anthropic|gemini|deepmind|autonomous agent|neural network|machine learning|deep learning|diffusion model|transformer|mistral|llama|ollama|grok|reasoning model|r1|agentic|copilot|multimodal|generative ai|devin|pixtral|synthetic data|vector db|rag|deepseek|perplexity|cohere|stability ai|runway|sora|genai|superintelligence|agi|foundation model|context window|fine-tuning|reinforcement learning|rlhf)\b"
+            r"\b(?:ai|artificial intelligence|llms?|large language model|openai|chatgpt|gpt-[345]|claude|anthropic|gemini|deepmind|autonomous agent|neural network|machine learning|deep learning|diffusion model|transformer|mistral|llama|ollama|grok|reasoning model|r1|agentic|copilot|multimodal|generative ai|devin|pixtral|synthetic data|vector db|rag|deepseek|perplexity|cohere|stability ai|runway|sora|genai|superintelligence|agi|foundation model|context window|fine-tuning|reinforcement learning|rlhf|antigravity|ai model|ai models|ai tool|ai tools|ai safety|ai startup|ai agent|ai agents|sam altman)\b"
         ]
     }
 }
@@ -94,7 +95,12 @@ def score_patterns(patterns: list, text: str) -> int:
         cnt += len(m)
     return cnt
 
-def classify_domain_scored(title: str, summary: str = "", body_sample: str = "") -> str:
+def classify_domain_scored(
+    title: str, 
+    summary: str = "", 
+    body_sample: str = "", 
+    source_category: Optional[str] = None
+) -> str:
     t_clean = clean_for_triage(title)
     s_clean = clean_for_triage(summary)
     b_clean = clean_for_triage(body_sample[:600])
@@ -102,14 +108,27 @@ def classify_domain_scored(title: str, summary: str = "", body_sample: str = "")
     best_slug = "tech"
     max_score = 0
 
+    norm_src = (source_category or "").strip().lower()
+    if norm_src == "ai-robotics":
+        norm_src = "ai"
+
     for slug, info in CATEGORIES_TAXONOMY.items():
         t_sc = score_patterns(info["patterns"], t_clean) * 4
         s_sc = score_patterns(info["patterns"], s_clean) * 2
         b_sc = score_patterns(info["patterns"], b_clean)
         tot = t_sc + s_sc + b_sc
+
+        # Intelligent tie-breaker prior (+2) if this matches source desk
+        if norm_src and norm_src == slug:
+            tot += 2
+
         if tot > max_score:
             max_score = tot
             best_slug = slug
+
+    # If content had no strong matches and a valid non-tech source desk was provided, preserve it
+    if max_score <= 2 and norm_src and norm_src in CATEGORIES_TAXONOMY and norm_src != "tech":
+        return norm_src
 
     return best_slug
 
