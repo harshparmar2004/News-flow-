@@ -10,7 +10,7 @@ import {
   Clock, 
   Search, 
   X,
-  ChevronDown
+  CheckCircle2
 } from "lucide-react";
 import { ArticleCard } from "@/components/ArticleCard";
 import { useAdPreferences } from "./AdPreferencesContext";
@@ -42,7 +42,6 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
   const [selectedBeat, setSelectedBeat] = useState<string>("all");
   const [activeFilter, setActiveFilter] = useState<"latest" | "top" | "most_read">("latest");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [visibleLimit, setVisibleLimit] = useState<number>(24);
 
   // 1. Calculate beat categories with counts
   const beatCategories = useMemo(() => {
@@ -119,8 +118,7 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
     return list;
   }, [filteredArticles, activeFilter]);
 
-  const displayedArticles = sortedArticles.slice(0, visibleLimit);
-  const hasMore = visibleLimit < sortedArticles.length;
+  const displayedArticles = sortedArticles;
 
   return (
     <div className="space-y-4 sm:space-y-5">
@@ -146,8 +144,9 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
             <h1 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
               Today&apos;s News Wire
             </h1>
-            <span className="text-[10px] sm:text-[11px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold shrink-0">
-              {articles.length} Stories Today
+            <span className="text-[11px] sm:text-xs font-mono px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold shrink-0 border border-rose-500/20 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+              <span>{articles.length} Live Today</span>
             </span>
           </div>
 
@@ -165,10 +164,7 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5 text-xs font-mono">
           <button
             type="button"
-            onClick={() => {
-              setSelectedBeat("all");
-              setVisibleLimit(24);
-            }}
+            onClick={() => setSelectedBeat("all")}
             className={`px-2.5 py-1 rounded-lg font-medium transition-all shrink-0 cursor-pointer active:scale-95 text-[11px] ${
               selectedBeat === "all"
                 ? "bg-[#1F1E1D] dark:bg-[#F5F2EB] text-white dark:text-[#1F1E1D] shadow-xs"
@@ -185,10 +181,7 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
               <button
                 key={cat.slug}
                 type="button"
-                onClick={() => {
-                  setSelectedBeat(cat.slug);
-                  setVisibleLimit(24);
-                }}
+                onClick={() => setSelectedBeat(cat.slug)}
                 className={`px-2.5 py-1 rounded-lg font-medium transition-all shrink-0 cursor-pointer active:scale-95 text-[11px] ${
                   isSelected
                     ? "bg-[#C96442] text-white shadow-xs font-semibold"
@@ -211,10 +204,7 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setVisibleLimit(24);
-            }}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search today's stories..."
             className="w-full h-9 pl-8.5 pr-8 rounded-lg sm:rounded-xl text-xs sm:text-sm bg-white dark:bg-[#252422] border border-[#E6DFD3] dark:border-[#383530] text-[#1F1E1D] dark:text-[#F5F2EB] placeholder-[#8E8B82] focus:outline-hidden focus:border-[#C96442] focus:ring-1 focus:ring-[#C96442]/30 transition-all"
           />
@@ -274,6 +264,35 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
         </div>
       </div>
 
+      {/* Live Stories Status Bar (Prominent Live Counter for Mobile & Desktop) */}
+      <div className="flex items-center justify-between px-1.5 py-1 text-xs font-mono text-[#8E8B82] dark:text-[#A8A59D]">
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
+          </span>
+          <span className="font-bold text-[#1F1E1D] dark:text-[#F5F2EB]">
+            {displayedArticles.length} Live {displayedArticles.length === 1 ? "Story" : "Stories"}
+          </span>
+          <span>&bull;</span>
+          <span className="text-[#686660] dark:text-[#A8A59D]">Past 24 Hours</span>
+        </div>
+        {searchQuery ? (
+          <span className="text-[11px] text-[#C96442] font-medium">
+            {displayedArticles.length} matching search
+          </span>
+        ) : selectedBeat !== "all" ? (
+          <span className="text-[11px] text-[#C96442] font-medium">
+            {displayedArticles.length} in this beat
+          </span>
+        ) : (
+          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+            All Live Stories
+          </span>
+        )}
+      </div>
+
       {/* Grid of All Today's Stories */}
       {displayedArticles.length > 0 ? (
         <div
@@ -311,31 +330,16 @@ export function TodaysFeedClient({ articles, totalPublishedCount }: TodaysFeedCl
         </div>
       )}
 
-      {/* Pagination & Load Controls */}
-      {hasMore && (
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono border-t border-[#E6DFD3] dark:border-[#2F2D29]">
-          <span className="text-[#8E8B82]">
-            Showing {displayedArticles.length} of {sortedArticles.length} stories published today
-          </span>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => setVisibleLimit((prev) => prev + 24)}
-              className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-medium bg-white dark:bg-[#252422] hover:bg-[#FAF7F0] dark:hover:bg-[#2E2C29] text-[#1F1E1D] dark:text-[#F5F2EB] border border-[#E6DFD3] dark:border-[#383530] shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <span>Load More Stories (+24)</span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#C96442]" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setVisibleLimit(sortedArticles.length)}
-              className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl font-medium bg-[#1F1E1D] dark:bg-[#F5F2EB] text-white dark:text-[#1F1E1D] shadow-xs transition-all cursor-pointer"
-            >
-              Show All ({sortedArticles.length})
-            </button>
+      {/* End of 24-Hour Live Feed Indicator */}
+      {displayedArticles.length > 0 && (
+        <div className="pt-8 pb-4 border-t border-[#E6DFD3] dark:border-[#2F2D29] flex flex-col items-center text-center space-y-1.5">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBE8DF]/50 dark:bg-[#252422] text-xs font-mono text-[#686660] dark:text-[#A8A59D]">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+            <span>You&apos;re caught up &bull; All {displayedArticles.length} live stories from the last 24h displayed</span>
           </div>
+          <p className="text-[11px] font-mono text-[#8E8B82] dark:text-[#78756E]">
+            Continuous autonomous journalism &bull; Updated 24/7 as news breaks
+          </p>
         </div>
       )}
     </div>

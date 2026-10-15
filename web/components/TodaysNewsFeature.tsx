@@ -170,12 +170,12 @@ export function TodaysNewsFeature({ articles }: TodaysNewsFeatureProps) {
           </Link>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/today"
-            className="hidden sm:inline-flex items-center gap-1 text-xs font-mono font-semibold text-rose-600 hover:text-rose-700 dark:text-rose-400 transition-colors"
+            className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-mono font-semibold text-rose-600 hover:text-rose-700 dark:text-rose-400 transition-colors"
           >
-            <span>Full Wire ({sortedArticles.length})</span>
+            <span>All ({sortedArticles.length})</span>
             <span>&rarr;</span>
           </Link>
           <div className="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-[#8E8B82] dark:text-[#8E8B82] shrink-0">
