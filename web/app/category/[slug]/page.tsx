@@ -14,18 +14,26 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  if (slug === "ai-robotics") {
-    return { title: "Artificial Intelligence Intelligence | NewsFlow" };
-  }
   const category = await prisma.category.findUnique({
-    where: { slug },
+    where: { slug: slug === "ai-robotics" ? "ai" : slug },
   });
 
   if (!category) return { title: "Category Not Found | NewsFlow" };
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://news-flow-one.vercel.app";
+  const catName = category.name.includes("News") ? category.name : `${category.name} News`;
+
   return {
-    title: `${category.name} Intelligence | NewsFlow`,
-    description: category.description || `Latest autonomous news and analysis in ${category.name}`,
+    title: `${catName} — Latest Breakthroughs & Live Updates | NewsFlow`,
+    description: category.description || `Breaking ${catName.toLowerCase()}, frontier innovation, research shifts, and deep tech developments updated live 24/7 on NewsFlow.`,
+    alternates: {
+      canonical: `${siteUrl}/category/${category.slug}`,
+    },
+    openGraph: {
+      title: `${catName} | NewsFlow`,
+      description: category.description || `Live 24/7 breaking updates on ${category.name}.`,
+      url: `${siteUrl}/category/${category.slug}`,
+    },
   };
 }
 

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUp, Check } from "lucide-react";
+import { NewsFlowLogo } from "./NewsFlowLogo";
 
 export function Footer() {
   const pathname = usePathname();
@@ -39,7 +40,7 @@ export function Footer() {
           {/* Brand & 1-line Mission */}
           <div className="space-y-1 max-w-lg">
             <div className="flex items-center space-x-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#C96442]" />
+              <NewsFlowLogo size={24} showPulse={false} />
               <Link href="/" className="inline-block">
                 <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
                   NewsFlow

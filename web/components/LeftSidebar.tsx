@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Rss, Search, Clock, Radio } from "lucide-react";
+import { NewsFlowLogo } from "./NewsFlowLogo";
 import { useAdPreferences } from "./AdPreferencesContext";
 
 interface CategoryWithCount {
@@ -30,12 +31,12 @@ export function LeftSidebar({ categories, activeSlug, totalArticles, todaysCount
       {/* Top Navigation Block */}
       <div className="space-y-5">
         {/* Brand / Title Indicator */}
-        <div className="flex items-center space-x-2 pt-0.5 pb-1">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#C96442]" />
-          <span className="font-serif text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB]">
+        <Link href="/" className="flex items-center space-x-2.5 pt-0.5 pb-1 group">
+          <NewsFlowLogo size={24} />
+          <span className="font-serif text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB] group-hover:text-[#C96442] dark:group-hover:text-[#C96442] transition-colors">
             NewsFlow
           </span>
-        </div>
+        </Link>
 
         {/* Section: NEWS DESKS */}
         <div className="space-y-1">

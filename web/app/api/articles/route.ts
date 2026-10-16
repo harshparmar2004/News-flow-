@@ -35,24 +35,25 @@ const CATEGORY_PATTERNS: Array<{
       /\b(?:funding|seed round|series [a-g]|venture capital|vcs?|valuation|investor|investors|pre-seed|unicorn|angel investor|y combinator|sequoia|a16z|andreessen|acqui(?:re|res|red|sition)|buyout|ipo|merger|venture-backed|bootstrapped startup|early-stage|late-stage|techstars|venture debt|growth equity|term sheet|pitch deck)\b/i,
       /\b(?:vc bashing|vc firm|seed funding|series a funding|series b funding|fundraising round|backed by investors)\b/i,
       /\b(?:raises \$|raised \$|secures \$|closes \$|valued at \$|raising \$)\b/i,
+      /\b(?:raises?|raised|secures?|secured|closes?|closed)\s+(?:[\$€£]|[\d\.]+\s*(?:million|billion|mn|bn))\b/i,
     ],
   },
   {
     key: "gadgets-hardware",
     patterns: [
-      /\b(?:smartphone|iphone|ipad|pixel (?:fold|\d+)|macbook|laptop|laptops|gpus?|cpus?|nvidia rtx|amd radeon|intel core|qualcomm|snapdragon|tsmc|semiconductor|semiconductors|wafer|silicon|processor|processors|foldable|tablet|smartwatch|smartwatches|galaxy watch|apple watch|headphones|earbuds|oled|monitor|playstation|nintendo|xbox|bios|motherboard|firmware|wearable|vr headset|ar glasses|apple vision|meta quest|smart glasses|kindle|handheld|geforce|radeon|core ultra|snapdragon x|m3|m4)\b/i,
+      /\b(?:smartphone|iphone|ipad|pixel (?:fold|\d+)|macbook|laptop|laptops|gpus?|cpus?|nvidia rtx|amd radeon|intel core|qualcomm|snapdragon|tsmc|semiconductor|semiconductors|wafer|silicon|processor|processors|foldable|tablet|smartwatch|smartwatches|galaxy watch|apple watch|headphones|earbuds|oled|monitor|playstation|nintendo|xbox|bios|motherboard|firmware|wearable|vr headset|ar glasses|apple vision|meta quest|smart glasses|kindle|handheld|geforce|radeon|core ultra|snapdragon x|m3|m4|ssd|nvme|ram|ddr\d)\b/i,
     ],
   },
   {
     key: "robotics",
     patterns: [
-      /\b(?:robot|robots|robotic|robotics|roboticist|humanoid|humanoids|bipedal|quadruped|boston dynamics|electric atlas|figure 02|figure ai|sanctuary ai|phoenix humanoid|unitree|optimus|tesla bot|drone|drones|dji|uav|quadcopter|actuator|actuators|hydraulic|manipulator|dexterous manipulation|autonomous vehicle|self-driving|waymo|zoox|robotaxi|embodied ai|physical intelligence|fourier intelligence|cyberdog|delivery robot|automated warehouse|exoskeleton)\b/i,
+      /\b(?:robot|robots|robotic|robotics|roboticist|humanoid|humanoids|bipedal|quadruped|quadrupeds|boston dynamics|electric atlas|figure 02|figure ai|sanctuary ai|phoenix humanoid|unitree|optimus|tesla bot|drone|drones|dji|uav|quadcopter|actuator|actuators|hydraulic|manipulator|dexterous manipulation|autonomous vehicle|self-driving|waymo|zoox|robotaxi|embodied ai|physical intelligence|fourier intelligence|cyberdog|delivery robot|automated warehouse|exoskeleton|cobot|cobots|agv|amr)\b/i,
     ],
   },
   {
     key: "ai",
     patterns: [
-      /\b(?:ai|artificial intelligence|llms?|large language model|openai|chatgpt|gpt-[345]|claude|anthropic|gemini|deepmind|autonomous agent|neural network|machine learning|deep learning|diffusion model|transformer|mistral|llama|ollama|grok|reasoning model|r1|agentic|copilot|multimodal|generative ai|devin|pixtral|synthetic data|vector db|rag|deepseek|perplexity|cohere|stability ai|runway|sora|genai|superintelligence|agi|foundation model|context window|fine-tuning|reinforcement learning|rlhf)\b/i,
+      /\b(?:ai|artificial intelligence|llms?|large language model|openai|chatgpt|gpt-[345]|claude|anthropic|gemini|deepmind|autonomous agent|neural network|machine learning|deep learning|diffusion model|transformer|mistral|llama|ollama|grok|reasoning model|r1|agentic|copilot|multimodal|generative ai|devin|pixtral|synthetic data|vector db|rag|deepseek|perplexity|cohere|stability ai|runway|sora|genai|superintelligence|agi|foundation model|context window|fine-tuning|reinforcement learning|rlhf|antigravity|ai model|ai models|ai tool|ai tools|ai safety|ai startup|ai agent|ai agents|sam altman)\b/i,
     ],
   },
 ];
@@ -79,21 +80,20 @@ function classifyDomainWithJev(
   bodyContent: string,
   explicitCategory?: string | null
 ): { name: string; slug: string } {
-  // If explicitly specified a specific non-generic beat, honor it
-  if (explicitCategory) {
-    const normalized = explicitCategory.toLowerCase().trim();
+  let normExplicit = (explicitCategory || "").toLowerCase().trim();
+  if (normExplicit === "ai-robotics") normExplicit = "ai";
+
+  // Resolve canonical key for explicit category if passed
+  let explicitSlug: string | null = null;
+  if (normExplicit) {
     for (const [key, cat] of Object.entries(CANONICAL_CATEGORIES)) {
       if (
-        normalized === key ||
-        normalized === cat.name.toLowerCase() ||
-        normalized === cat.slug
+        normExplicit === key ||
+        normExplicit === cat.name.toLowerCase() ||
+        normExplicit === cat.slug
       ) {
-        if (key === "ai-robotics") {
-          return CANONICAL_CATEGORIES["ai"];
-        }
-        if (key !== "tech") {
-          return cat;
-        }
+        explicitSlug = key === "ai-robotics" ? "ai" : key;
+        break;
       }
     }
   }
@@ -110,12 +110,23 @@ function classifyDomainWithJev(
     const tScore = scoreRegexMatches(item.patterns, cleanTitle) * 4;
     const sScore = scoreRegexMatches(item.patterns, cleanSummary) * 2;
     const bScore = scoreRegexMatches(item.patterns, cleanBodySample);
-    const total = tScore + sScore + bScore;
+    let total = tScore + sScore + bScore;
+
+    // Intelligent prior (+2): gives source desk an advantage on generic titles,
+    // but strong domain signals (e.g. OpenAI on a hardware feed) will cleanly override it.
+    if (explicitSlug && explicitSlug === item.key) {
+      total += 2;
+    }
 
     if (total > maxScore) {
       maxScore = total;
       bestKey = item.key;
     }
+  }
+
+  // If content had no strong signals and a non-tech explicit desk was provided, preserve it
+  if (maxScore <= 2 && explicitSlug && explicitSlug !== "tech" && CANONICAL_CATEGORIES[explicitSlug]) {
+    return CANONICAL_CATEGORIES[explicitSlug];
   }
 
   return CANONICAL_CATEGORIES[bestKey] || CANONICAL_CATEGORIES["tech"];

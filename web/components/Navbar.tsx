@@ -17,6 +17,7 @@ import {
   KeyRound,
   LogOut
 } from "lucide-react";
+import { NewsFlowLogo } from "./NewsFlowLogo";
 import { useTheme } from "./ThemeContext";
 import { useAdPreferences } from "./AdPreferencesContext";
 
@@ -60,7 +61,8 @@ export function Navbar() {
           
           {/* Logo & Context Badge */}
           <div className="flex items-center space-x-3">
-            <Link href={isAdminRoute ? "/admin" : "/"} className="flex items-baseline space-x-2 group">
+            <Link href={isAdminRoute ? "/admin" : "/"} className="flex items-center space-x-2.5 group">
+              <NewsFlowLogo size={30} />
               <span className="font-serif text-2xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB] group-hover:text-[#C96442] dark:group-hover:text-[#C96442] transition-colors">
                 NewsFlow
               </span>

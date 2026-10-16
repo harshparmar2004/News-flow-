@@ -20,6 +20,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { useAdPreferences } from "./AdPreferencesContext";
+import { NewsFlowLogo } from "./NewsFlowLogo";
 
 interface MobileDesksDrawerProps {
   isOpen: boolean;
@@ -77,8 +78,8 @@ export function MobileDesksDrawer({ isOpen, onClose }: MobileDesksDrawerProps) {
 
         {/* Drawer Header */}
         <div className="px-5 py-3 border-b border-[#EBE8DF]/70 dark:border-[#282724] flex items-center justify-between shrink-0">
-          <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#C96442]" />
+          <div className="flex items-center space-x-2.5">
+            <NewsFlowLogo size={20} />
             <span className="font-serif text-lg font-bold text-[#1F1E1D] dark:text-[#F5F2EB]">
               News Desks & Navigation
             </span>

@@ -43,15 +43,12 @@ export function CategoryFeedClient({ category }: CategoryFeedClientProps) {
     const list = [...category.articles];
 
     if (activeFilter === "latest") {
-      // 1. LATEST: Strictly newest published at the top, then newest created.
+      // 1. LATEST: Strictly newest published/ingested at the top.
       // Guarantees newly published news from AI agent is on top of all stories!
       return list.sort((a, b) => {
-        const timeA = new Date(a.published_at).getTime();
-        const timeB = new Date(b.published_at).getTime();
-        if (timeB !== timeA) return timeB - timeA;
-        const createdA = a.created_at ? new Date(a.created_at).getTime() : 0;
-        const createdB = b.created_at ? new Date(b.created_at).getTime() : 0;
-        if (createdB !== createdA) return createdB - createdA;
+        const effA = Math.max(new Date(a.published_at).getTime(), a.created_at ? new Date(a.created_at).getTime() : 0);
+        const effB = Math.max(new Date(b.published_at).getTime(), b.created_at ? new Date(b.created_at).getTime() : 0);
+        if (effB !== effA) return effB - effA;
         return (b.id || "").localeCompare(a.id || "");
       });
     }
@@ -63,10 +60,10 @@ export function CategoryFeedClient({ category }: CategoryFeedClientProps) {
       const fortyEightHoursAgo = now - 48 * 60 * 60 * 1000;
 
       return list.sort((a, b) => {
-        const timeA = new Date(a.published_at).getTime();
-        const timeB = new Date(b.published_at).getTime();
-        const aIsRecent = timeA >= fortyEightHoursAgo;
-        const bIsRecent = timeB >= fortyEightHoursAgo;
+        const effA = Math.max(new Date(a.published_at).getTime(), a.created_at ? new Date(a.created_at).getTime() : 0);
+        const effB = Math.max(new Date(b.published_at).getTime(), b.created_at ? new Date(b.created_at).getTime() : 0);
+        const aIsRecent = effA >= fortyEightHoursAgo;
+        const bIsRecent = effB >= fortyEightHoursAgo;
 
         if (aIsRecent && !bIsRecent) return -1;
         if (!aIsRecent && bIsRecent) return 1;
@@ -77,7 +74,7 @@ export function CategoryFeedClient({ category }: CategoryFeedClientProps) {
         if (scoreB !== scoreA) return scoreB - scoreA;
 
         // Secondary sort: newest publication time
-        return timeB - timeA;
+        return effB - effA;
       });
     }
 

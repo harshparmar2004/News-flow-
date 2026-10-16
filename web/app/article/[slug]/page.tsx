@@ -54,17 +54,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const seo: SeoMeta = safeJsonParse(article.seo_meta, {});
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://news-flow-one.vercel.app";
   const title = seo.title || `${article.title} | NewsFlow`;
   const description = seo.description || article.summary;
   const ogImage = seo.og_image || article.cover_image_url || `${siteUrl}/og-default.jpg`;
+  const canonicalUrl = `${siteUrl}/article/${article.slug}`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
+      url: canonicalUrl,
       type: "article",
       publishedTime: article.published_at.toISOString(),
       authors: [article.author],
