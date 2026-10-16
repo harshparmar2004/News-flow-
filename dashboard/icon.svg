@@ -1,60 +1,56 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <!-- Background Gradient -->
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1E1E1C" />
-      <stop offset="100%" stop-color="#0E0E0D" />
+    <!-- Background Beige Gradient -->
+    <linearGradient id="beigeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDFBF7" />
+      <stop offset="100%" stop-color="#F4EFE6" />
     </linearGradient>
 
-    <!-- Subtle Border Stroke Gradient -->
-    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3A3833" />
-      <stop offset="100%" stop-color="#1A1917" />
+    <!-- Subtle Border Stroke -->
+    <linearGradient id="beigeBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EBE4D5" />
+      <stop offset="100%" stop-color="#D9CFBC" />
     </linearGradient>
 
-    <!-- Ribbon 1: Warm Terracotta to Coral Gradient -->
-    <linearGradient id="ribbon1" x1="0%" y1="100%" x2="100%" y2="0%">
+    <!-- Terracotta Orange Wave Ribbon (Left / Main Stem) -->
+    <linearGradient id="orangeRibbon1" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#B84A28" />
-      <stop offset="45%" stop-color="#D9643B" />
-      <stop offset="100%" stop-color="#FF7547" />
+      <stop offset="35%" stop-color="#C96442" />
+      <stop offset="70%" stop-color="#E25828" />
+      <stop offset="100%" stop-color="#FF6E38" />
     </linearGradient>
 
-    <!-- Ribbon 2: Vibrant Coral to Radiant Golden Amber -->
-    <linearGradient id="ribbon2" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#E2552D" />
-      <stop offset="50%" stop-color="#FF7A4D" />
-      <stop offset="100%" stop-color="#FFB347" />
+    <!-- Vibrant Coral-Orange Ribbon (Right / Flow Stem) -->
+    <linearGradient id="orangeRibbon2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D24F22" />
+      <stop offset="40%" stop-color="#EA5E2E" />
+      <stop offset="100%" stop-color="#FF824D" />
     </linearGradient>
 
-    <!-- Live Telemetry Pulse Glow -->
-    <filter id="emeraldGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="8" result="blur" />
-      <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
+    <!-- Subtle Drop Shadow -->
+    <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#8C5C43" flood-opacity="0.12" />
     </filter>
   </defs>
 
-  <!-- Squircle Base -->
-  <rect x="16" y="16" width="480" height="480" rx="124" ry="124" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="6" />
+  <!-- Warm Beige Squircle Badge -->
+  <rect x="20" y="20" width="472" height="472" rx="124" ry="124" fill="url(#beigeBg)" stroke="url(#beigeBorder)" stroke-width="8" filter="url(#badgeShadow)" />
 
-  <!-- Flow Wave Ribbons forming the Iconic 'N' -->
+  <!-- The Iconic 'N' Wave Monogram in Signature Terracotta Orange -->
   <g id="monogram-n">
-    <!-- Bottom Left to Center Surge (Pillar 1) -->
-    <path d="M142 350 C142 270, 168 210, 222 176 C238 166, 260 178, 252 196 C234 238, 214 278, 184 340 C176 356, 154 362, 142 350 Z" fill="url(#ribbon1)" />
+    <!-- Left Pillar Arch (Folded Ribbon) -->
+    <path d="M148 354 C146 264, 172 198, 228 168 C244 158, 266 170, 258 188 C240 230, 218 274, 188 344 C180 362, 156 368, 148 354 Z" fill="url(#orangeRibbon1)" />
 
-    <!-- Main Diagonal Flow Wave (The News Stream) -->
-    <path d="M168 252 C210 186, 276 160, 344 240 C356 254, 346 274, 328 274 C268 274, 214 314, 188 356 C178 372, 156 366, 154 348 C150 310, 156 272, 168 252 Z" fill="url(#ribbon1)" />
+    <!-- Central Fluid Flow Wave (The Diagonal Stream) -->
+    <path d="M174 256 C216 188, 282 164, 348 244 C360 258, 350 278, 332 278 C272 278, 218 318, 192 360 C182 376, 160 370, 158 352 C154 314, 160 276, 174 256 Z" fill="url(#orangeRibbon1)" />
 
-    <!-- Upper Wave & Right Upward Surge (Pillar 2) -->
-    <path d="M214 194 C264 148, 320 162, 350 216 C358 230, 372 222, 370 206 C364 164, 334 136, 280 146 C240 154, 206 176, 178 206 C166 218, 178 234, 192 226 C200 220, 208 206, 214 194 Z" fill="url(#ribbon2)" />
+    <!-- Upper Loop and Right Arch (Secondary Ribbon Wave) -->
+    <path d="M222 196 C272 150, 328 164, 356 218 C364 232, 378 224, 376 208 C370 166, 340 138, 286 148 C246 156, 212 178, 184 208 C172 220, 184 236, 198 228 C206 222, 216 208, 222 196 Z" fill="url(#orangeRibbon2)" />
 
-    <!-- Right Rising Column -->
-    <path d="M288 340 C318 296, 346 250, 366 186 C370 172, 388 174, 388 190 C388 238, 366 288, 332 334 C314 358, 280 354, 288 340 Z" fill="url(#ribbon2)" />
+    <!-- Right Pillar Ascent -->
+    <path d="M296 344 C326 300, 352 254, 372 190 C376 176, 394 178, 394 194 C394 242, 372 292, 338 338 C320 362, 288 358, 296 344 Z" fill="url(#orangeRibbon2)" />
+
+    <!-- Sleek Center Paper Accent Curve -->
+    <path d="M198 222 C234 186, 274 212, 308 246 C314 252, 324 248, 322 240 C306 206, 268 180, 230 196 C216 202, 204 214, 198 222 Z" fill="#FFFFFF" opacity="0.65" />
   </g>
-
-  <!-- Live Telemetry Emerald Beacon -->
-  <circle cx="396" cy="116" r="22" fill="#10B981" filter="url(#emeraldGlow)" />
-  <circle cx="396" cy="116" r="14" fill="#34D399" />
 </svg>
