@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Rss, Search, Clock, Radio } from "lucide-react";
-import { NewsFlowLogo } from "./NewsFlowLogo";
 import { useAdPreferences } from "./AdPreferencesContext";
 
 interface CategoryWithCount {
@@ -30,14 +28,6 @@ export function LeftSidebar({ categories, activeSlug, totalArticles, todaysCount
     <aside className="w-64 shrink-0 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] border-r border-[#EBE8DF] dark:border-[#282724] bg-[#FBF9F5] dark:bg-[#141413] p-4 sm:p-5 flex flex-col justify-between overflow-y-auto select-none">
       {/* Top Navigation Block */}
       <div className="space-y-5">
-        {/* Brand / Title Indicator */}
-        <Link href="/" className="flex items-center space-x-2.5 pt-0.5 pb-1 group">
-          <NewsFlowLogo size={24} />
-          <span className="font-serif text-xl font-bold tracking-tight text-[#1F1E1D] dark:text-[#F5F2EB] group-hover:text-[#C96442] dark:group-hover:text-[#C96442] transition-colors">
-            NewsFlow
-          </span>
-        </Link>
-
         {/* Section: NEWS DESKS */}
         <div className="space-y-1">
           <h3 className="text-[11px] font-mono uppercase tracking-wider font-semibold text-[#8E8B82] dark:text-[#686660] px-2 mb-1.5">
@@ -59,31 +49,6 @@ export function LeftSidebar({ categories, activeSlug, totalArticles, todaysCount
                 {totalArticles}
               </span>
             )}
-          </Link>
-
-          {/* Today's News Direct Link */}
-          <Link
-            href="/today"
-            className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all group ${
-              pathname === "/today" || activeSlug === "today"
-                ? "bg-[#FBEBE8] dark:bg-[#2C1F1B] text-[#C96442] font-semibold shadow-xs"
-                : "text-[#686660] dark:text-[#A8A59D] hover:bg-[#FAF7F0] dark:hover:bg-[#20201D] hover:text-[#1F1E1D] dark:hover:text-[#F5F2EB]"
-            }`}
-          >
-            <span className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
-              <span className="group-hover:text-rose-500 transition-colors">Today&apos;s News</span>
-            </span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
-              {todaysCount && todaysCount > 0 ? (
-                <>
-                  <span className="font-bold">{todaysCount}</span>
-                  <span>Live</span>
-                </>
-              ) : (
-                <span>Live</span>
-              )}
-            </span>
           </Link>
 
           {/* Category List */}
