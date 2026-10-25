@@ -188,12 +188,20 @@ body {
   /* Light mode: crisp, clean subtle elevation on outer cards */
   --outer-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 2px 8px -1px rgba(28, 25, 23, 0.06);
   --outer-box-shadow-hover: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 14px -2px rgba(28, 25, 23, 0.08);
+
+  /* News Card Shadow System (Warm, Tactile Editorial Elevation) */
+  --news-card-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.05), 0 6px 18px -2px rgba(35, 25, 20, 0.07);
+  --news-card-shadow-hover: 0 6px 14px -2px rgba(0, 0, 0, 0.06), 0 16px 32px -4px rgba(35, 25, 20, 0.13), 0 0 0 1px rgba(201, 100, 66, 0.25);
 }
 
 .dark {
   /* Dark mode: crisp, tight light-orange (#C96442) outline only, minimal spread */
   --outer-box-shadow: 0 0 0 1px rgba(201, 100, 66, 0.45), 0 0 6px 0 rgba(201, 100, 66, 0.18);
   --outer-box-shadow-hover: 0 0 0 1px rgba(201, 100, 66, 0.70), 0 0 10px 0 rgba(201, 100, 66, 0.28);
+
+  /* Dark mode news card shadow: deep ambient shadow with subtle elevation */
+  --news-card-shadow: 0 3px 10px -2px rgba(0, 0, 0, 0.5), 0 8px 24px -4px rgba(0, 0, 0, 0.65);
+  --news-card-shadow-hover: 0 6px 16px -2px rgba(0, 0, 0, 0.6), 0 20px 36px -4px rgba(0, 0, 0, 0.8), 0 0 14px 0 rgba(201, 100, 66, 0.25);
 }
 
 /* Apply outline shadow ONLY to outer cards / primary boxes */
@@ -204,6 +212,16 @@ body {
 
 .admin-card:hover {
   box-shadow: var(--outer-box-shadow-hover) !important;
+}
+
+/* Enhanced Editorial News Card Shadow & Lift */
+.news-card {
+  box-shadow: var(--news-card-shadow);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease;
+}
+
+.news-card:hover {
+  box-shadow: var(--news-card-shadow-hover);
 }
 
 /* Absolutely NO shadow or glow on any inner boxes, buttons, inputs, rows, or elements inside an outer card */

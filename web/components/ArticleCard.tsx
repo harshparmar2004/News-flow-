@@ -61,7 +61,7 @@ export function ArticleCard({ article, priority = false }: ArticleCardProps) {
   return (
     <article
       id={`article-card-${article.slug}`}
-      className="group flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-300 hover:border-[#C96442]/60 hover:shadow-lg hover:shadow-[#C96442]/5 hover:-translate-y-0.5 active:scale-[0.985] active:translate-y-0 active:border-[#C96442]/40 transform-gpu scroll-mt-24"
+      className="group news-card flex flex-col justify-between rounded-2xl border border-[#EBE8DF] dark:border-[#2A2925] bg-white dark:bg-[#1C1B19] overflow-hidden transition-all duration-300 shadow-[0_2px_6px_-1px_rgba(0,0,0,0.05),0_6px_18px_-2px_rgba(35,25,20,0.07)] dark:shadow-[0_3px_10px_-2px_rgba(0,0,0,0.5),0_8px_24px_-4px_rgba(0,0,0,0.65)] hover:border-[#C96442]/50 hover:shadow-[0_6px_14px_-2px_rgba(0,0,0,0.06),0_16px_32px_-4px_rgba(35,25,20,0.13),0_0_0_1px_rgba(201,100,66,0.25)] dark:hover:shadow-[0_6px_16px_-2px_rgba(0,0,0,0.6),0_20px_36px_-4px_rgba(0,0,0,0.8),0_0_14px_rgba(201,100,66,0.25)] hover:-translate-y-1 active:scale-[0.985] active:translate-y-0 transform-gpu scroll-mt-24"
     >
       {/* Cover Image Thumbnail */}
       <Link

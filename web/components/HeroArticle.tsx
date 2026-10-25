@@ -23,7 +23,7 @@ interface HeroArticleProps {
 
 export function HeroArticle({ article }: HeroArticleProps) {
   return (
-    <article className="group relative rounded-3xl border border-[#EBE8DF] dark:border-[#33322E] bg-white dark:bg-[#22221F] p-6 md:p-8 transition-all hover:border-[#C96442]/40 hover:shadow-lg hover:shadow-amber-950/5">
+    <article className="group news-card relative rounded-3xl border border-[#EBE8DF] dark:border-[#33322E] bg-white dark:bg-[#22221F] p-6 md:p-8 transition-all duration-300 shadow-[0_2px_10px_-2px_rgba(0,0,0,0.05),0_8px_24px_-4px_rgba(35,25,20,0.08)] dark:shadow-[0_4px_20px_-3px_rgba(0,0,0,0.6)] hover:border-[#C96442]/50 hover:shadow-[0_16px_36px_-6px_rgba(35,25,20,0.14),0_0_0_1px_rgba(201,100,66,0.2)] dark:hover:shadow-[0_16px_36px_-6px_rgba(0,0,0,0.85),0_0_16px_rgba(201,100,66,0.25)] hover:-translate-y-0.5">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         {/* Left Column: Metadata, Title, Summary, CTA */}
         <div className="lg:col-span-7 flex flex-col justify-between space-y-5">
