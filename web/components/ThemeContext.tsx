@@ -21,20 +21,34 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem("newsflow_theme") as Theme | null;
-    if (stored) {
+    if (stored === "dark" || stored === "light") {
       setTheme(stored);
       document.documentElement.classList.toggle("dark", stored === "dark");
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setTheme("dark");
-      document.documentElement.classList.add("dark");
+      updateMetaTheme(stored);
+    } else {
+      // Default to Light Mode for everyone
+      setTheme("light");
+      document.documentElement.classList.remove("dark");
+      updateMetaTheme("light");
     }
   }, []);
 
   const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : "light";
+    const next: Theme = theme === "light" ? "dark" : "light";
     setTheme(next);
     localStorage.setItem("newsflow_theme", next);
     document.documentElement.classList.toggle("dark", next === "dark");
+    updateMetaTheme(next);
+  };
+
+  const updateMetaTheme = (currentTheme: Theme) => {
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute(
+        "content",
+        currentTheme === "dark" ? "#181816" : "#FBF9F5"
+      );
+    }
   };
 
   return (
