@@ -87,6 +87,7 @@ export const viewport: Viewport = {
 
 import { Suspense } from "react";
 import { TopProgressBar } from "@/components/TopProgressBar";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function RootLayout({
   children,
@@ -112,6 +113,7 @@ export default function RootLayout({
             <MobileNavShell />
           </AdPreferencesProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

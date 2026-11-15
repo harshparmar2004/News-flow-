@@ -13,6 +13,7 @@ import {
 } from "@/lib/utils";
 import { SocialShareBar } from "@/components/SocialShareBar";
 import { JsonLd } from "@/components/JsonLd";
+import { ArticleViewTracker } from "@/components/ArticleViewTracker";
 import { ArticleCard } from "@/components/ArticleCard";
 import { ReadingProgressBar } from "@/components/ReadingProgressBar";
 import { ArticleBackButton } from "@/components/ArticleBackButton";
@@ -92,14 +93,6 @@ export default async function ArticlePage({ params }: PageProps) {
     notFound();
   }
 
-  // Increment view count asynchronously in background
-  prisma.article
-    .update({
-      where: { id: article.id },
-      data: { views_count: { increment: 1 } },
-    })
-    .catch(() => {});
-
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const currentUrl = `${siteUrl}/article/${article.slug}`;
   const tags: string[] = safeJsonParse(article.tags, []);
@@ -123,6 +116,7 @@ export default async function ArticlePage({ params }: PageProps) {
     <>
       <ReadingProgressBar />
       <JsonLd article={article} siteUrl={siteUrl} />
+      <ArticleViewTracker articleId={article.id} />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-10 pb-24 lg:pb-12">
         {article.status !== "published" && (
